@@ -36,27 +36,110 @@ const products = [
       "Chapter checkpoints and interview callouts"
     ],
     sampleTitle: "Sample: Security Hardening (Chapter 7)",
-    sampleContent: `A homelab without security hardening is a botnet node waiting to happen. It is not a question of <em>if</em> your exposed SSH port gets probed — it is a question of how many times per hour.
+    sampleContent: `<p>A homelab without security hardening is a botnet node waiting to happen. It is not a question of <em>if</em> your exposed SSH port gets probed — it is a question of how many times per hour.</p>
 
-<strong>"It is just a homelab"</strong> is the most dangerous sentence in self-hosting. Default passwords, open ports, and unpatched systems are how real breaches start. And the habits you build here are the habits you carry into your career.
+<p><strong>"It is just a homelab"</strong> is the most dangerous sentence in self-hosting. Default passwords, open ports, and unpatched systems are how real breaches start. And the habits you build here are the habits you carry into your career. This chapter hardens your lab to a standard that would pass a basic security audit.</p>
 
-<strong>Security Principles:</strong>
-<ol class="list-decimal ml-6 mt-2 space-y-1">
+<blockquote class="border-l-4 border-sjvik-gold/40 pl-4 my-4 text-sjvik-text-muted italic">Common mistake: Assuming your homelab is safe because it is behind a consumer router. NAT is not a firewall. One compromised IoT device, one forwarded port you forgot about, one UPnP rule your router auto-created — and your unpatched Proxmox node is reachable. Harden it anyway.</blockquote>
+
+<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">Security Principles</h3>
+
+<p>Before we touch a single configuration file, internalize these:</p>
+
+<ol class="list-decimal ml-6 mt-2 space-y-2">
 <li><strong>Least privilege.</strong> Every service, user, and process gets the minimum permissions it needs. Nothing more.</li>
 <li><strong>Defense in depth.</strong> Multiple layers of protection. If one fails, the next catches the threat.</li>
 <li><strong>Assume breach.</strong> Design as if an attacker is already on your network. Limit lateral movement.</li>
 <li><strong>Audit and log.</strong> If you cannot see what happened, you cannot respond to it.</li>
 </ol>
 
-<strong class="block mt-4">SSH Hardening — Key-Only Auth:</strong>
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Verify on every host
-grep -E "^(PermitRootLogin|PasswordAuthentication)" /etc/ssh/sshd_config
+<p class="mt-4">These are not academic principles. They are how every serious organization approaches security. Building them into your homelab makes them second nature.</p>
 
-# Lock it down
-sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">SSH Hardening</h3>
+
+<p>SSH is the primary management interface for your entire lab. It must be locked down.</p>
+
+<p class="mt-3"><strong>Key-Only Authentication (Review)</strong></p>
+<p>You set this up in Chapter 2. Verify it is still in effect on every host and container:</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Check on each node/container
+grep -E "^(PermitRootLogin|PasswordAuthentication|PubkeyAuthentication)" /etc/ssh/sshd_config</code></pre>
+
+<p class="mt-3">If <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">PasswordAuthentication</code> is present and set to <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">yes</code>, fix it:</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+echo "PasswordAuthentication no" >> /etc/ssh/sshd_config  # If not present at all
 systemctl restart sshd</code></pre>
 
-<p class="mt-4 text-sjvik-text-muted italic">This is 1 of 11 chapters. The full guide covers firewalls, fail2ban, network segmentation, Proxmox API tokens, encrypted remote access, and more.</p>`
+<p class="mt-3"><strong>Additional SSH Hardening</strong></p>
+<p>Edit <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">/etc/ssh/sshd_config</code> on each host:</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Disable unused authentication methods
+ChallengeResponseAuthentication no
+KerberosAuthentication no
+GSSAPIAuthentication no
+
+# Disable X11 forwarding (not needed for server management)
+X11Forwarding no
+
+# Set a login grace period
+LoginGraceTime 30
+
+# Limit authentication attempts per connection
+MaxAuthTries 3
+
+# Log level (VERBOSE gives you more audit data)
+LogLevel VERBOSE</code></pre>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Validate config before restarting (prevents lockout from typos)
+sshd -t
+
+# If no errors, restart
+systemctl restart sshd</code></pre>
+
+<blockquote class="border-l-4 border-sjvik-gold/40 pl-4 my-4 text-sjvik-text-muted italic">Common mistake: Editing sshd_config and restarting without testing the config first. If you introduce a syntax error, SSH will refuse to start and you are locked out. Always run <code class="font-mono">sshd -t</code> before <code class="font-mono">systemctl restart sshd</code>. Keep a console session open as a fallback.</blockquote>
+
+<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">Fail2ban</h3>
+
+<p>Fail2ban monitors log files and bans IPs that show malicious behavior.</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>apt install -y fail2ban</code></pre>
+
+<p class="mt-3">Create <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">/etc/fail2ban/jail.local</code>:</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>[DEFAULT]
+bantime  = 3600
+findtime = 600
+maxretry = 3
+backend = systemd
+
+[sshd]
+enabled = true
+port    = ssh
+filter  = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+
+[proxmox]
+enabled = true
+port    = https,http,8006
+filter  = proxmox
+logpath = /var/log/daemon.log
+maxretry = 3</code></pre>
+
+<p class="mt-3">Fail2ban does not include a Proxmox filter by default. Create one:</p>
+
+<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>cat > /etc/fail2ban/filter.d/proxmox.conf << 'EOF'
+[Definition]
+failregex = pvedaemon\\[.*authentication failure; rhost=&lt;HOST&gt; user=.* msg=.*
+ignoreregex =
+EOF
+
+systemctl enable --now fail2ban</code></pre>
+
+<blockquote class="border-l-4 border-sjvik-green/40 pl-4 my-4 italic"><strong class="text-sjvik-green not-italic">Interview angle:</strong> <span class="text-sjvik-text-muted">"I hardened the environment with a defense-in-depth approach: SSH is key-only with password authentication disabled, the Proxmox cluster firewall runs default-deny with IP set-based rules, fail2ban monitors for brute-force attempts on both SSH and the Proxmox web UI, and unattended-upgrades handles security patches automatically across all containers."</span></blockquote>
+
+<p class="mt-6 text-sjvik-text-muted italic">This is roughly half of Chapter 7. The full chapter continues with Proxmox cluster firewall rules, container-level firewalls, unattended security upgrades, Tailscale VPN setup, certificate management, and a quarterly security audit checklist.</p>`
   },
   {
     title: "SOC Analyst Interview Kit",
@@ -89,25 +172,51 @@ systemctl restart sshd</code></pre>
       "Common mistakes and answers that sound right but aren't"
     ],
     sampleTitle: "Sample: Answers That Sound Right But Are Wrong (Chapter 8)",
-    sampleContent: `Every interviewer has heard these. They sound confident. They sound reasonable. And they are either wrong, dangerously incomplete, or a sign that the candidate is reciting buzzwords without understanding the underlying concepts.
+    sampleContent: `<p>Every interviewer has heard these. They sound confident. They sound reasonable. And they are either wrong, dangerously incomplete, or a sign that the candidate is reciting buzzwords without understanding the underlying concepts.</p>
 
-<strong class="text-sjvik-gold">"Just block the IP"</strong>
+<p>This chapter is your inoculation. Read through these, recognize the pattern, and make sure you are not the candidate who says them.</p>
 
-<p class="mt-2"><strong>Question:</strong> "An alert fires showing repeated connection attempts from an external IP to your web server. What do you do?"</p>
-<p class="mt-1"><strong>The "sounds right" answer:</strong> "Block the IP on the firewall."</p>
-<p class="mt-1"><strong>Why it's wrong:</strong> Blocking a single IP is whack-a-mole. Attackers don't use one IP — they use dozens, hundreds, or thousands. More importantly, you skipped the entire investigation. <em>Why</em> were they connecting? Did they succeed? What were they targeting?</p>
-<p class="mt-2"><strong>The better answer:</strong> "I'd first analyze what the attempts were targeting — port, protocol, payload. Check if any succeeded by correlating web server logs, WAF logs, and EDR. Block the IP as short-term containment while investigating, but build a broader detection rule — because the attacker will come back from a different IP. The long-term fix is addressing the vulnerability they were targeting."</p>
+<h3 class="text-lg font-bold mt-6 mb-3 text-sjvik-gold">1. "Just block the IP"</h3>
+
+<p><strong>The question:</strong> "An alert fires showing repeated connection attempts from an external IP to your web server. What do you do?"</p>
+<p class="mt-2"><strong>The "sounds right" answer:</strong> "I would block the IP on the firewall."</p>
+<p class="mt-2"><strong>Why it is wrong:</strong> Blocking a single IP is whack-a-mole. Attackers do not use one IP — they use dozens, hundreds, or thousands. They rotate through cloud providers, VPNs, compromised hosts, and residential proxies. Blocking one IP gives you approximately 30 seconds of peace before the next one shows up.</p>
+<p class="mt-2">More importantly, you skipped the entire investigation. Why were they connecting? Did they succeed? What were they targeting? Blocking the IP is a containment step — and a weak one at that — not a complete response.</p>
+<p class="mt-2"><strong>The better answer:</strong> "I would first analyze what the connection attempts were targeting — port, protocol, and payload. I would check if any attempts succeeded by correlating with web server access logs, WAF logs, and EDR. If this is an active exploit attempt, I would block the IP as an immediate short-term containment step while investigating, but I would also look at the attack pattern to build a broader detection rule — because the attacker will come back from a different IP. The long-term fix is addressing whatever vulnerability they were targeting."</p>
 
 <hr class="border-sjvik-border my-6" />
 
-<strong class="text-sjvik-gold">"Encryption means it's secure"</strong>
+<h3 class="text-lg font-bold mb-3 text-sjvik-gold">2. "Encryption means it is secure"</h3>
 
-<p class="mt-2"><strong>Question:</strong> "How do you ensure data is secure in transit?"</p>
-<p class="mt-1"><strong>The "sounds right" answer:</strong> "We encrypt everything with TLS."</p>
-<p class="mt-1"><strong>Why it's wrong:</strong> Encryption protects confidentiality — one property of security. It doesn't protect against a compromised endpoint, a corporate TLS-inspecting proxy, weak cipher suites, or expired certs. "We encrypt everything" is a vague aspiration, not a security control.</p>
-<p class="mt-2"><strong>The better answer:</strong> "TLS in transit is a baseline, but encryption alone isn't sufficient. I'd verify TLS 1.2+ with strong ciphers, valid certificate management, and certificate pinning where appropriate. Plus encryption at rest, key management, and access controls on who can decrypt."</p>
+<p><strong>The question:</strong> "How do you ensure data is secure in transit?"</p>
+<p class="mt-2"><strong>The "sounds right" answer:</strong> "We encrypt everything with TLS, so the data is secure."</p>
+<p class="mt-2"><strong>Why it is wrong:</strong> Encryption protects confidentiality. That is one property of security. It does not protect against a compromised endpoint, a man-in-the-middle with a trusted certificate (like a corporate proxy doing TLS inspection), weak cipher suites, expired certificates, or an attacker who already has the decryption keys.</p>
+<p class="mt-2">Also, "we encrypt everything" is not a security control — it is a vague aspiration. Encrypt with what? TLS 1.0? TLS 1.3? A self-signed cert? AES-256 or DES? The details matter enormously.</p>
+<p class="mt-2"><strong>The better answer:</strong> "TLS encryption in transit is a baseline, but encryption alone is not sufficient. I would verify we are using TLS 1.2 or 1.3 with strong cipher suites, that certificates are valid and properly managed, and that we have certificate pinning where appropriate. I would also consider the endpoints — encryption does not help if the server is compromised. And for sensitive data, I would look at encryption at rest as well, key management practices, and access controls on who can decrypt."</p>
 
-<p class="mt-6 text-sjvik-text-muted italic">This is 2 of 10 "sounds right but wrong" answers. The full chapter covers 10 patterns that tank interviews — including "the SIEM will catch everything," "zero trust means no firewall," and "hash passwords with MD5."</p>`
+<hr class="border-sjvik-border my-6" />
+
+<h3 class="text-lg font-bold mb-3 text-sjvik-gold">3. "Zero trust means no firewall"</h3>
+
+<p><strong>The question:</strong> "Explain zero trust architecture and how it changes security."</p>
+<p class="mt-2"><strong>The "sounds right" answer:</strong> "Zero trust means we do not trust the network perimeter, so we do not need firewalls anymore. Everything is identity-based."</p>
+<p class="mt-2"><strong>Why it is wrong:</strong> Zero trust does not mean "no perimeter." It means "do not assume the perimeter is enough." Firewalls still have a role — they just are not the only thing standing between you and the bad guys. Zero trust adds identity verification, device posture checks, micro-segmentation, and continuous validation on top of network controls. It is defense in depth, not defense instead of.</p>
+<p class="mt-2">Saying "we do not need firewalls" in an interview is like saying "we have seatbelts so we do not need brakes." Both do different things. You want both.</p>
+<p class="mt-2"><strong>The better answer:</strong> "Zero trust is a shift from implicit trust based on network location to explicit verification for every access request. It means that being on the corporate network does not automatically grant you access to resources — you still need to authenticate, your device needs to meet security requirements, and access is granted on a least-privilege basis. Firewalls still play a role in network segmentation and blocking known-bad traffic, but they are one layer in a broader architecture that includes identity providers, device management, micro-segmentation, and continuous monitoring."</p>
+
+<hr class="border-sjvik-border my-6" />
+
+<h3 class="text-lg font-bold mb-3 text-sjvik-text">The Pattern</h3>
+
+<p>Read back through these three mistakes. Notice something?</p>
+
+<p class="mt-2">Almost every wrong answer shares the same flaw: <strong>it jumps to a single action without understanding the full picture.</strong></p>
+
+<p class="mt-2">Block the IP. Disable the account. Restore from backup. These are all actions. Some of them are even correct actions — but taken in isolation, without context, they range from incomplete to actively harmful.</p>
+
+<p class="mt-2">What interviewers are looking for — and what separates a good analyst from a button-pusher — is the ability to <em>think in systems</em>. Every action has dependencies, side effects, and assumptions. When you are in an interview and a quick, confident answer pops into your head, pause for two seconds and ask yourself: <strong>"What am I not thinking about?"</strong></p>
+
+<p class="mt-6 text-sjvik-text-muted italic">This is 3 of 10 "sounds right but wrong" patterns. The full chapter continues with "hash passwords with MD5," "the SIEM will catch everything," "disable the user account immediately," "we use antivirus so we are protected," and more — plus a full mock interview scoring rubric with 30 practice questions across 3 simulated rounds.</p>`
   }
 ];
 ---
@@ -117,7 +226,7 @@ systemctl restart sshd</code></pre>
   description="Practical PDF guides for cybersecurity professionals and homelab builders. Built from real production experience."
 >
   <Nav />
-  <main class="pt-24 pb-16 px-6">
+  <main class="pt-24 pb-16 px-6 relative" style="background-color: #0D1117;">
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
       <div class="mb-16 text-center">
@@ -131,7 +240,7 @@ systemctl restart sshd</code></pre>
       <!-- Product Cards -->
       <div class="space-y-16">
         {products.map((product) => (
-          <div class="rounded-xl border border-sjvik-border bg-sjvik-surface p-8">
+          <div class="rounded-xl border border-sjvik-border p-8 shadow-lg" style="background-color: #161B22;">
             <!-- Title + Price Row -->
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
               <div>
@@ -144,12 +253,12 @@ systemctl restart sshd</code></pre>
             </div>
 
             <!-- Who it's for -->
-            <div class="mb-6 rounded-lg bg-sjvik-bg/50 border border-sjvik-border/50 px-4 py-3">
+            <div class="mb-6 rounded-lg bg-sjvik-bg border border-sjvik-border px-4 py-3">
               <p class="text-sm"><span class="font-mono text-sjvik-green">Who it's for:</span> <span class="text-sjvik-text-muted">{product.audience}</span></p>
             </div>
 
             <!-- Description -->
-            <p class="text-sjvik-text-muted leading-relaxed mb-6">{product.description}</p>
+            <p class="text-sjvik-text leading-relaxed mb-6">{product.description}</p>
 
             <!-- Table of Contents -->
             <div class="mb-6">
@@ -165,14 +274,17 @@ systemctl restart sshd</code></pre>
             </div>
 
             <!-- Free Sample Chapter -->
-            <details class="mb-6 group">
-              <summary class="cursor-pointer font-mono text-sm text-sjvik-gold hover:text-sjvik-gold/80 transition-colors flex items-center gap-2">
+            <details class="mb-6 group" open>
+              <summary class="cursor-pointer font-mono text-sjvik-gold text-sm mb-3 flex items-center gap-2 select-none hover:text-sjvik-gold/80 transition-colors list-none [&::-webkit-details-marker]:hidden">
                 <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
                 {product.sampleTitle} — Read free, no signup
               </summary>
-              <div class="mt-4 rounded-lg border border-sjvik-gold/20 bg-sjvik-gold/5 p-6 text-sm leading-relaxed text-sjvik-text space-y-3" set:html={product.sampleContent} />
+              <div class="mt-3 rounded-lg border border-sjvik-gold/30 p-6 text-base leading-relaxed text-sjvik-text space-y-3" style="background-color: #0D1117;" set:html={product.sampleContent} />
             </details>
 
             <!-- Tags -->
@@ -201,7 +313,7 @@ systemctl restart sshd</code></pre>
       </div>
 
       <!-- Beta Notice — rewritten as direct offer -->
-      <div class="mt-16 rounded-xl border border-sjvik-gold/30 bg-sjvik-gold/5 p-6">
+      <div class="mt-16 rounded-xl border border-sjvik-gold/40 p-6" style="background-color: #161B22;">
         <p class="font-mono text-sjvik-gold text-sm mb-2">// free beta copies available</p>
         <p class="text-sjvik-text leading-relaxed mb-3">
           These guides are in active beta. I'm giving away <strong>free copies</strong> to practitioners who'll give honest feedback. No strings, no email list — just grab it and tell me what you think.
