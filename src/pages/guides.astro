@@ -1,0 +1,135 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const products = [
+  {
+    title: "Proxmox Homelab: Zero to Production",
+    description: "Build a production-grade homelab from scratch. Proxmox clustering, LXC containers, Traefik, monitoring, backups, and security hardening. 131 pages of copy-paste configs and real-world patterns.",
+    price: "$20",
+    pages: "131 pages",
+    tags: ["Proxmox", "LXC", "Traefik", "Grafana", "Monitoring", "Backups", "Security"],
+    url: "https://stevenjvik.gumroad.com/l/gxcefj",
+    highlights: [
+      "3-node Proxmox cluster setup from bare metal",
+      "LXC container templates and best practices",
+      "Traefik reverse proxy with auto-TLS",
+      "Grafana + Prometheus monitoring with file-based alerts",
+      "Restic + Proxmox Backup Server strategy",
+      "Fail2ban, SSH hardening, firewall rules",
+      "Ansible automation for repeatable deploys",
+      "Chapter checkpoints and interview callouts"
+    ]
+  },
+  {
+    title: "SOC Analyst Interview Kit",
+    description: "200+ flashcards, 25 scenarios, Splunk SPL & Sentinel KQL exercises, MITRE ATT&CK mapping, behavioral frameworks, and a mock interview rubric. Everything you need to land the SOC role. 160 pages.",
+    price: "$25",
+    pages: "160 pages",
+    tags: ["SOC", "SIEM", "Splunk", "Sentinel", "MITRE ATT&CK", "Interview Prep"],
+    url: "https://stevenjvik.gumroad.com/l/pwemdd",
+    highlights: [
+      "200+ flashcards covering SOC fundamentals",
+      "25 realistic scenario walkthroughs",
+      "Splunk SPL & Sentinel KQL query exercises",
+      "MITRE ATT&CK framework mapping",
+      "Behavioral answer frameworks that actually work",
+      "Mock interview rubric with scoring guide",
+      "\"First 90 days\" onboarding playbook",
+      "Common mistakes and answers that sound right but aren't"
+    ]
+  }
+];
+---
+
+<Layout
+  title="Guides — SJVIK Labs"
+  description="Practical PDF guides for cybersecurity professionals and homelab builders. Built from real production experience."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-4xl mx-auto">
+      <!-- Header -->
+      <div class="mb-16 text-center">
+        <p class="font-mono text-sjvik-green text-sm mb-3">// guides</p>
+        <h1 class="text-4xl sm:text-5xl font-bold mb-4">Practical Guides</h1>
+        <p class="text-sjvik-text-muted text-lg max-w-2xl mx-auto">
+          No fluff, no theory-only content. Every page comes from production experience — real configs, real patterns, real lessons learned.
+        </p>
+      </div>
+
+      <!-- Product Cards -->
+      <div class="space-y-12">
+        {products.map((product) => (
+          <div class="rounded-xl border border-sjvik-border bg-sjvik-surface p-8">
+            <!-- Title + Price Row -->
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+              <div>
+                <h2 class="text-2xl font-bold mb-1">{product.title}</h2>
+                <p class="font-mono text-sm text-sjvik-text-muted">{product.pages} &middot; PDF</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="font-mono text-2xl font-bold text-sjvik-green">{product.price}</span>
+              </div>
+            </div>
+
+            <!-- Description -->
+            <p class="text-sjvik-text-muted leading-relaxed mb-6">{product.description}</p>
+
+            <!-- What's Inside -->
+            <div class="mb-6">
+              <p class="font-mono text-sjvik-green text-sm mb-3">What's inside:</p>
+              <ul class="grid sm:grid-cols-2 gap-2">
+                {product.highlights.map((item) => (
+                  <li class="flex items-start gap-2 text-sm text-sjvik-text">
+                    <span class="text-sjvik-green mt-0.5 shrink-0">&#10003;</span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mb-6">
+              {product.tags.map((tag) => (
+                <span class="text-xs font-mono px-2 py-1 rounded bg-sjvik-bg text-sjvik-text-muted border border-sjvik-border">{tag}</span>
+              ))}
+            </div>
+
+            <!-- CTA Button -->
+            <a
+              href={product.url}
+              target="_blank"
+              rel="noopener"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-sjvik-green text-sjvik-bg font-mono font-semibold rounded-lg hover:bg-sjvik-green-light transition-colors"
+            >
+              Get the Guide
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </a>
+          </div>
+        ))}
+      </div>
+
+      <!-- Beta Notice -->
+      <div class="mt-16 rounded-xl border border-sjvik-gold/30 bg-sjvik-gold/5 p-6 text-center">
+        <p class="font-mono text-sjvik-gold text-sm mb-2">// beta program</p>
+        <p class="text-sjvik-text leading-relaxed">
+          These guides are in beta. If you're a practitioner willing to give honest feedback,
+          <a href="https://www.reddit.com/user/stevenjvik" target="_blank" rel="noopener" class="text-sjvik-green hover:underline">reach out on Reddit</a>
+          for a free review copy.
+        </p>
+      </div>
+
+      <!-- Back to Home -->
+      <div class="mt-12 text-center">
+        <a href="/" class="font-mono text-sm text-sjvik-text-muted hover:text-sjvik-green transition-colors">
+          &larr; Back to SJVIK Labs
+        </a>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
