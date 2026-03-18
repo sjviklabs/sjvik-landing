@@ -1,15 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-sjvik-green: #8EC49B;
-  --color-sjvik-green-dark: #6BA37A;
-  --color-sjvik-green-light: #B5D9BE;
-  --color-sjvik-bg: #0D1117;
-  --color-sjvik-surface: #161B22;
-  --color-sjvik-surface-light: #21262D;
-  --color-sjvik-text: #E6EDF3;
-  --color-sjvik-text-muted: #8B949E;
-  --color-sjvik-border: #30363D;
-  --color-sjvik-gold: #D4A843;
-  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+  /* Primary: Emerald/Jade */
+  --color-sjvik-green: #10B981;
+  --color-sjvik-green-dark: #059669;
+  --color-sjvik-green-light: #34D399;
+
+  /* Accent: Amber */
+  --color-sjvik-accent: #F97316;
+  --color-sjvik-gold: #F97316;
+
+  /* Surfaces: Slate scale */
+  --color-sjvik-bg: #0F172A;
+  --color-sjvik-surface: #1E293B;
+  --color-sjvik-surface-light: #334155;
+
+  /* Text */
+  --color-sjvik-text: #F8FAFC;
+  --color-sjvik-text-dim: #CBD5E1;
+  --color-sjvik-text-muted: #94A3B8;
+
+  /* Borders */
+  --color-sjvik-border: rgba(148, 163, 184, 0.22);
+
+  /* Semantic */
+  --color-sjvik-success: #22C55E;
+  --color-sjvik-warning: #F59E0B;
+  --color-sjvik-danger: #EF4444;
+
+  /* Typography */
+  --font-display: "Outfit", "Arial", sans-serif;
+  --font-body: "Inter Tight", "Helvetica Neue", sans-serif;
+  --font-mono: "JetBrains Mono", "Cascadia Code", monospace;
 }
