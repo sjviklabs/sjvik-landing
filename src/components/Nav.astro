@@ -1,17 +1,79 @@
 ---
+const currentPath = Astro.url.pathname;
+const links = [
+  { href: "/experience", label: "Experience" },
+  { href: "/projects", label: "Projects" },
+  { href: "/guides", label: "Guides" },
+  { href: "/about", label: "About" },
+];
 ---
-<nav class="fixed top-0 w-full z-50 bg-sjvik-bg/80 backdrop-blur-md border-b border-sjvik-border">
-  <div class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3 group">
-      <span class="text-sjvik-green font-mono font-bold text-lg tracking-tight">SJVIK Labs</span>
-      <span class="text-sjvik-green opacity-80 animate-pulse">█</span>
+
+<nav class="fixed top-0 w-full z-50 glass">
+  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2.5 no-underline group">
+      <img src="/logo.png" alt="" class="w-7 h-7 rounded" />
+      <span class="font-display text-sm font-semibold tracking-wide text-text-primary group-hover:text-emerald transition-colors">SJVIK Labs</span>
     </a>
-    <div class="hidden sm:flex items-center gap-8 text-sm font-mono">
-      <a href="#products" class="text-sjvik-text-muted hover:text-sjvik-green transition-colors">Products</a>
-      <a href="/guides" class="text-sjvik-text-muted hover:text-sjvik-green transition-colors">Guides</a>
-      <a href="#open-source" class="text-sjvik-text-muted hover:text-sjvik-green transition-colors">Open Source</a>
-      <a href="#about" class="text-sjvik-text-muted hover:text-sjvik-green transition-colors">About</a>
-      <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="text-sjvik-text-muted hover:text-sjvik-green transition-colors">GitHub</a>
+
+    <div class="flex items-center gap-1">
+      <div class="hidden md:flex items-center gap-1">
+        {links.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              "text-[0.8125rem] font-[450] px-3 py-1.5 rounded transition-all",
+              currentPath.startsWith(link.href)
+                ? "text-emerald bg-emerald/8"
+                : "text-text-outline hover:text-text-primary hover:bg-white/[0.06]"
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
+        <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="text-[0.8125rem] font-[450] text-text-outline px-3 py-1.5 rounded hover:text-text-primary hover:bg-white/[0.06] transition-all">GitHub</a>
+      </div>
+
+      <button class="theme-toggle" id="theme-toggle" aria-label="Theme: auto">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <span id="theme-label">System</span>
+      </button>
+
+      <button class="md:hidden ml-2 p-2 text-text-outline hover:text-text-primary transition-colors" id="mobile-menu-btn" aria-label="Menu">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="hidden md:hidden bg-layer-1" id="mobile-menu">
+    <div class="px-6 pb-4 space-y-1">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            "block text-sm font-[450] px-3 py-2 rounded transition-all",
+            currentPath.startsWith(link.href)
+              ? "text-emerald bg-emerald/8"
+              : "text-text-outline hover:text-text-primary hover:bg-white/[0.06]"
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+      <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="block text-sm font-[450] text-text-outline px-3 py-2 rounded hover:text-text-primary hover:bg-white/[0.06] transition-all">GitHub</a>
     </div>
   </div>
 </nav>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', function() {
+    var btn = document.getElementById('mobile-menu-btn');
+    var menu = document.getElementById('mobile-menu');
+    if (btn && menu) {
+      btn.addEventListener('click', function() {
+        menu.classList.toggle('hidden');
+      });
+    }
+  });
+</script>

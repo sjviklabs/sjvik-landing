@@ -41,9 +41,9 @@ const products = [
 
 <p><strong>"It is just a homelab"</strong> is the most dangerous sentence in self-hosting. Default passwords, open ports, and unpatched systems are how real breaches start. And the habits you build here are the habits you carry into your career. This chapter hardens your lab to a standard that would pass a basic security audit.</p>
 
-<blockquote class="border-l-4 border-sjvik-gold/40 pl-4 my-4 text-sjvik-text-muted italic">Common mistake: Assuming your homelab is safe because it is behind a consumer router. NAT is not a firewall. One compromised IoT device, one forwarded port you forgot about, one UPnP rule your router auto-created — and your unpatched Proxmox node is reachable. Harden it anyway.</blockquote>
+<blockquote class="border-l-4 border-amber/40 pl-4 my-4 text-text-variant italic">Common mistake: Assuming your homelab is safe because it is behind a consumer router. NAT is not a firewall. One compromised IoT device, one forwarded port you forgot about, one UPnP rule your router auto-created — and your unpatched Proxmox node is reachable. Harden it anyway.</blockquote>
 
-<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">Security Principles</h3>
+<h3 class="text-lg font-bold mt-6 mb-2 text-text-primary">Security Principles</h3>
 
 <p>Before we touch a single configuration file, internalize these:</p>
 
@@ -56,26 +56,26 @@ const products = [
 
 <p class="mt-4">These are not academic principles. They are how every serious organization approaches security. Building them into your homelab makes them second nature.</p>
 
-<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">SSH Hardening</h3>
+<h3 class="text-lg font-bold mt-6 mb-2 text-text-primary">SSH Hardening</h3>
 
 <p>SSH is the primary management interface for your entire lab. It must be locked down.</p>
 
 <p class="mt-3"><strong>Key-Only Authentication (Review)</strong></p>
 <p>You set this up in Chapter 2. Verify it is still in effect on every host and container:</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Check on each node/container
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code># Check on each node/container
 grep -E "^(PermitRootLogin|PasswordAuthentication|PubkeyAuthentication)" /etc/ssh/sshd_config</code></pre>
 
-<p class="mt-3">If <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">PasswordAuthentication</code> is present and set to <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">yes</code>, fix it:</p>
+<p class="mt-3">If <code class="font-mono bg-base px-1.5 py-0.5 rounded text-emerald text-sm">PasswordAuthentication</code> is present and set to <code class="font-mono bg-base px-1.5 py-0.5 rounded text-emerald text-sm">yes</code>, fix it:</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code>sed -i 's/^PasswordAuthentication yes/PasswordAuthentication no/' /etc/ssh/sshd_config
 echo "PasswordAuthentication no" >> /etc/ssh/sshd_config  # If not present at all
 systemctl restart sshd</code></pre>
 
 <p class="mt-3"><strong>Additional SSH Hardening</strong></p>
-<p>Edit <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">/etc/ssh/sshd_config</code> on each host:</p>
+<p>Edit <code class="font-mono bg-base px-1.5 py-0.5 rounded text-emerald text-sm">/etc/ssh/sshd_config</code> on each host:</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Disable unused authentication methods
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code># Disable unused authentication methods
 ChallengeResponseAuthentication no
 KerberosAuthentication no
 GSSAPIAuthentication no
@@ -92,23 +92,23 @@ MaxAuthTries 3
 # Log level (VERBOSE gives you more audit data)
 LogLevel VERBOSE</code></pre>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code># Validate config before restarting (prevents lockout from typos)
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code># Validate config before restarting (prevents lockout from typos)
 sshd -t
 
 # If no errors, restart
 systemctl restart sshd</code></pre>
 
-<blockquote class="border-l-4 border-sjvik-gold/40 pl-4 my-4 text-sjvik-text-muted italic">Common mistake: Editing sshd_config and restarting without testing the config first. If you introduce a syntax error, SSH will refuse to start and you are locked out. Always run <code class="font-mono">sshd -t</code> before <code class="font-mono">systemctl restart sshd</code>. Keep a console session open as a fallback.</blockquote>
+<blockquote class="border-l-4 border-amber/40 pl-4 my-4 text-text-variant italic">Common mistake: Editing sshd_config and restarting without testing the config first. If you introduce a syntax error, SSH will refuse to start and you are locked out. Always run <code class="font-mono">sshd -t</code> before <code class="font-mono">systemctl restart sshd</code>. Keep a console session open as a fallback.</blockquote>
 
-<h3 class="text-lg font-bold mt-6 mb-2 text-sjvik-text">Fail2ban</h3>
+<h3 class="text-lg font-bold mt-6 mb-2 text-text-primary">Fail2ban</h3>
 
 <p>Fail2ban monitors log files and bans IPs that show malicious behavior.</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>apt install -y fail2ban</code></pre>
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code>apt install -y fail2ban</code></pre>
 
-<p class="mt-3">Create <code class="font-mono bg-sjvik-bg px-1.5 py-0.5 rounded text-sjvik-green text-sm">/etc/fail2ban/jail.local</code>:</p>
+<p class="mt-3">Create <code class="font-mono bg-base px-1.5 py-0.5 rounded text-emerald text-sm">/etc/fail2ban/jail.local</code>:</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>[DEFAULT]
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code>[DEFAULT]
 bantime  = 3600
 findtime = 600
 maxretry = 3
@@ -130,7 +130,7 @@ maxretry = 3</code></pre>
 
 <p class="mt-3">Fail2ban does not include a Proxmox filter by default. Create one:</p>
 
-<pre class="bg-sjvik-bg rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-sjvik-text"><code>cat > /etc/fail2ban/filter.d/proxmox.conf << 'EOF'
+<pre class="bg-base rounded-lg p-4 mt-2 text-sm overflow-x-auto font-mono text-text-primary"><code>cat > /etc/fail2ban/filter.d/proxmox.conf << 'EOF'
 [Definition]
 failregex = pvedaemon\\[.*authentication failure; rhost=&lt;HOST&gt; user=.* msg=.*
 ignoreregex =
@@ -138,9 +138,9 @@ EOF
 
 systemctl enable --now fail2ban</code></pre>
 
-<blockquote class="border-l-4 border-sjvik-green/40 pl-4 my-4 italic"><strong class="text-sjvik-green not-italic">Interview angle:</strong> <span class="text-sjvik-text-muted">"I hardened the environment with a defense-in-depth approach: SSH is key-only with password authentication disabled, the Proxmox cluster firewall runs default-deny with IP set-based rules, fail2ban monitors for brute-force attempts on both SSH and the Proxmox web UI, and unattended-upgrades handles security patches automatically across all containers."</span></blockquote>
+<blockquote class="border-l-4 border-sjvik-green/40 pl-4 my-4 italic"><strong class="text-emerald not-italic">Interview angle:</strong> <span class="text-text-variant">"I hardened the environment with a defense-in-depth approach: SSH is key-only with password authentication disabled, the Proxmox cluster firewall runs default-deny with IP set-based rules, fail2ban monitors for brute-force attempts on both SSH and the Proxmox web UI, and unattended-upgrades handles security patches automatically across all containers."</span></blockquote>
 
-<p class="mt-6 text-sjvik-text-muted italic">This is roughly half of Chapter 7. The full chapter continues with Proxmox cluster firewall rules, container-level firewalls, unattended security upgrades, Tailscale VPN setup, certificate management, and a quarterly security audit checklist.</p>`
+<p class="mt-6 text-text-variant italic">This is roughly half of Chapter 7. The full chapter continues with Proxmox cluster firewall rules, container-level firewalls, unattended security upgrades, Tailscale VPN setup, certificate management, and a quarterly security audit checklist.</p>`
   },
   {
     title: "SOC Analyst Interview Kit",
@@ -178,7 +178,7 @@ systemctl enable --now fail2ban</code></pre>
 
 <p>This chapter is your inoculation. Read through these, recognize the pattern, and make sure you are not the candidate who says them.</p>
 
-<h3 class="text-lg font-bold mt-6 mb-3 text-sjvik-gold">1. "Just block the IP"</h3>
+<h3 class="text-lg font-bold mt-6 mb-3 text-amber">1. "Just block the IP"</h3>
 
 <p><strong>The question:</strong> "An alert fires showing repeated connection attempts from an external IP to your web server. What do you do?"</p>
 <p class="mt-2"><strong>The "sounds right" answer:</strong> "I would block the IP on the firewall."</p>
@@ -186,9 +186,9 @@ systemctl enable --now fail2ban</code></pre>
 <p class="mt-2">More importantly, you skipped the entire investigation. Why were they connecting? Did they succeed? What were they targeting? Blocking the IP is a containment step — and a weak one at that — not a complete response.</p>
 <p class="mt-2"><strong>The better answer:</strong> "I would first analyze what the connection attempts were targeting — port, protocol, and payload. I would check if any attempts succeeded by correlating with web server access logs, WAF logs, and EDR. If this is an active exploit attempt, I would block the IP as an immediate short-term containment step while investigating, but I would also look at the attack pattern to build a broader detection rule — because the attacker will come back from a different IP. The long-term fix is addressing whatever vulnerability they were targeting."</p>
 
-<hr class="border-sjvik-border my-6" />
+<hr class="border-text-dim/20 my-6" />
 
-<h3 class="text-lg font-bold mb-3 text-sjvik-gold">2. "Encryption means it is secure"</h3>
+<h3 class="text-lg font-bold mb-3 text-amber">2. "Encryption means it is secure"</h3>
 
 <p><strong>The question:</strong> "How do you ensure data is secure in transit?"</p>
 <p class="mt-2"><strong>The "sounds right" answer:</strong> "We encrypt everything with TLS, so the data is secure."</p>
@@ -196,9 +196,9 @@ systemctl enable --now fail2ban</code></pre>
 <p class="mt-2">Also, "we encrypt everything" is not a security control — it is a vague aspiration. Encrypt with what? TLS 1.0? TLS 1.3? A self-signed cert? AES-256 or DES? The details matter enormously.</p>
 <p class="mt-2"><strong>The better answer:</strong> "TLS encryption in transit is a baseline, but encryption alone is not sufficient. I would verify we are using TLS 1.2 or 1.3 with strong cipher suites, that certificates are valid and properly managed, and that we have certificate pinning where appropriate. I would also consider the endpoints — encryption does not help if the server is compromised. And for sensitive data, I would look at encryption at rest as well, key management practices, and access controls on who can decrypt."</p>
 
-<hr class="border-sjvik-border my-6" />
+<hr class="border-text-dim/20 my-6" />
 
-<h3 class="text-lg font-bold mb-3 text-sjvik-gold">3. "Zero trust means no firewall"</h3>
+<h3 class="text-lg font-bold mb-3 text-amber">3. "Zero trust means no firewall"</h3>
 
 <p><strong>The question:</strong> "Explain zero trust architecture and how it changes security."</p>
 <p class="mt-2"><strong>The "sounds right" answer:</strong> "Zero trust means we do not trust the network perimeter, so we do not need firewalls anymore. Everything is identity-based."</p>
@@ -206,9 +206,9 @@ systemctl enable --now fail2ban</code></pre>
 <p class="mt-2">Saying "we do not need firewalls" in an interview is like saying "we have seatbelts so we do not need brakes." Both do different things. You want both.</p>
 <p class="mt-2"><strong>The better answer:</strong> "Zero trust is a shift from implicit trust based on network location to explicit verification for every access request. It means that being on the corporate network does not automatically grant you access to resources — you still need to authenticate, your device needs to meet security requirements, and access is granted on a least-privilege basis. Firewalls still play a role in network segmentation and blocking known-bad traffic, but they are one layer in a broader architecture that includes identity providers, device management, micro-segmentation, and continuous monitoring."</p>
 
-<hr class="border-sjvik-border my-6" />
+<hr class="border-text-dim/20 my-6" />
 
-<h3 class="text-lg font-bold mb-3 text-sjvik-text">The Pattern</h3>
+<h3 class="text-lg font-bold mb-3 text-text-primary">The Pattern</h3>
 
 <p>Read back through these three mistakes. Notice something?</p>
 
@@ -218,7 +218,7 @@ systemctl enable --now fail2ban</code></pre>
 
 <p class="mt-2">What interviewers are looking for — and what separates a good analyst from a button-pusher — is the ability to <em>think in systems</em>. Every action has dependencies, side effects, and assumptions. When you are in an interview and a quick, confident answer pops into your head, pause for two seconds and ask yourself: <strong>"What am I not thinking about?"</strong></p>
 
-<p class="mt-6 text-sjvik-text-muted italic">This is 3 of 10 "sounds right but wrong" patterns. The full chapter continues with "hash passwords with MD5," "the SIEM will catch everything," "disable the user account immediately," "we use antivirus so we are protected," and more — plus a full mock interview scoring rubric with 30 practice questions across 3 simulated rounds.</p>`
+<p class="mt-6 text-text-variant italic">This is 3 of 10 "sounds right but wrong" patterns. The full chapter continues with "hash passwords with MD5," "the SIEM will catch everything," "disable the user account immediately," "we use antivirus so we are protected," and more — plus a full mock interview scoring rubric with 30 practice questions across 3 simulated rounds.</p>`
   }
 ];
 ---
@@ -228,13 +228,13 @@ systemctl enable --now fail2ban</code></pre>
   description="Practical PDF guides for cybersecurity professionals and homelab builders. Built from real production experience."
 >
   <Nav />
-  <main class="pt-24 pb-16 px-6 relative" style="background-color: #0D1117;">
+  <main class="pt-24 pb-16 px-6 relative bg-base">
     <div class="max-w-4xl mx-auto">
       <!-- Header -->
       <div class="mb-16 text-center">
-        <p class="font-mono text-sjvik-green text-sm mb-3">// guides</p>
+        <p class="font-mono text-emerald text-sm mb-3">// guides</p>
         <h1 class="text-4xl sm:text-5xl font-bold mb-4">Practical Guides</h1>
-        <p class="text-sjvik-text-muted text-lg max-w-2xl mx-auto">
+        <p class="text-text-variant text-lg max-w-2xl mx-auto">
           No fluff, no theory-only content. Every page comes from production experience — real configs, real patterns, real lessons learned.
         </p>
       </div>
@@ -242,33 +242,33 @@ systemctl enable --now fail2ban</code></pre>
       <!-- Product Cards -->
       <div class="space-y-16">
         {products.map((product) => (
-          <div class="rounded-xl border border-sjvik-border p-8 shadow-lg" style="background-color: #161B22;">
+          <div class="rounded-xl border border-text-dim/20 p-8 shadow-lg" class="bg-layer-1">
             <!-- Title + Price Row -->
             <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-4">
               <div>
                 <h2 class="text-2xl font-bold mb-1">{product.title}</h2>
-                <p class="font-mono text-sm text-sjvik-text-muted">{product.pages} &middot; PDF</p>
+                <p class="font-mono text-sm text-text-variant">{product.pages} &middot; PDF</p>
               </div>
               <div class="flex items-center gap-3">
-                <span class="font-mono text-2xl font-bold text-sjvik-green">{product.price}</span>
+                <span class="font-mono text-2xl font-bold text-emerald">{product.price}</span>
               </div>
             </div>
 
             <!-- Who it's for -->
-            <div class="mb-6 rounded-lg bg-sjvik-bg border border-sjvik-border px-4 py-3">
-              <p class="text-sm"><span class="font-mono text-sjvik-green">Who it's for:</span> <span class="text-sjvik-text-muted">{product.audience}</span></p>
+            <div class="mb-6 rounded-lg bg-base border border-text-dim/20 px-4 py-3">
+              <p class="text-sm"><span class="font-mono text-emerald">Who it's for:</span> <span class="text-text-variant">{product.audience}</span></p>
             </div>
 
             <!-- Description -->
-            <p class="text-sjvik-text leading-relaxed mb-6">{product.description}</p>
+            <p class="text-text-primary leading-relaxed mb-6">{product.description}</p>
 
             <!-- Table of Contents -->
             <div class="mb-6">
-              <p class="font-mono text-sjvik-green text-sm mb-3">Table of contents:</p>
+              <p class="font-mono text-emerald text-sm mb-3">Table of contents:</p>
               <ol class="space-y-1">
                 {product.chapters.map((ch, i) => (
-                  <li class="flex items-start gap-3 text-sm text-sjvik-text">
-                    <span class="font-mono text-sjvik-text-muted shrink-0 w-6 text-right">{String(i).padStart(2, '0')}</span>
+                  <li class="flex items-start gap-3 text-sm text-text-primary">
+                    <span class="font-mono text-text-variant shrink-0 w-6 text-right">{String(i).padStart(2, '0')}</span>
                     <span>{ch}</span>
                   </li>
                 ))}
@@ -277,7 +277,7 @@ systemctl enable --now fail2ban</code></pre>
 
             <!-- Free Sample Chapter -->
             <details class="mb-6 group" open>
-              <summary class="cursor-pointer font-mono text-sjvik-gold text-sm mb-3 flex items-center gap-2 select-none hover:text-sjvik-gold/80 transition-colors list-none [&::-webkit-details-marker]:hidden">
+              <summary class="cursor-pointer font-mono text-amber text-sm mb-3 flex items-center gap-2 select-none hover:text-amber/80 transition-colors list-none [&::-webkit-details-marker]:hidden">
                 <svg class="w-4 h-4 transition-transform group-open:rotate-90" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                 </svg>
@@ -286,13 +286,13 @@ systemctl enable --now fail2ban</code></pre>
                 </svg>
                 {product.sampleTitle} — Read free, no signup
               </summary>
-              <div class="mt-3 rounded-lg border border-sjvik-gold/30 p-6 text-base leading-relaxed text-sjvik-text space-y-3" style="background-color: #0D1117;" set:html={product.sampleContent} />
+              <div class="mt-3 rounded-lg border border-amber/30 p-6 text-base leading-relaxed text-text-primary space-y-3" class="bg-lowest" set:html={product.sampleContent} />
             </details>
 
             <!-- Tags -->
             <div class="flex flex-wrap gap-2 mb-6">
               {product.tags.map((tag) => (
-                <span class="text-xs font-mono px-2 py-1 rounded bg-sjvik-bg text-sjvik-text-muted border border-sjvik-border">{tag}</span>
+                <span class="text-xs font-mono px-2 py-1 rounded bg-base text-text-variant border border-text-dim/20">{tag}</span>
               ))}
             </div>
 
@@ -302,7 +302,7 @@ systemctl enable --now fail2ban</code></pre>
                 href={product.url}
                 target="_blank"
                 rel="noopener"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-sjvik-green text-sjvik-bg font-mono font-semibold rounded-lg hover:bg-sjvik-green-light transition-colors"
+                class="inline-flex items-center gap-2 px-6 py-3 cta-gradient text-white font-mono font-semibold rounded-lg hover:cta-gradient-light transition-colors"
               >
                 Get the Guide
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -313,7 +313,7 @@ systemctl enable --now fail2ban</code></pre>
                 href={product.betaUrl}
                 target="_blank"
                 rel="noopener"
-                class="inline-flex items-center gap-2 px-6 py-3 border border-sjvik-gold/60 text-sjvik-gold font-mono font-semibold rounded-lg hover:bg-sjvik-gold/10 transition-colors"
+                class="inline-flex items-center gap-2 px-6 py-3 border border-amber/60 text-amber font-mono font-semibold rounded-lg hover:bg-amber/10 transition-colors"
               >
                 Get free beta copy
               </a>
@@ -323,9 +323,9 @@ systemctl enable --now fail2ban</code></pre>
       </div>
 
       <!-- Beta Notice — rewritten as direct offer -->
-      <div class="mt-16 rounded-xl border border-sjvik-gold/40 p-6" style="background-color: #161B22;">
-        <p class="font-mono text-sjvik-gold text-sm mb-2">// free beta copies available</p>
-        <p class="text-sjvik-text leading-relaxed mb-3">
+      <div class="mt-16 rounded-xl border border-amber/40 p-6" class="bg-layer-1">
+        <p class="font-mono text-amber text-sm mb-2">// free beta copies available</p>
+        <p class="text-text-primary leading-relaxed mb-3">
           These guides are in active beta. I'm giving away <strong>free copies</strong> to practitioners who'll give honest feedback. No strings, no email list — just grab it and tell me what you think.
         </p>
         <div class="flex flex-wrap gap-3 mb-4">
@@ -333,7 +333,7 @@ systemctl enable --now fail2ban</code></pre>
             href="https://stevenjvik.gumroad.com/l/gxcefj/BETA"
             target="_blank"
             rel="noopener"
-            class="inline-flex items-center gap-2 px-5 py-2.5 border border-sjvik-gold/60 text-sjvik-gold font-mono text-sm font-semibold rounded-lg hover:bg-sjvik-gold/10 transition-colors"
+            class="inline-flex items-center gap-2 px-5 py-2.5 border border-amber/60 text-amber font-mono text-sm font-semibold rounded-lg hover:bg-amber/10 transition-colors"
           >
             Free: Proxmox Homelab Guide
           </a>
@@ -341,20 +341,20 @@ systemctl enable --now fail2ban</code></pre>
             href="https://stevenjvik.gumroad.com/l/pwemdd/BETA"
             target="_blank"
             rel="noopener"
-            class="inline-flex items-center gap-2 px-5 py-2.5 border border-sjvik-gold/60 text-sjvik-gold font-mono text-sm font-semibold rounded-lg hover:bg-sjvik-gold/10 transition-colors"
+            class="inline-flex items-center gap-2 px-5 py-2.5 border border-amber/60 text-amber font-mono text-sm font-semibold rounded-lg hover:bg-amber/10 transition-colors"
           >
             Free: SOC Interview Kit
           </a>
         </div>
-        <p class="text-sjvik-text-muted text-sm">
+        <p class="text-text-variant text-sm">
           Discount is pre-applied — no code needed. Then DM me on
-          <a href="https://www.reddit.com/user/OutlandishnessSad772" target="_blank" rel="noopener" class="text-sjvik-green hover:underline">Reddit</a> with your feedback.
+          <a href="https://www.reddit.com/user/stevenjvik" target="_blank" rel="noopener" class="text-emerald hover:underline">Reddit</a> with your feedback.
         </p>
       </div>
 
       <!-- Back to Home -->
       <div class="mt-12 text-center">
-        <a href="/" class="font-mono text-sm text-sjvik-text-muted hover:text-sjvik-green transition-colors">
+        <a href="/" class="font-mono text-sm text-text-variant hover:text-emerald transition-colors">
           &larr; Back to SJVIK Labs
         </a>
       </div>

@@ -1,0 +1,190 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const nodes = [
+  { role: "Cluster leader", name: "core-01", spec: "Hypervisor · Always-on", services: ["Private DNS filtering", "Vault sync relay"] },
+  { role: "AI inference", name: "ai-01", spec: "Hypervisor · Always-on", services: ["Local LLM inference (CPU, 7B/14B models)"] },
+  { role: "Storage", name: "store-01", spec: "Hypervisor · Always-on", services: ["Backup storage + scheduled snapshots"] },
+];
+
+const services = [
+  {
+    label: "Network Security",
+    name: "Private DNS Filtering",
+    description: "A self-hosted DNS resolver replaces ISP DNS for the entire network. All DNS queries are resolved locally — no external provider sees internal query traffic. Blocklists filter ad and tracker domains across every device."
+  },
+  {
+    label: "Data Sync",
+    name: "Vault Synchronization",
+    description: "Continuous, encrypted peer-to-peer sync for the knowledge vault across all devices. No cloud intermediary — files sync directly between nodes. An always-on relay node ensures vault state is preserved even when other devices are offline."
+  },
+  {
+    label: "Monitoring",
+    name: "Lab Control Center — TypeScript / Express",
+    description: "A custom monitoring dashboard with session-authenticated access. Live node health via CPU and memory arc gauges, service status badges, and an activity timeline of recent lab events. Data is collected by cron-scheduled shell scripts, fed into the Express backend, and surfaced with auto-refresh."
+  }
+];
+
+const domains = [
+  { num: "01", title: "Infrastructure as Code", desc: "Every service and configuration decision is documented in git-versioned state files. The repo is the source of truth." },
+  { num: "02", title: "Local AI Inference", desc: "CPU and GPU LLM inference on private hardware. No mandatory cloud dependency." },
+  { num: "03", title: "Zero-Trust Posture", desc: "One service per container, no shared namespaces. Private DNS. SSH key authentication only." },
+  { num: "04", title: "Operational Discipline", desc: "Change log for every infrastructure change. Runbooks with explicit rollback gates." },
+  { num: "05", title: "Security Engineering", desc: "Private DNS prevents ISP query visibility. Key-only authentication across all nodes." },
+  { num: "06", title: "Observability", desc: "Live dashboard with real metric collection, not mocked data. Arc gauges, status badges, activity timeline." },
+];
+
+const tech = [
+  "Linux", "Proxmox VE", "Container isolation", "TypeScript", "Node.js",
+  "Python", "Bash", "Private DNS", "Encrypted sync", "Backup automation",
+  "Git", "SSH", "Grafana", "Prometheus"
+];
+---
+
+<Layout
+  title="Nexus Home Lab — Steve Vik"
+  description="SJVIK Labs Nexus: enterprise-grade homelab for security research, infrastructure automation, and applied engineering."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <a href="/projects" class="inline-flex items-center gap-1 font-mono text-sm text-text-outline hover:text-emerald transition-colors mb-8">
+        <span class="text-emerald opacity-60">cd ../</span> projects
+      </a>
+
+      <div class="mb-8">
+        <p class="kicker mb-2">Personal Project &middot; Infrastructure Engineering</p>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">Nexus Home Lab</h1>
+        <div class="flex flex-wrap items-center gap-3 font-mono text-sm text-text-outline">
+          <span>SJVIK Labs</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span>2024 — present</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded bg-ok/8 text-ok text-xs font-semibold uppercase tracking-wider">
+            <span class="w-1.5 h-1.5 rounded-full bg-ok animate-pulse"></span>
+            Online
+          </span>
+        </div>
+      </div>
+
+      <!-- Intro -->
+      <div class="bg-layer-1 rounded p-6 mb-12 relative">
+        <span class="absolute -top-2.5 left-4 font-mono text-xs font-semibold text-emerald bg-base px-2">// README</span>
+        <p class="text-text-variant text-sm leading-relaxed">
+          The Nexus lab is a personal engineering environment built to apply infrastructure, AI, and security operations discipline on private hardware. It runs 24/7 with real operational constraints. Every service and configuration change is git-versioned. Every deployment goes through a review gate. The lab is the proof of work.
+        </p>
+      </div>
+
+      <!-- Cluster topology -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// infrastructure</p>
+        <h2 class="font-display text-xl font-bold mb-4">Multi-node cluster with service isolation</h2>
+
+        <div class="grid md:grid-cols-3 gap-px bg-text-dim/20 rounded overflow-hidden mb-6">
+          {nodes.map((node) => (
+            <div class="bg-layer-1 p-5">
+              <div class="font-mono text-xs font-semibold text-amber uppercase tracking-wider opacity-80 mb-2">{node.role}</div>
+              <div class="font-mono font-bold text-text-primary mb-1">{node.name}</div>
+              <div class="font-mono text-xs text-text-outline mb-3">{node.spec}</div>
+              <ul class="space-y-1">
+                {node.services.map((svc) => (
+                  <li class="text-text-variant text-sm flex items-baseline gap-2">
+                    <span class="font-mono text-xs text-emerald opacity-50">$</span>
+                    {svc}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <!-- Workstation -->
+        <div class="bg-layer-1 rounded p-5 mb-6">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <div class="font-mono text-xs font-semibold text-amber uppercase tracking-wider opacity-80 mb-2">Workstation</div>
+              <div class="font-mono font-bold text-text-primary mb-1">gpu-01</div>
+              <div class="font-mono text-xs text-text-outline mb-3">GPU node &middot; On-demand</div>
+              <p class="text-text-variant text-sm leading-relaxed">Dedicated GPU inference node. Runs the highest-quality local models for development tooling and automation. Models unload after idle timeout to conserve VRAM.</p>
+            </div>
+            <div>
+              <div class="font-mono text-xs font-semibold text-text-outline uppercase tracking-wider mb-2">Capabilities</div>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="chip">GPU inference</span>
+                <span class="chip">14B parameter models</span>
+                <span class="chip">Code generation</span>
+                <span class="chip">On-demand scaling</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-layer-1 rounded p-5">
+          <h3 class="font-mono font-bold text-sm mb-2">cluster.conf</h3>
+          <p class="text-text-variant text-sm leading-relaxed mb-3">All server nodes form a hypervisor cluster with kernel-based networking and secure authentication enabled. Quorum is maintained across three nodes. SSH access is key-authenticated across all nodes and containers.</p>
+          <div class="flex flex-wrap gap-1.5">
+            <span class="chip">Hypervisor cluster</span>
+            <span class="chip">Kernel networking</span>
+            <span class="chip">Secure auth</span>
+            <span class="chip">SSH key mesh</span>
+            <span class="chip">Container isolation</span>
+            <span class="chip">Quorum</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Services -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// services</p>
+        <h2 class="font-display text-xl font-bold mb-4">What's running and why each service exists</h2>
+        {services.map((svc) => (
+          <div class="work-item">
+            <span class="font-mono text-xs font-semibold text-emerald uppercase tracking-wider opacity-80 mb-2 block">{svc.label}</span>
+            <h3 class="font-bold mb-2">{svc.name}</h3>
+            <p class="text-text-variant text-sm leading-relaxed">{svc.description}</p>
+          </div>
+        ))}
+      </section>
+
+      <!-- Demonstrates -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// demonstrates</p>
+        <h2 class="font-display text-xl font-bold mb-4">Applied engineering discipline across six domains</h2>
+        <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-px bg-text-dim/20 rounded overflow-hidden">
+          {domains.map((d) => (
+            <div class="bg-layer-1 p-5 hover:bg-layer-2 transition-colors">
+              <div class="font-mono text-xs font-semibold text-amber opacity-70 mb-2">{d.num}</div>
+              <h3 class="font-bold text-sm mb-2">{d.title}</h3>
+              <p class="text-text-variant text-xs leading-relaxed">{d.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <!-- Stack -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// stack</p>
+        <h2 class="font-display text-xl font-bold mb-4">Tools in active production use</h2>
+        <div class="bg-layer-1 rounded p-5">
+          <div class="flex flex-wrap gap-1.5">
+            {tech.map((t) => (
+              <span class="chip">{t}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div class="flex items-center justify-between flex-wrap gap-3 pt-8 border-t border-text-dim/20">
+        <a href="/projects" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">&larr; All Projects</a>
+        <div class="flex gap-3">
+          <a href="/experience/sound-transit" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">Sound Transit &rarr;</a>
+          <a href="/experience/jblm" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">JBLM &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

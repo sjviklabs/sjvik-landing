@@ -6,12 +6,12 @@ interface Props {
   description?: string;
 }
 
-const { 
-  title = "SJVIK Labs — Security Tools, Lab Guides & Digital Products",
-  description = "Open-source security tools, homelab guides, and digital products by Steven Vik. Cybersecurity engineer, DevOps practitioner, and digital creator."
+const {
+  title = "Steve Vik — Cybersecurity & DevOps | SJVIK Labs",
+  description = "Cybersecurity engineer and DevOps practitioner. Security tools, homelab guides, open-source projects, and case studies by Steven Vik."
 } = Astro.props;
 
-const siteUrl = "https://sjvik-labs.stevenjvik.tech";
+const siteUrl = "https://stevenjvik.tech";
 const ogImage = `${siteUrl}/og-image.png`;
 ---
 
@@ -26,14 +26,11 @@ const ogImage = `${siteUrl}/og-image.png`;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter+Tight:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- OG Meta -->
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:url" content={siteUrl} />
     <meta property="og:type" content="website" />
-
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -41,7 +38,7 @@ const ogImage = `${siteUrl}/og-image.png`;
 
     <title>{title}</title>
   </head>
-  <body class="bg-sjvik-bg text-sjvik-text font-[Inter_Tight,sans-serif] antialiased">
+  <body class="bg-base text-text-primary font-[Inter_Tight,sans-serif] antialiased">
     <script is:inline>
       (function(){
         var ICONS={auto:'<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>',light:'<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>',dark:'<svg viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'};

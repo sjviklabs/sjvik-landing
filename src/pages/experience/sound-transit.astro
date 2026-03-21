@@ -1,0 +1,155 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const metrics = [
+  { value: "40%", label: "MTTR reduction via Python automation" },
+  { value: "150+", label: "Incidents resolved per month" },
+  { value: "99.9%", label: "SLA maintained" },
+  { value: "3,000+", label: "Endpoints monitored" },
+  { value: "25%", label: "Analyst onboarding time reduction" },
+];
+
+const contributions = [
+  {
+    accent: "Automation · 40% MTTR reduction",
+    title: "Python alert validation pipeline",
+    description: "The SOC's highest-friction problem was false-positive fatigue — analysts spending significant time triaging alerts that first-pass logic could have dismissed or auto-classified. I built a Python automation layer that performed first-pass validation on incoming alerts: IP reputation checks against threat intelligence feeds, asset classification lookups to contextualize the affected endpoint, and historical behavior comparison to identify known-safe patterns. Alerts that failed validation were flagged for analyst review with enriched context already populated. This eliminated the manual enrichment step on a large percentage of inbound alerts and compressed mean time to response by 40%."
+  },
+  {
+    accent: "SIEM Engineering · Splunk",
+    title: "Correlation rule tuning on network and endpoint telemetry",
+    description: "Out-of-the-box Splunk correlation rules generate signal appropriate for generic environments — not for a transit authority with law enforcement integrations and transit-specific operational technology. I tuned the correlation rule set on both network traffic and endpoint telemetry data sources, adjusting thresholds, adding environment-specific exclusions for known-safe operational patterns, and building new rules targeting the threat patterns most relevant to the environment. The result was a cleaner alert queue with higher signal-to-noise and fewer analyst interruptions for non-actionable events."
+  },
+  {
+    accent: "ITSM · ServiceNow",
+    title: "Rebuilt ServiceNow ITSM workflows",
+    description: "The existing ServiceNow workflows were designed around generic ITSM process flows that did not reflect how the SOC actually operated — escalation paths were wrong, SLA tracking was misaligned with real incident severity classifications, and analysts were spending time managing ticket state rather than managing incidents. I rebuilt the workflows to match actual SOC escalation paths: correct routing, accurate SLA windows tied to incident priority, and reduced manual state management."
+  },
+  {
+    accent: "Documentation · 25% onboarding reduction",
+    title: "SOPs and incident playbooks",
+    description: "The team lacked standardized written procedures for common incident types — knowledge was informal, distributed across individuals, and not transferable at scale. I wrote a standardized SOP and playbook library covering the most common incident categories the SOC handled, including escalation protocols, handoff procedures for shift transitions, and step-by-step response guidance for specific alert types. The documentation became the primary reference material for new analyst onboarding and reduced the time required to bring new analysts to independent operational capability by 25%."
+  }
+];
+
+const skills = [
+  "Splunk SIEM", "Correlation Rule Tuning", "Python Automation", "Alert Triage",
+  "Incident Response", "SolarWinds", "Blackrock3", "ServiceNow ITSM",
+  "Workflow Engineering", "SOP Authorship", "NIST 800-53", "CJIS Level 4",
+  "24/7 SOC Operations", "Threat Intelligence", "IP Reputation", "False-Positive Reduction"
+];
+---
+
+<Layout
+  title="Sound Transit SOC — Steve Vik"
+  description="Case study: Engineer - Network Operations Center at Sound Transit. 40% MTTR reduction via Python automation, 150+ incidents/month, CJIS/NIST 800-53 compliance."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- Breadcrumb -->
+      <a href="/experience" class="inline-flex items-center gap-1 font-mono text-sm text-text-outline hover:text-emerald transition-colors mb-8">
+        <span class="text-emerald opacity-60">cd ../</span> experience
+      </a>
+
+      <!-- Header -->
+      <div class="mb-8">
+        <p class="kicker mb-2">Case Study &middot; Enterprise NOC</p>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">Engineer — Network Operations Center</h1>
+        <div class="flex flex-wrap items-center gap-3 font-mono text-sm text-text-outline">
+          <span>Sound Transit (via Infojini)</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span>Seattle, WA</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span>Feb 2024 – Mar 2025</span>
+        </div>
+      </div>
+
+      <!-- Metrics -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-px bg-text-dim/20 rounded overflow-hidden mb-12">
+        {metrics.map((m) => (
+          <div class="bg-layer-1 p-5 text-center">
+            <div class="font-mono text-xl font-bold text-emerald mb-1">{m.value}</div>
+            <div class="text-xs text-text-outline">{m.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Environment -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// environment</p>
+        <h2 class="font-display text-xl font-bold mb-4">24/7 enterprise SOC — regional transit authority</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-layer-1 rounded p-5">
+            <h3 class="font-bold mb-2">Operational context</h3>
+            <p class="text-text-variant text-sm leading-relaxed">Sound Transit operates light rail, commuter rail, and bus service across the greater Seattle metropolitan area — critical public infrastructure running around the clock. The SOC operated on a 24/7 continuous monitoring model with no scheduled downtime windows, requiring strict SLA discipline and rapid escalation capability.</p>
+          </div>
+          <div class="bg-layer-1 rounded p-5">
+            <h3 class="font-bold mb-2">Security toolchain</h3>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="chip">Splunk</span>
+              <span class="chip">SolarWinds</span>
+              <span class="chip">Blackrock3</span>
+              <span class="chip">ServiceNow</span>
+              <span class="chip">Python</span>
+            </div>
+            <p class="text-text-variant text-sm leading-relaxed">Splunk served as the primary SIEM — the backbone for correlation rules, alert triage, and post-incident investigation. SolarWinds and Blackrock3 provided complementary network and endpoint visibility.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Compliance -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// compliance</p>
+        <h2 class="font-display text-xl font-bold mb-4">Zero violations across all frameworks</h2>
+        <div class="bg-layer-1 rounded p-5">
+          <p class="text-text-variant text-sm leading-relaxed mb-4">Sound Transit's NOC operated under a layered compliance obligation. Law enforcement integrations within the transit authority required full CJIS Level 4 clearance and strict data handling protocols. All security operations were governed against the NIST 800-53 control framework.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-ok/8 text-ok uppercase tracking-wider">CJIS Level 4</span>
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-ok/8 text-ok uppercase tracking-wider">NIST 800-53</span>
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-ok/8 text-ok uppercase tracking-wider">0 Violations</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Contributions -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// contributions</p>
+        <h2 class="font-display text-xl font-bold mb-4">What I built and how it moved the numbers</h2>
+        {contributions.map((item) => (
+          <div class="work-item">
+            <span class="font-mono text-xs font-semibold text-emerald uppercase tracking-wider opacity-80 mb-2 block">{item.accent}</span>
+            <h3 class="font-bold mb-2">{item.title}</h3>
+            <p class="text-text-variant text-sm leading-relaxed">{item.description}</p>
+          </div>
+        ))}
+      </section>
+
+      <!-- Skills -->
+      <section class="mb-10">
+        <p class="kicker mb-2">// skills demonstrated</p>
+        <h2 class="font-display text-xl font-bold mb-4">Technical and operational competencies</h2>
+        <div class="bg-layer-1 rounded p-5">
+          <div class="flex flex-wrap gap-1.5">
+            {skills.map((skill) => (
+              <span class="chip">{skill}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <!-- Navigation -->
+      <div class="flex items-center justify-between flex-wrap gap-3 pt-8 border-t border-text-dim/20">
+        <a href="/experience" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">&larr; All Experience</a>
+        <div class="flex gap-3">
+          <a href="/experience/jblm" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">JBLM &rarr;</a>
+          <a href="/experience/nexus-lab" class="px-5 py-2.5 cta-gradient text-white font-mono text-sm font-semibold rounded hover:opacity-90 transition-opacity">Nexus Lab &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

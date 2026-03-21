@@ -1,0 +1,149 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const projects = [
+  {
+    name: "Nexus Home Lab",
+    description: "Enterprise-grade homelab for security research, infrastructure automation, and hands-on practice. 3-node Proxmox cluster, 11 LXC containers, private DNS, automated backups, and custom monitoring dashboard.",
+    tags: ["Linux", "Proxmox", "Bash", "Python", "Grafana"],
+    url: "/experience/nexus-lab",
+    urlLabel: "Case Study",
+    status: "Online"
+  },
+  {
+    name: "SOC Lab",
+    description: "Incident response playbooks, Sigma detection rules, Ansible hardening roles, and automation scripts. Public portfolio-quality security demonstrations.",
+    tags: ["Splunk", "IR", "Detection", "Sigma", "Ansible"],
+    url: "https://github.com/sjviklabs/sec-lab",
+    urlLabel: "GitHub",
+    external: true
+  },
+  {
+    name: "Lab Control Center",
+    description: "Full-stack orchestration dashboard with real-time node health, agent management, project hub, scheduler, and command center. Express 5 + SQLite + React 19.",
+    tags: ["TypeScript", "React", "Express", "SQLite"],
+    url: "https://github.com/sjviklabs/ops-dashboard",
+    urlLabel: "GitHub",
+    external: true
+  },
+  {
+    name: "Job Tracker",
+    description: "Job search mission control with automated daily scraper across 8 profiles, O*NET-aligned scoring, cover letter templates, and email integration. 3,186 jobs tracked.",
+    tags: ["JavaScript", "Python", "Express", "Cron"],
+    url: "https://github.com/stevenjvik/career-tracker",
+    urlLabel: "GitHub",
+    external: true
+  },
+  {
+    name: "DM Screen",
+    description: "Real-time D&D combat tracker with initiative management, monster/spell lookup, session launcher, and live player view. 26 reference panels, mobile responsive.",
+    tags: ["React", "TypeScript", "Express", "WebSocket"],
+    url: "https://github.com/sjviklabs/creative-dm-tools",
+    urlLabel: "GitHub",
+    external: true
+  },
+  {
+    name: "Tahala Campaign Portal",
+    description: "Public campaign portal for the TCEA D&D campaign. 16 sessions, 15 character dossiers, session timeline, media player, and Archivist profile.",
+    tags: ["React", "TypeScript", "Vite"],
+    url: "https://tahala.stevenjvik.tech",
+    urlLabel: "Live Site",
+    external: true
+  },
+  {
+    name: "Archivist Bot",
+    description: "Discord bot for the Tahala campaign. 18 slash commands, cast management, session tracking, AI-generated Eagle Witness posts. Ollama failover.",
+    tags: ["TypeScript", "Discord.js", "SQLite", "Ollama"],
+    url: "https://github.com/stevenjvik/creative-bot",
+    urlLabel: "GitHub",
+    external: true
+  },
+  {
+    name: "Paperclip Agents",
+    description: "7 autonomous AI agents on heartbeat schedules — SRE, Content, Career, Comms, Analytics, Product, DevOps. Self-driving company orchestration on LXC 109.",
+    tags: ["Node.js", "Claude Code", "PM2", "Cron"]
+  }
+];
+
+const products = [
+  {
+    name: "Proxmox Homelab: Zero to Production",
+    description: "131-page guide to building a production-grade homelab from scratch. Real configs, real patterns.",
+    price: "$20",
+    url: "https://stevenjvik.gumroad.com/l/gxcefj"
+  },
+  {
+    name: "SOC Analyst Interview Kit",
+    description: "160 pages — 200+ flashcards, 25 scenarios, Splunk SPL & Sentinel KQL exercises.",
+    price: "$25",
+    url: "https://stevenjvik.gumroad.com/l/pwemdd"
+  }
+];
+---
+
+<Layout
+  title="Projects — Steve Vik"
+  description="Security tools, homelab infrastructure, D&D tooling, and digital products by Steven Vik."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="mb-12">
+        <p class="kicker mb-2">// projects</p>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">What I'm building</h1>
+        <p class="text-text-variant max-w-xl">Applied security engineering, infrastructure automation, and full-stack applications — running in production.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-4 mb-16">
+        {projects.map((project) => (
+          <div class="bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors flex flex-col">
+            <div class="flex items-start justify-between mb-2">
+              <h2 class="font-mono font-bold text-text-primary">{project.name}</h2>
+              {project.status && (
+                <span class="font-mono text-xs text-ok px-2 py-0.5 rounded bg-ok/8">{project.status}</span>
+              )}
+            </div>
+            <p class="text-text-variant text-sm leading-relaxed mb-4 flex-1">{project.description}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              {project.tags.map((tag) => (
+                <span class="chip">{tag}</span>
+              ))}
+              {project.url && (
+                <a
+                  href={project.url}
+                  target={project.external ? "_blank" : undefined}
+                  rel={project.external ? "noopener" : undefined}
+                  class="ml-auto font-mono text-sm text-emerald hover:text-emerald-deep transition-colors"
+                >
+                  {project.urlLabel} &rarr;
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Digital Products -->
+      <div class="mb-8">
+        <p class="kicker mb-2">// digital products</p>
+        <h2 class="font-display text-2xl font-bold mb-3">Guides</h2>
+        <p class="text-text-variant max-w-xl mb-6">Practical guides built from real experience. <a href="/guides" class="text-emerald hover:text-emerald-deep transition-colors">See full details and sample chapters &rarr;</a></p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4">
+        {products.map((product) => (
+          <a href={product.url} target="_blank" rel="noopener" class="group block bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors">
+            <div class="flex items-center justify-between mb-2">
+              <span class="font-mono text-lg font-bold text-emerald">{product.price}</span>
+              <span class="text-xs font-mono px-2 py-1 rounded bg-emerald/8 text-emerald">PDF</span>
+            </div>
+            <h3 class="font-bold mb-2 group-hover:text-emerald transition-colors">{product.name}</h3>
+            <p class="text-text-variant text-sm">{product.description}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

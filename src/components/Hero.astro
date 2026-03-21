@@ -1,43 +1,66 @@
 ---
 ---
-<section class="relative min-h-[80vh] flex items-center justify-center pt-16">
-  <!-- Grid background effect -->
-  <div class="absolute inset-0 bg-[linear-gradient(rgba(142,196,155,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(142,196,155,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem]"></div>
-  <!-- Glow -->
-  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-sjvik-green/5 rounded-full blur-[120px]"></div>
-  
-  <div class="relative max-w-4xl mx-auto px-6 text-center">
+<section class="relative min-h-[85vh] flex items-center justify-center pt-16">
+  <!-- Ambient glow -->
+  <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-emerald/5 rounded-full blur-[120px]"></div>
+
+  <div class="relative max-w-5xl mx-auto px-6 text-center">
     <!-- Logo -->
     <div class="mb-8">
-      <img src="/logo.png" alt="SJVIK Labs" class="w-28 h-28 mx-auto rounded-2xl shadow-lg shadow-sjvik-green/10" />
+      <img src="/logo.png" alt="SJVIK Labs" class="w-28 h-28 mx-auto rounded-2xl emerald-glow" />
     </div>
 
-    <!-- Terminal-style intro -->
-    <div class="inline-block mb-8 px-4 py-2 rounded-lg bg-sjvik-surface border border-sjvik-border font-mono text-sm text-sjvik-text-muted">
-      <span class="text-sjvik-green">$</span> whoami
-      <span class="ml-2 text-sjvik-text">steven.vik</span>
-      <span class="mx-2 text-sjvik-border">|</span>
-      <span class="text-sjvik-green">cybersecurity</span>
-      <span class="mx-1 text-sjvik-border">·</span>
-      <span class="text-sjvik-green">devops</span>
-      <span class="mx-1 text-sjvik-border">·</span>
-      <span class="text-sjvik-green">creator</span>
+    <!-- Terminal intro -->
+    <div class="inline-block mb-6 px-4 py-2 rounded bg-layer-1 font-mono text-sm text-text-outline">
+      <span class="text-emerald">$</span> whoami
+      <span class="ml-2 text-text-primary">steven.vik</span>
+      <span class="mx-2 text-text-dim">|</span>
+      <span class="text-emerald">cybersecurity</span>
+      <span class="mx-1 text-text-dim">&middot;</span>
+      <span class="text-emerald">devops</span>
+      <span class="mx-1 text-text-dim">&middot;</span>
+      <span class="text-emerald">creator</span>
     </div>
 
-    <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6">
-      <span class="text-sjvik-green font-mono">SJVIK Labs</span>
+    <h1 class="font-display text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-4">
+      Secure systems. Measured outcomes.
     </h1>
-    <p class="text-xl sm:text-2xl text-sjvik-text-muted max-w-2xl mx-auto mb-10 leading-relaxed">
-      Security tools, homelab guides, and digital products.<br class="hidden sm:block" />
-      Built by a practitioner, for practitioners.
+    <p class="text-xl text-text-variant max-w-2xl mx-auto mb-6 leading-relaxed">
+      8+ years across enterprise NOC monitoring, incident response, and compliance.
+      I build security tools, homelab infrastructure, and practical guides for practitioners.
     </p>
 
+    <!-- Availability -->
+    <div class="inline-block mb-8 px-5 py-2.5 rounded bg-emerald/8 text-emerald font-mono text-sm font-medium">
+      Available for cybersecurity, DevOps, and infrastructure roles
+    </div>
+
+    <!-- Hero metrics -->
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-px bg-text-dim/20 rounded overflow-hidden max-w-2xl mx-auto mb-10">
+      <div class="bg-layer-1 p-5 text-center">
+        <div class="font-mono text-2xl font-bold text-emerald">40%</div>
+        <div class="text-xs text-text-outline mt-1">MTTR reduction via Python automation</div>
+      </div>
+      <div class="bg-layer-1 p-5 text-center">
+        <div class="font-mono text-2xl font-bold text-emerald">3,000+</div>
+        <div class="text-xs text-text-outline mt-1">Endpoints monitored in 24/7 SOC</div>
+      </div>
+      <div class="bg-layer-1 p-5 text-center col-span-2 md:col-span-1">
+        <div class="font-mono text-2xl font-bold text-emerald">CJIS</div>
+        <div class="text-xs text-text-outline mt-1">Level 4 cleared, NIST 800-53</div>
+      </div>
+    </div>
+
+    <!-- CTAs -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-      <a href="#products" class="px-6 py-3 bg-sjvik-green text-sjvik-bg font-mono font-semibold rounded-lg hover:bg-sjvik-green-light transition-colors">
-        Browse Products
+      <a href="/experience" class="px-6 py-3 cta-gradient text-base font-mono font-semibold rounded text-white hover:opacity-90 transition-opacity">
+        View Experience
       </a>
-      <a href="https://github.com/stevenjvik" target="_blank" rel="noopener" class="px-6 py-3 border border-sjvik-border text-sjvik-text font-mono rounded-lg hover:border-sjvik-green hover:text-sjvik-green transition-colors">
-        View on GitHub
+      <a href="/projects" class="px-6 py-3 bg-layer-2 text-text-primary font-mono rounded hover:bg-layer-3 transition-colors">
+        Projects
+      </a>
+      <a href="/guides" class="px-6 py-3 bg-layer-2 text-text-primary font-mono rounded hover:bg-layer-3 transition-colors">
+        Guides
       </a>
     </div>
   </div>

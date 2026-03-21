@@ -1,0 +1,147 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Nav from '../../components/Nav.astro';
+import Footer from '../../components/Footer.astro';
+
+const metrics = [
+  { value: "25%", label: "Reduction in unauthorized access incidents" },
+  { value: "35%", label: "Improved security posture metrics" },
+  { value: "500+", label: "DoD users secured via DISA STIG" },
+  { value: "Zero", label: "Service interruptions during STIG rollout" },
+];
+
+const contributions = [
+  {
+    accent: "DISA STIG · 500+ users · zero interruptions",
+    title: "STIG-compliant Windows 10 deployment",
+    description: "The STIG rollout was the primary deliverable — hardening 500+ Windows 10 endpoints to DoD baseline without interrupting active operations on a military installation. I led the deployment end-to-end: GPO-based enforcement of STIG controls, systematic disabling of legacy and unnecessary services flagged by the STIG checklist, hardening of browser and registry settings to the DoD configuration baseline, and enforcement of local security policy settings. Each deployment phase was tested in staging before production rollout. The result was a 25% reduction in unauthorized access incidents."
+  },
+  {
+    accent: "Splunk SIEM · threat hunting · team standard",
+    title: "Splunk threat hunting protocol development",
+    description: "I developed a structured threat hunting protocol using Splunk, building detection queries targeting the attack patterns with the highest likelihood in the environment: lateral movement via pass-the-hash and pass-the-ticket, privilege escalation through abuse of service accounts and scheduled tasks, and anomalous authentication patterns including off-hours logins and access from unusual source IPs. The protocol was documented and subsequently adopted as the team-wide standard for proactive threat detection."
+  },
+  {
+    accent: "Vulnerability management · 35% posture improvement",
+    title: "Vulnerability prioritization framework",
+    description: "I built a vulnerability management strategy that combined CVSS severity with asset criticality ratings — prioritizing remediation effort on high-CVSS vulnerabilities affecting high-criticality assets first, and deprioritizing low-criticality asset findings. The framework reduced the exposure window for the most dangerous vulnerability/asset combinations and contributed to a 35% improvement in measured security posture metrics."
+  },
+  {
+    accent: "Active Directory · identity hardening",
+    title: "Active Directory hardening and access control audit",
+    description: "I conducted a comprehensive AD hardening effort: enforced DoD-aligned password complexity and expiration policies, audited service account configurations to remove unnecessary privileges and rotate credentials, and performed group membership reviews to identify and remediate accounts with excessive privilege. The hardening directly contributed to the reduction in unauthorized access incidents."
+  }
+];
+
+const skills = [
+  "DISA STIG", "Windows 10 Hardening", "Active Directory", "Group Policy (GPO)",
+  "Splunk SIEM", "Threat Hunting", "Lateral Movement Detection",
+  "Privilege Escalation Detection", "Vulnerability Management", "CVSS Prioritization",
+  "Service Account Auditing", "DoD Security Frameworks", "Incident Response",
+  "Registry Hardening", "Legacy Service Removal"
+];
+---
+
+<Layout
+  title="JBLM IT Security — Steve Vik"
+  description="Case study: IT Security Specialist at Joint Base Lewis-McChord. DISA STIG deployment for 500+ users, 25% unauthorized access reduction, Splunk threat hunting."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-4xl mx-auto">
+
+      <a href="/experience" class="inline-flex items-center gap-1 font-mono text-sm text-text-outline hover:text-emerald transition-colors mb-8">
+        <span class="text-emerald opacity-60">cd ../</span> experience
+      </a>
+
+      <div class="mb-8">
+        <p class="kicker mb-2">Case Study &middot; DoD Security</p>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">IT Security Specialist</h1>
+        <div class="flex flex-wrap items-center gap-3 font-mono text-sm text-text-outline">
+          <span>Joint Base Lewis-McChord (via TEKsystems)</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span>Tacoma, WA</span>
+          <span class="w-px h-3.5 bg-text-dim"></span>
+          <span>Mar 2017 – Mar 2018</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-text-dim/20 rounded overflow-hidden mb-12">
+        {metrics.map((m) => (
+          <div class="bg-layer-1 p-5 text-center">
+            <div class="font-mono text-xl font-bold text-amber mb-1">{m.value}</div>
+            <div class="text-xs text-text-outline">{m.label}</div>
+          </div>
+        ))}
+      </div>
+
+      <section class="mb-10">
+        <p class="kicker mb-2">// environment</p>
+        <h2 class="font-display text-xl font-bold mb-4">DoD installation — Windows-centric, classified adjacencies</h2>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-layer-1 rounded p-5">
+            <h3 class="font-bold mb-2">Operational context</h3>
+            <p class="text-text-variant text-sm leading-relaxed">Joint Base Lewis-McChord is one of the largest military installations in the United States. The IT security scope covered Windows 10 endpoints across a mix of administrative and operational users, with adjacencies to classified systems imposing strict DoD baseline requirements on every device.</p>
+          </div>
+          <div class="bg-layer-1 rounded p-5">
+            <h3 class="font-bold mb-2">Security standards and toolchain</h3>
+            <div class="flex flex-wrap gap-1.5 mb-3">
+              <span class="chip">DISA STIG</span>
+              <span class="chip">Active Directory</span>
+              <span class="chip">Group Policy</span>
+              <span class="chip">Splunk</span>
+              <span class="chip">Windows 10</span>
+            </div>
+            <p class="text-text-variant text-sm leading-relaxed">DISA STIGs defined the mandatory configuration baseline for all endpoints. Splunk served as the SIEM for threat detection and investigation.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <p class="kicker mb-2">// standards enforced</p>
+        <h2 class="font-display text-xl font-bold mb-4">DoD-grade hardening baseline maintained throughout</h2>
+        <div class="bg-layer-1 rounded p-5">
+          <p class="text-text-variant text-sm leading-relaxed mb-4">All work was governed by DISA STIG requirements and DoD security framework mandates. The STIG deployment covered 500+ users with no service interruptions.</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-amber/8 text-amber uppercase tracking-wider">DISA STIG</span>
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-amber/8 text-amber uppercase tracking-wider">DoD Security Frameworks</span>
+            <span class="font-mono text-xs font-semibold px-3 py-1.5 rounded bg-ok/8 text-ok uppercase tracking-wider">Zero Service Interruptions</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="mb-10">
+        <p class="kicker mb-2">// contributions</p>
+        <h2 class="font-display text-xl font-bold mb-4">What I built and how it moved the numbers</h2>
+        {contributions.map((item) => (
+          <div class="work-item">
+            <span class="font-mono text-xs font-semibold text-amber uppercase tracking-wider opacity-80 mb-2 block">{item.accent}</span>
+            <h3 class="font-bold mb-2">{item.title}</h3>
+            <p class="text-text-variant text-sm leading-relaxed">{item.description}</p>
+          </div>
+        ))}
+      </section>
+
+      <section class="mb-10">
+        <p class="kicker mb-2">// skills demonstrated</p>
+        <h2 class="font-display text-xl font-bold mb-4">Technical and operational competencies</h2>
+        <div class="bg-layer-1 rounded p-5">
+          <div class="flex flex-wrap gap-1.5">
+            {skills.map((skill) => (
+              <span class="chip">{skill}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div class="flex items-center justify-between flex-wrap gap-3 pt-8 border-t border-text-dim/20">
+        <a href="/experience/sound-transit" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">&larr; Sound Transit</a>
+        <div class="flex gap-3">
+          <a href="/experience" class="px-5 py-2.5 bg-layer-2 text-text-primary font-mono text-sm rounded hover:bg-layer-3 transition-colors">All Experience</a>
+          <a href="/experience/nexus-lab" class="px-5 py-2.5 cta-gradient text-white font-mono text-sm font-semibold rounded hover:opacity-90 transition-opacity">Nexus Lab &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>

@@ -1,0 +1,95 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+
+const jobs = [
+  {
+    title: "Engineer — Network Operations Center",
+    company: "Sound Transit",
+    via: "via Infojini",
+    location: "Seattle, WA",
+    dates: "Feb 2024 – Mar 2025",
+    description: "Monitored 3,000+ endpoints across critical transit IT and OT infrastructure in a 24/7 NOC. Authored SOPs, developed Python automation and Django-based internal tools reducing MTTR by 40%. Managed endpoint security tooling including CrowdStrike Falcon, Defender for Endpoint, and Entra ID. Enforced CJIS and NIST 800-53 compliance with zero audit violations.",
+    tags: ["Splunk", "SolarWinds", "Python", "CrowdStrike", "NIST 800-53", "CJIS"],
+    caseStudy: "/experience/sound-transit",
+    accent: "emerald"
+  },
+  {
+    title: "Enterprise Technology Auditor",
+    company: "TES USA / Amazon Campus",
+    location: "Tukwila, WA",
+    dates: "Jul 2023 – Jan 2024",
+    description: "Coordinated infrastructure audits across 20+ Amazon buildings — AV systems, Cisco hardware, and projector infrastructure. Streamlined asset inventory documentation and developed improved tracking processes that shortened audit cycles and improved equipment accuracy across campuses.",
+    tags: ["Asset Inventory", "Cisco", "Infrastructure Auditing", "Documentation"],
+    accent: "secondary"
+  },
+  {
+    title: "IT System Engineer",
+    company: "Seattle University & City of Medina PD",
+    location: "Seattle, WA",
+    dates: "2020 – 2021",
+    description: "Deployed Cisco Communicator and unified communications infrastructure supporting the COVID-19 continuity transition — configuring help desk phone lines, student services lines, and online classroom capability for 200+ faculty, staff, and students. Enforced CJIS compliance and developed incident response playbooks.",
+    tags: ["Cisco UC", "CJIS", "Incident Response", "PowerShell"],
+    accent: "secondary"
+  },
+  {
+    title: "IT Security Specialist",
+    company: "Joint Base Lewis-McChord",
+    via: "via TEKsystems",
+    location: "Tacoma, WA",
+    dates: "Mar 2017 – Mar 2018",
+    description: "Rebuilt DoD security environments for 500+ users. Managed DISA STIG-compliant Windows 10 deployment — 25% reduction in unauthorized access. Developed Splunk SIEM threat hunting protocols and vulnerability management strategies that delivered a 35% stronger security posture.",
+    tags: ["Splunk", "DISA STIG", "Windows Server", "Threat Hunting", "Vulnerability Management"],
+    caseStudy: "/experience/jblm",
+    accent: "amber"
+  }
+];
+---
+
+<Layout
+  title="Experience — Steve Vik"
+  description="Professional experience: enterprise NOC operations, DoD compliance, law enforcement IT, and infrastructure auditing."
+>
+  <Nav />
+  <main class="pt-24 pb-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="mb-12">
+        <p class="kicker mb-2">// experience</p>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">Professional background</h1>
+        <p class="text-text-variant max-w-xl">Enterprise NOC operations, DoD compliance, law enforcement IT, and infrastructure auditing.</p>
+      </div>
+
+      <div class="space-y-6">
+        {jobs.map((job) => (
+          <div class="bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors">
+            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
+              <div>
+                <h2 class="text-lg font-bold">{job.title}</h2>
+                <p class="font-mono text-sm text-text-outline">
+                  {job.company}
+                  {job.via && <span class="text-text-dim"> {job.via}</span>}
+                  <span class="mx-1 text-text-dim">&middot;</span>
+                  {job.location}
+                </p>
+              </div>
+              <span class="font-mono text-sm text-text-outline shrink-0">{job.dates}</span>
+            </div>
+            <p class="text-text-variant text-sm leading-relaxed mb-4">{job.description}</p>
+            <div class="flex flex-wrap items-center gap-2">
+              {job.tags.map((tag) => (
+                <span class="chip">{tag}</span>
+              ))}
+              {job.caseStudy && (
+                <a href={job.caseStudy} class="ml-auto font-mono text-sm text-emerald hover:text-emerald-deep transition-colors">
+                  Case Study &rarr;
+                </a>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </main>
+  <Footer />
+</Layout>
