@@ -30,7 +30,16 @@ if [[ "${1:-}" == "--build-only" ]]; then
 fi
 
 echo "==> Deploying to Hostinger (sjvik-labs/) via FTP..."
-lftp -u "u964877707.deploy01,$PASS" ftp://ftp.stevenjvik.tech -e "
+USER="${HOSTINGER_USER:-}"
+if [[ -z "$USER" && -f ~/.hostinger-tahala-user ]]; then
+  USER="$(cat ~/.hostinger-tahala-user)"
+fi
+if [[ -z "$USER" ]]; then
+  echo "ERROR: Set HOSTINGER_USER env var or create ~/.hostinger-tahala-user"
+  exit 1
+fi
+
+lftp -u "$USER,$PASS" ftp://ftp.stevenjvik.tech -e "
   set ssl:verify-certificate no;
   mkdir -p sjvik-labs;
   mirror --reverse --delete --verbose dist/ sjvik-labs/;
