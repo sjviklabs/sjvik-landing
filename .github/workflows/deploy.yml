@@ -28,11 +28,12 @@ jobs:
           fi
 
       - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: 191.101.13.246
-          username: ${{ secrets.HOSTINGER_USER }}
-          password: ${{ secrets.HOSTINGER_PASS }}
-          local-dir: ./dist/
-          server-dir: domains/stevenjvik.tech/public_html/sjvik-labs/
-          dangerous-clean-slate: true
+        run: |
+          sudo apt-get install -y lftp > /dev/null 2>&1
+          lftp -u "${{ secrets.HOSTINGER_USER }},${{ secrets.HOSTINGER_PASS }}" ftp://191.101.13.246 -e "
+            set ssl:verify-certificate no;
+            set ftp:ssl-allow yes;
+            mkdir -p domains/stevenjvik.tech/public_html/sjvik-labs;
+            mirror --reverse --delete --verbose dist/ domains/stevenjvik.tech/public_html/sjvik-labs/;
+            bye
+          "
