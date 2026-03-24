@@ -33,7 +33,6 @@ jobs:
           lftp -u "${{ secrets.HOSTINGER_USER }},${{ secrets.HOSTINGER_PASS }}" ftp://191.101.13.246 -e "
             set ssl:verify-certificate no;
             set ftp:ssl-allow yes;
-            mkdir -p domains/stevenjvik.tech/public_html/sjvik-labs;
-            mirror --reverse --delete --verbose dist/ domains/stevenjvik.tech/public_html/sjvik-labs/;
+            mirror --reverse --delete --verbose --exclude tahala/ --exclude homelab/ --exclude stories/ --exclude genealogy/ --exclude preview/ dist/ domains/stevenjvik.tech/public_html/;
             bye
           "
