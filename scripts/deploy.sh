@@ -29,7 +29,7 @@ if [[ "${1:-}" == "--build-only" ]]; then
   exit 0
 fi
 
-echo "==> Deploying to Hostinger (sjvik-labs/) via FTP..."
+echo "==> Deploying to Hostinger (root) via FTP..."
 USER="${HOSTINGER_USER:-}"
 if [[ -z "$USER" && -f ~/.hostinger-tahala-user ]]; then
   USER="$(cat ~/.hostinger-tahala-user)"
@@ -41,9 +41,8 @@ fi
 
 lftp -u "$USER,$PASS" ftp://ftp.stevenjvik.tech -e "
   set ssl:verify-certificate no;
-  mkdir -p sjvik-labs;
-  mirror --reverse --delete --verbose dist/ sjvik-labs/;
+  mirror --reverse --delete --exclude tahala/ --exclude sjvik-labs/ --verbose dist/ ./;
   bye
 "
 
-echo "==> Live at https://sjvik-labs.stevenjvik.tech"
+echo "==> Live at https://stevenjvik.tech"
