@@ -6,8 +6,8 @@ import Footer from '../components/Footer.astro';
 const projects = [
   {
     name: "SJVIK NOC",
-    description: "VLAN-segmented operations center for security research, infrastructure automation, and applied engineering. 3-node Proxmox cluster, 15 LXC services, 4 VLANs, HA failover, Wazuh SIEM, Ansible IaC, and capacity monitoring.",
-    tags: ["Linux", "Proxmox", "VLANs", "Ansible", "Wazuh", "Grafana"],
+    description: "Production operations center: 3-node Proxmox HA cluster, 16 LXC containers across 4 VLANs. Centralized logging (Loki/Alloy), Wazuh SIEM, 13 Grafana alert rules, Ansible IaC (20+ roles, site.yml converges all), and a custom React operator dashboard with log search.",
+    tags: ["Linux", "Proxmox", "VLANs", "Ansible", "Wazuh", "Grafana", "Loki"],
     url: "/experience/nexus-lab",
     urlLabel: "Case Study",
     status: "Online"
@@ -22,24 +22,20 @@ const projects = [
   },
   {
     name: "Lab Control Center",
-    description: "Full-stack orchestration dashboard with real-time node health, agent management, project hub, scheduler, and command center. Express 5 + SQLite + React 19.",
-    tags: ["TypeScript", "React", "Express", "SQLite"],
-    url: "https://github.com/sjviklabs/ops-dashboard",
-    urlLabel: "GitHub",
-    external: true
+    description: "Full-stack orchestration dashboard with real-time node health, agent management, project hub, Loki log search, scheduler, and command center. Express 5 + SQLite + React 19.",
+    tags: ["TypeScript", "React", "Express", "SQLite", "Loki"],
+    url: "/noc/",
+    urlLabel: "Architecture"
   },
   {
     name: "Job Tracker",
-    description: "Job search mission control with automated daily scraper across 8 profiles, O*NET-aligned scoring, cover letter templates, and email integration. 3,186 jobs tracked.",
-    tags: ["JavaScript", "Python", "Express", "Cron"],
-    url: "https://github.com/stevenjvik/career-tracker",
-    urlLabel: "GitHub",
-    external: true
+    description: "Job search mission control with automated daily scraper across 8 profiles, O*NET-aligned scoring, cover letter templates, and email integration.",
+    tags: ["JavaScript", "Python", "Express", "Cron"]
   },
   {
     name: "Garrison Agent System",
-    description: "7 autonomous AI agents on heartbeat schedules — SRE, Content, Career, Comms, Analytics, Product, DevOps. Self-driving orchestration on dedicated infrastructure.",
-    tags: ["Node.js", "Claude Code", "PM2", "Cron"]
+    description: "8 autonomous AI agents on heartbeat schedules — SRE, Content, Career, Comms, Analytics, Product, DevOps, Security. Self-driving orchestration on dedicated LXC with PostgreSQL state tracking.",
+    tags: ["Node.js", "Claude Code", "PM2", "PostgreSQL"]
   }
 ];
 

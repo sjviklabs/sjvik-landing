@@ -4,42 +4,58 @@ import Nav from '../../components/Nav.astro';
 import Footer from '../../components/Footer.astro';
 
 const nodes = [
-  { role: "Cluster leader", name: "core-01", spec: "Hypervisor · Always-on", services: ["Private DNS filtering", "Vault sync relay"] },
-  { role: "AI inference", name: "ai-01", spec: "Hypervisor · Always-on", services: ["Local LLM inference (CPU, 7B/14B models)"] },
-  { role: "Storage", name: "store-01", spec: "Hypervisor · Always-on", services: ["Backup storage + scheduled snapshots"] },
+  { role: "Primary compute", name: "Node 1", spec: "64 GB · NVMe + SATA · 7 LXCs", services: ["DNS filtering (AdGuard)", "Reverse proxy (Traefik + TLS)", "Monitoring stack (Grafana, Prometheus, Loki)", "Operator dashboard (React + Express)", "Vault sync", "Password vault (Vaultwarden)"] },
+  { role: "AI + Services", name: "Node 2", spec: "64 GB · NVMe + 932 GB SATA · 6 LXCs", services: ["SIEM (Wazuh v4.14)", "Automation agents (Garrison)", "Web analytics (Umami)", "LLM inference (Ollama)", "Uptime monitoring"] },
+  { role: "Storage + Backup", name: "Node 3", spec: "64 GB · NVMe + SATA array · 3 LXCs", services: ["Proxmox Backup Server", "Network file shares (Samba)", "Local AI inference"] },
 ];
 
 const services = [
   {
+    label: "Centralized Logging",
+    name: "Loki + Alloy Pipeline",
+    description: "Grafana Loki v3.7 ingests logs from all 16 containers via Grafana Alloy agents. TSDB v13 schema with 7-day retention. Each agent labels logs with host, container, node, and job for precise filtering. Alloy configs are Ansible-templated — adding a new container to the pipeline is automatic."
+  },
+  {
+    label: "SIEM",
+    name: "Wazuh Security Monitoring",
+    description: "Full Wazuh deployment (indexer + manager + dashboard) with agents on 12 containers. Provides endpoint monitoring, file integrity monitoring, log analysis, vulnerability detection, and compliance reporting."
+  },
+  {
+    label: "Infrastructure as Code",
+    name: "Ansible — 20+ Roles, One Command",
+    description: "Every container's desired state is declared in Ansible. A single site.yml playbook converges all 16 containers. Audit-first role authoring ensures roles capture real state, not assumptions. Ansible Vault encrypts all secrets. New containers are provisioned with one command via create-container.yml."
+  },
+  {
+    label: "Operator Dashboard",
+    name: "Control Panel — Express + React",
+    description: "Custom-built dashboard with 9 pages: infrastructure overview, centralized log search (proxied Loki LogQL), automation agent runs, GTD task management, project hub, and cost tracking. 12 scheduled collector jobs feed data automatically. The Logs page provides container, severity, and time range filtering without needing Grafana access."
+  },
+  {
+    label: "Alerting",
+    name: "13 Grafana Alert Rules",
+    description: "File-provisioned (GitOps-managed) alert rules covering per-container disk and RAM usage, CPU spikes, node availability, backup compliance, TLS certificate expiry, and SIEM agent health. Triggered by a cluster audit that discovered 3 containers silently overflowing disk with no alerts firing."
+  },
+  {
     label: "Network Security",
-    name: "Private DNS Filtering",
-    description: "A self-hosted DNS resolver replaces ISP DNS for the entire network. All DNS queries are resolved locally — no external provider sees internal query traffic. Blocklists filter ad and tracker domains across every device."
-  },
-  {
-    label: "Data Sync",
-    name: "Vault Synchronization",
-    description: "Continuous, encrypted peer-to-peer sync for the knowledge vault across all devices. No cloud intermediary — files sync directly between nodes. An always-on relay node ensures vault state is preserved even when other devices are offline."
-  },
-  {
-    label: "Monitoring",
-    name: "Lab Control Center — TypeScript / Express",
-    description: "A custom monitoring dashboard with session-authenticated access. Live node health via CPU and memory arc gauges, service status badges, and an activity timeline of recent lab events. Data is collected by cron-scheduled shell scripts, fed into the Express backend, and surfaced with auto-refresh."
+    name: "VLAN Segmentation + DNS Filtering",
+    description: "4 VLANs isolate management, services, data, and gaming traffic. The gaming VLAN is fully isolated with no cross-VLAN routing. AdGuard Home provides network-wide DNS filtering and local hostname resolution. Traefik reverse proxy serves all services with locally-trusted TLS certificates."
   }
 ];
 
 const domains = [
-  { num: "01", title: "Infrastructure as Code", desc: "Every service and configuration decision is documented in git-versioned state files. The repo is the source of truth." },
-  { num: "02", title: "Local AI Inference", desc: "CPU and GPU LLM inference on private hardware. No mandatory cloud dependency." },
-  { num: "03", title: "Zero-Trust Posture", desc: "One service per container, no shared namespaces. Private DNS. SSH key authentication only." },
-  { num: "04", title: "Operational Discipline", desc: "Change log for every infrastructure change. Runbooks with explicit rollback gates." },
-  { num: "05", title: "Security Engineering", desc: "Private DNS prevents ISP query visibility. Key-only authentication across all nodes." },
-  { num: "06", title: "Observability", desc: "Live dashboard with real metric collection, not mocked data. Arc gauges, status badges, activity timeline." },
+  { num: "01", title: "Infrastructure as Code", desc: "20+ Ansible roles, site.yml converges all 16 containers. Audit-first role authoring prevents codifying drift. Encrypted secrets via Ansible Vault." },
+  { num: "02", title: "Centralized Observability", desc: "Every container ships logs to Loki, exports metrics to Prometheus, and is health-checked by Uptime Kuma. 13 Grafana alert rules cover disk, RAM, CPU, backups, and SIEM." },
+  { num: "03", title: "Defense in Depth", desc: "4 VLANs, Wazuh SIEM with 12 agents, SSH key-only auth, least-privilege service users, DNS filtering. Gaming VLAN fully isolated." },
+  { num: "04", title: "Operational Discipline", desc: "Every change committed. Staggered deployments (serial:3). Conservative roles for critical services. DNS server is always last in any rollout." },
+  { num: "05", title: "Disaster Recovery", desc: "Daily PBS backups for all 16 containers. DR smoke test passed — full container restored to a different node in under 10 minutes. Dual Tailscale failover tested." },
+  { num: "06", title: "Full-Stack Engineering", desc: "Custom React + Express operator dashboard. Loki LogQL proxy. 12 scheduled collectors. Jinja2 → River/HCL template generation for Alloy configs." },
 ];
 
 const tech = [
-  "Linux", "Proxmox VE", "Container isolation", "TypeScript", "Node.js",
-  "Python", "Bash", "Private DNS", "Encrypted sync", "Backup automation",
-  "Git", "SSH", "Grafana", "Prometheus"
+  "Linux", "Proxmox VE", "LXC containers", "Ansible", "TypeScript", "Node.js",
+  "React 19", "Express 5", "Python", "Bash", "Grafana", "Prometheus", "Loki",
+  "Grafana Alloy", "Wazuh SIEM", "Traefik", "AdGuard DNS", "Tailscale",
+  "Vaultwarden", "PostgreSQL", "SQLite", "Git", "SSH"
 ];
 ---
 
@@ -57,7 +73,7 @@ const tech = [
 
       <div class="mb-8">
         <p class="kicker mb-2">Personal Project &middot; Infrastructure Engineering</p>
-        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">Nexus Home Lab</h1>
+        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">SJVIK Network Operations Center</h1>
         <div class="flex flex-wrap items-center gap-3 font-mono text-sm text-text-outline">
           <span>SJVIK Labs</span>
           <span class="w-px h-3.5 bg-text-dim"></span>
@@ -74,14 +90,17 @@ const tech = [
       <div class="bg-layer-1 rounded p-6 mb-12 relative">
         <span class="absolute -top-2.5 left-4 font-mono text-xs font-semibold text-emerald bg-base px-2">// README</span>
         <p class="text-text-variant text-sm leading-relaxed">
-          The Nexus lab is a personal engineering environment built to apply infrastructure, AI, and security operations discipline on private hardware. It runs 24/7 with real operational constraints. Every service and configuration change is git-versioned. Every deployment goes through a review gate. The lab is the proof of work.
+          The SJVIK NOC is a production-grade operations center running 16 LXC containers across a 3-node Proxmox HA cluster with 4 VLAN-segmented network zones. Every container ships logs to a centralized Loki instance, exports metrics to Prometheus, and is monitored by 13 Grafana alert rules. All infrastructure is codified in Ansible — new containers are one command. A custom React dashboard provides operator-facing log search, infrastructure health, and automation visibility without requiring Grafana access.
         </p>
+        <a href="/noc/" class="inline-flex items-center gap-1 font-mono text-xs text-emerald hover:underline mt-3">
+          Full architecture document &rarr;
+        </a>
       </div>
 
       <!-- Cluster topology -->
       <section class="mb-10">
         <p class="kicker mb-2">// infrastructure</p>
-        <h2 class="font-display text-xl font-bold mb-4">Multi-node cluster with service isolation</h2>
+        <h2 class="font-display text-xl font-bold mb-4">3-node HA cluster — 16 containers across 4 VLANs</h2>
 
         <div class="grid md:grid-cols-3 gap-px bg-text-dim/20 rounded overflow-hidden mb-6">
           {nodes.map((node) => (
@@ -101,37 +120,16 @@ const tech = [
           ))}
         </div>
 
-        <!-- Workstation -->
-        <div class="bg-layer-1 rounded p-5 mb-6">
-          <div class="grid md:grid-cols-2 gap-6">
-            <div>
-              <div class="font-mono text-xs font-semibold text-amber uppercase tracking-wider opacity-80 mb-2">Workstation</div>
-              <div class="font-mono font-bold text-text-primary mb-1">gpu-01</div>
-              <div class="font-mono text-xs text-text-outline mb-3">GPU node &middot; On-demand</div>
-              <p class="text-text-variant text-sm leading-relaxed">Dedicated GPU inference node. Runs the highest-quality local models for development tooling and automation. Models unload after idle timeout to conserve VRAM.</p>
-            </div>
-            <div>
-              <div class="font-mono text-xs font-semibold text-text-outline uppercase tracking-wider mb-2">Capabilities</div>
-              <div class="flex flex-wrap gap-1.5">
-                <span class="chip">GPU inference</span>
-                <span class="chip">14B parameter models</span>
-                <span class="chip">Code generation</span>
-                <span class="chip">On-demand scaling</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="bg-layer-1 rounded p-5">
           <h3 class="font-mono font-bold text-sm mb-2">cluster.conf</h3>
-          <p class="text-text-variant text-sm leading-relaxed mb-3">All server nodes form a hypervisor cluster with kernel-based networking and secure authentication enabled. Quorum is maintained across three nodes. SSH access is key-authenticated across all nodes and containers.</p>
+          <p class="text-text-variant text-sm leading-relaxed mb-3">3-node Proxmox HA cluster with quorum, VLAN-segmented networking, and SSH key-only authentication. 5 critical containers are HA-registered with automatic restart. Dual Tailscale subnet routers provide encrypted remote access with tested failover.</p>
           <div class="flex flex-wrap gap-1.5">
-            <span class="chip">Hypervisor cluster</span>
-            <span class="chip">Kernel networking</span>
-            <span class="chip">Secure auth</span>
+            <span class="chip">HA cluster</span>
+            <span class="chip">4 VLANs</span>
             <span class="chip">SSH key mesh</span>
             <span class="chip">Container isolation</span>
             <span class="chip">Quorum</span>
+            <span class="chip">Dual VPN failover</span>
           </div>
         </div>
       </section>
@@ -152,7 +150,7 @@ const tech = [
       <!-- Demonstrates -->
       <section class="mb-10">
         <p class="kicker mb-2">// demonstrates</p>
-        <h2 class="font-display text-xl font-bold mb-4">Applied engineering discipline across six domains</h2>
+        <h2 class="font-display text-xl font-bold mb-4">What this project demonstrates</h2>
         <div class="grid md:grid-cols-3 sm:grid-cols-2 gap-px bg-text-dim/20 rounded overflow-hidden">
           {domains.map((d) => (
             <div class="bg-layer-1 p-5 hover:bg-layer-2 transition-colors">
