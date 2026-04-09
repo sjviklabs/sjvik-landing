@@ -1,0 +1,1408 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SJVIK NOC — Architecture Overview</title>
+    <meta
+      name="description"
+      content="A 3-node Proxmox HA cluster running 16 LXC containers with centralized logging, SIEM, infrastructure-as-code, and automated alerting."
+    />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+
+      :root {
+        --emerald: #4edea3;
+        --emerald-dark: #2db87e;
+        --emerald-glow: rgba(78, 222, 163, 0.15);
+        --surface-0: #0a0f1a;
+        --surface-1: #111827;
+        --surface-2: #1a2332;
+        --surface-3: #243044;
+        --text-primary: #e8edf5;
+        --text-secondary: #94a3b8;
+        --text-muted: #64748b;
+        --amber: #f59e0b;
+        --red: #ef4444;
+        --blue: #3b82f6;
+        --purple: #8b5cf6;
+        --border: rgba(78, 222, 163, 0.12);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          "Inter",
+          -apple-system,
+          sans-serif;
+        background: var(--surface-0);
+        color: var(--text-primary);
+        line-height: 1.6;
+        font-size: 11pt;
+      }
+
+      @media print {
+        body {
+          background: white;
+          color: #1a1a1a;
+          font-size: 10pt;
+        }
+        .page-break {
+          page-break-before: always;
+        }
+        section {
+          break-inside: avoid;
+        }
+        :root {
+          --surface-1: #ffffff;
+          --surface-2: #f8f9fa;
+          --surface-3: #e9ecef;
+          --text-primary: #1a1a1a;
+          --text-secondary: #495057;
+          --text-muted: #868e96;
+          --border: #dee2e6;
+          --emerald: #059669;
+          --emerald-dark: #047857;
+        }
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 50px;
+      }
+
+      .cover {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        background: linear-gradient(
+          135deg,
+          var(--surface-0) 0%,
+          var(--surface-1) 50%,
+          var(--surface-2) 100%
+        );
+        border-bottom: 3px solid var(--emerald);
+        padding: 80px 50px;
+      }
+
+      .cover-logo {
+        font-size: 14pt;
+        font-weight: 800;
+        letter-spacing: 6px;
+        text-transform: uppercase;
+        color: var(--emerald);
+        margin-bottom: 16px;
+      }
+
+      .cover h1 {
+        font-size: 36pt;
+        font-weight: 800;
+        line-height: 1.1;
+        margin-bottom: 12px;
+        background: linear-gradient(
+          135deg,
+          var(--emerald),
+          var(--emerald-dark)
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      @media print {
+        .cover h1 {
+          color: var(--emerald-dark);
+          -webkit-text-fill-color: var(--emerald-dark);
+        }
+      }
+
+      .cover .subtitle {
+        font-size: 16pt;
+        color: var(--text-secondary);
+        font-weight: 300;
+        margin-bottom: 48px;
+      }
+      .cover-meta {
+        font-size: 10pt;
+        color: var(--text-muted);
+        line-height: 2;
+      }
+      .cover-meta strong {
+        color: var(--text-secondary);
+      }
+
+      section {
+        padding: 40px 50px;
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h2 {
+        font-size: 20pt;
+        font-weight: 700;
+        color: var(--emerald);
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border);
+      }
+      h2 .section-num {
+        font-size: 12pt;
+        font-weight: 400;
+        color: var(--text-muted);
+        margin-right: 8px;
+      }
+      h3 {
+        font-size: 13pt;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 24px 0 10px;
+      }
+      h4 {
+        font-size: 11pt;
+        font-weight: 600;
+        color: var(--emerald-dark);
+        margin: 16px 0 6px;
+      }
+      p {
+        margin: 8px 0;
+        color: var(--text-secondary);
+      }
+      p.lead {
+        font-size: 12pt;
+        color: var(--text-primary);
+        font-weight: 400;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 16px 0;
+        font-size: 9.5pt;
+      }
+      th {
+        background: var(--surface-2);
+        color: var(--emerald);
+        font-weight: 600;
+        text-align: left;
+        padding: 10px 12px;
+        border-bottom: 2px solid var(--border);
+        font-size: 8.5pt;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      td {
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--border);
+        color: var(--text-secondary);
+        vertical-align: top;
+      }
+      @media print {
+        th {
+          background: #f1f3f5;
+          color: #047857;
+        }
+      }
+
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin: 16px 0;
+      }
+      .card {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 16px;
+      }
+      .card .label {
+        font-size: 8pt;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-muted);
+        margin-bottom: 4px;
+      }
+      .card .value {
+        font-size: 22pt;
+        font-weight: 700;
+        color: var(--emerald);
+      }
+      .card .detail {
+        font-size: 9pt;
+        color: var(--text-secondary);
+        margin-top: 4px;
+      }
+
+      .badge {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 8pt;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .badge-green {
+        background: rgba(78, 222, 163, 0.15);
+        color: var(--emerald);
+      }
+      .badge-amber {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--amber);
+      }
+      .badge-blue {
+        background: rgba(59, 130, 246, 0.15);
+        color: var(--blue);
+      }
+      .badge-purple {
+        background: rgba(139, 92, 246, 0.15);
+        color: var(--purple);
+      }
+      .badge-red {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--red);
+      }
+      @media print {
+        .badge-green {
+          background: #d1fae5;
+          color: #047857;
+        }
+        .badge-amber {
+          background: #fef3c7;
+          color: #92400e;
+        }
+        .badge-blue {
+          background: #dbeafe;
+          color: #1d4ed8;
+        }
+        .badge-purple {
+          background: #ede9fe;
+          color: #6d28d9;
+        }
+        .badge-red {
+          background: #fee2e2;
+          color: #991b1b;
+        }
+      }
+
+      code {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 9pt;
+        background: var(--surface-3);
+        padding: 1px 5px;
+        border-radius: 3px;
+        color: var(--emerald);
+      }
+      @media print {
+        code {
+          background: #f1f3f5;
+          color: #047857;
+        }
+      }
+
+      .diagram {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 24px;
+        margin: 16px 0;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 8.5pt;
+        line-height: 1.5;
+        white-space: pre;
+        overflow-x: auto;
+        color: var(--text-secondary);
+      }
+      .diagram .em {
+        color: var(--emerald);
+        font-weight: 600;
+      }
+      .diagram .am {
+        color: var(--amber);
+      }
+      .diagram .bl {
+        color: var(--blue);
+      }
+      .diagram .pu {
+        color: var(--purple);
+      }
+
+      ul,
+      ol {
+        padding-left: 24px;
+        margin: 8px 0;
+        color: var(--text-secondary);
+      }
+      li {
+        margin: 4px 0;
+      }
+
+      .callout {
+        background: var(--emerald-glow);
+        border-left: 3px solid var(--emerald);
+        padding: 12px 16px;
+        margin: 16px 0;
+        border-radius: 0 6px 6px 0;
+        font-size: 10pt;
+      }
+      @media print {
+        .callout {
+          background: #ecfdf5;
+          border-left-color: #059669;
+        }
+      }
+
+      .flow {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 16px 0;
+        flex-wrap: wrap;
+      }
+      .flow-item {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        padding: 8px 14px;
+        font-size: 9pt;
+        font-weight: 500;
+        white-space: nowrap;
+      }
+      .flow-arrow {
+        color: var(--emerald);
+        font-weight: 700;
+        font-size: 14pt;
+      }
+
+      .toc {
+        list-style: none;
+        padding: 0;
+      }
+      .toc li {
+        padding: 6px 0;
+        border-bottom: 1px solid var(--border);
+      }
+      .toc li a {
+        color: var(--text-primary);
+        text-decoration: none;
+      }
+      .toc li .num {
+        color: var(--emerald);
+        font-weight: 600;
+        margin-right: 12px;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 24px;
+        font-size: 8pt;
+        color: var(--text-muted);
+        border-top: 1px solid var(--border);
+        margin-top: 40px;
+      }
+
+      .portfolio-note {
+        background: var(--surface-2);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 24px 50px;
+        font-size: 10pt;
+        color: var(--text-secondary);
+      }
+      .portfolio-note strong {
+        color: var(--emerald);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- COVER PAGE -->
+    <div class="cover">
+      <div class="cover-logo">SJVIK LABS</div>
+      <h1>Network Operations Center</h1>
+      <div class="subtitle">Architecture Overview</div>
+      <div class="cover-meta">
+        <strong>Author:</strong> Steven J. Vik<br />
+        <strong>Date:</strong> April 2026<br />
+        <strong>Cluster:</strong> 3-node Proxmox HA &bull; 16 LXC containers
+        &bull; 4 VLANs
+      </div>
+    </div>
+
+    <div class="portfolio-note">
+      <strong>About this document:</strong> This is a sanitized overview of a
+      production home-lab NOC I built and operate. Internal IPs, credentials,
+      file paths, and operational details have been redacted. The architecture,
+      tooling decisions, and operational practices are presented accurately.
+      Source:
+      <a href="https://github.com/sjviklabs" style="color: var(--emerald)"
+        >github.com/sjviklabs</a
+      >
+    </div>
+
+    <!-- TABLE OF CONTENTS -->
+    <section>
+      <h2>Contents</h2>
+      <ul class="toc">
+        <li>
+          <span class="num">01</span><a href="#overview">Executive Overview</a>
+        </li>
+        <li>
+          <span class="num">02</span
+          ><a href="#architecture">Architecture & Data Flow</a>
+        </li>
+        <li>
+          <span class="num">03</span
+          ><a href="#inventory">Container Inventory</a>
+        </li>
+        <li>
+          <span class="num">04</span><a href="#network">Network Segmentation</a>
+        </li>
+        <li>
+          <span class="num">05</span
+          ><a href="#observability">Observability Stack</a>
+        </li>
+        <li>
+          <span class="num">06</span><a href="#iac">Infrastructure as Code</a>
+        </li>
+        <li>
+          <span class="num">07</span
+          ><a href="#controlpanel">Custom Operator Dashboard</a>
+        </li>
+        <li>
+          <span class="num">08</span><a href="#security">Security Posture</a>
+        </li>
+        <li>
+          <span class="num">09</span
+          ><a href="#backup">Backup & Disaster Recovery</a>
+        </li>
+        <li>
+          <span class="num">10</span
+          ><a href="#alerting">Monitoring & Alerting</a>
+        </li>
+        <li>
+          <span class="num">11</span
+          ><a href="#decisions">Key Engineering Decisions</a>
+        </li>
+      </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 01. EXECUTIVE OVERVIEW -->
+    <section id="overview">
+      <h2><span class="section-num">01</span> Executive Overview</h2>
+      <p class="lead">
+        The SJVIK NOC is a production-grade operations center running on a
+        3-node Proxmox VE high-availability cluster. It provides centralized
+        logging, SIEM, infrastructure-as-code, automated alerting, and a custom
+        React-based operator dashboard for 16 LXC containers across 4
+        VLAN-segmented network zones.
+      </p>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="label">Proxmox Nodes</div>
+          <div class="value">3</div>
+          <div class="detail">HA cluster with quorum</div>
+        </div>
+        <div class="card">
+          <div class="label">LXC Containers</div>
+          <div class="value">16</div>
+          <div class="detail">All Ansible-managed</div>
+        </div>
+        <div class="card">
+          <div class="label">VLANs</div>
+          <div class="value">4</div>
+          <div class="detail">Segmented by function</div>
+        </div>
+        <div class="card">
+          <div class="label">Alert Rules</div>
+          <div class="value">13</div>
+          <div class="detail">Grafana file-provisioned</div>
+        </div>
+        <div class="card">
+          <div class="label">Ansible Roles</div>
+          <div class="value">20+</div>
+          <div class="detail">site.yml converges all</div>
+        </div>
+        <div class="card">
+          <div class="label">Log Retention</div>
+          <div class="value">7d</div>
+          <div class="detail">Loki TSDB v13</div>
+        </div>
+      </div>
+
+      <h3>Design Principles</h3>
+      <ul>
+        <li>
+          <strong>Defense in depth:</strong> VLAN segmentation, SIEM with
+          endpoint agents, least-privilege services, encrypted secrets at rest
+        </li>
+        <li>
+          <strong>Observable by default:</strong> Every container ships logs to
+          a central aggregator, exports metrics to Prometheus, and is
+          health-checked by an uptime monitor
+        </li>
+        <li>
+          <strong>Reproducible from code:</strong> Every container's state is
+          captured in Ansible — rebuilding or provisioning a new LXC is a single
+          command
+        </li>
+        <li>
+          <strong>Alertable:</strong> 13 Grafana rules cover disk, RAM, CPU,
+          node health, backups, TLS certificates, and SIEM agent status
+        </li>
+      </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 02. ARCHITECTURE -->
+    <section id="architecture">
+      <h2><span class="section-num">02</span> Architecture & Data Flow</h2>
+
+      <h3>Physical Layer</h3>
+      <table>
+        <tr>
+          <th>Node</th>
+          <th>Role</th>
+          <th>RAM</th>
+          <th>Storage</th>
+          <th>Containers</th>
+        </tr>
+        <tr>
+          <td><strong>Node 1</strong></td>
+          <td>Primary compute</td>
+          <td>64 GB</td>
+          <td>NVMe + SATA SSD</td>
+          <td>7 LXCs</td>
+        </tr>
+        <tr>
+          <td><strong>Node 2</strong></td>
+          <td>AI + services</td>
+          <td>64 GB</td>
+          <td>NVMe + 932 GB SATA</td>
+          <td>6 LXCs</td>
+        </tr>
+        <tr>
+          <td><strong>Node 3</strong></td>
+          <td>Storage + backup</td>
+          <td>64 GB</td>
+          <td>NVMe + SATA array</td>
+          <td>3 LXCs</td>
+        </tr>
+      </table>
+
+      <h3>Data Flow</h3>
+      <div class="diagram">
+        <span class="em">Container Logs</span> ──→
+        <span class="bl">Grafana Alloy (per LXC)</span> ──→
+        <span class="em">Loki (centralized)</span> ──→
+        <span class="pu">Grafana Explore</span> ↘
+        <span class="am">Operator Dashboard</span>
+
+        <span class="em">Container Metrics</span> ──→
+        <span class="bl">node_exporter (per LXC)</span> ──→
+        <span class="em">Prometheus</span> ──→
+        <span class="pu">Grafana Dashboards</span> ↘
+        <span class="am">13 Alert Rules → Email</span>
+
+        <span class="em">Security Events</span> ──→
+        <span class="bl">Wazuh Agents (12 LXCs)</span> ──→
+        <span class="em">Wazuh Manager</span> ──→
+        <span class="pu">Wazuh Dashboard</span>
+
+        <span class="em">HTTP Services</span> ──→
+        <span class="bl">Traefik Reverse Proxy</span> ──→
+        <span class="em">*.lan routing</span> ──→
+        <span class="pu">mkcert TLS</span>
+
+        <span class="em">IaC (Ansible)</span> ──→
+        <span class="bl">SSH to all 16 LXCs</span> ──→
+        <span class="em">site.yml</span> ──→
+        <span class="pu">Converged State</span>
+      </div>
+
+      <h3>High Availability</h3>
+      <p>
+        5 critical containers are HA-registered in the Proxmox cluster with
+        automatic restart policies. These cover DNS, reverse proxy, the operator
+        dashboard, the automation agent system, and the monitoring stack. HA
+        configuration uses <code>max_restart 2</code> with no automatic
+        relocation (manual failover only) to prevent split-brain scenarios
+        during quorum recovery.
+      </p>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 03. CONTAINER INVENTORY -->
+    <section id="inventory">
+      <h2><span class="section-num">03</span> Container Inventory</h2>
+
+      <h3>Node 1 — Primary Compute (7 LXCs)</h3>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>VLAN</th>
+          <th>Service</th>
+          <th>Category</th>
+        </tr>
+        <tr>
+          <td>adguard</td>
+          <td>Mgmt</td>
+          <td>AdGuard Home v0.107 — DNS filtering & rewrite</td>
+          <td><span class="badge badge-green">HA</span></td>
+        </tr>
+        <tr>
+          <td>web-01</td>
+          <td>Mgmt</td>
+          <td>SJVIK Control Panel (Node.js, PM2, Express + React)</td>
+          <td><span class="badge badge-green">HA</span></td>
+        </tr>
+        <tr>
+          <td>syncthing</td>
+          <td>Data</td>
+          <td>Syncthing — Knowledge vault sync</td>
+          <td><span class="badge badge-blue">Data</span></td>
+        </tr>
+        <tr>
+          <td>vaultwarden</td>
+          <td>Data</td>
+          <td>Vaultwarden v1.35 — Self-hosted password vault</td>
+          <td><span class="badge badge-blue">Data</span></td>
+        </tr>
+        <tr>
+          <td>traefik</td>
+          <td>Mgmt</td>
+          <td>Traefik v3.3 — Reverse proxy with mkcert TLS</td>
+          <td><span class="badge badge-green">HA</span></td>
+        </tr>
+        <tr>
+          <td>monitor</td>
+          <td>Mgmt</td>
+          <td>Grafana 12.4, Prometheus 2.42, Loki 3.7, Alloy 1.15</td>
+          <td><span class="badge badge-green">HA</span></td>
+        </tr>
+        <tr>
+          <td>trading</td>
+          <td>Mgmt</td>
+          <td>AI Trading Lab — Paper trading experiment (Ubuntu)</td>
+          <td><span class="badge badge-amber">Active</span></td>
+        </tr>
+      </table>
+
+      <h3>Node 2 — AI & Services (6 LXCs)</h3>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>VLAN</th>
+          <th>Service</th>
+          <th>Category</th>
+        </tr>
+        <tr>
+          <td>5etools</td>
+          <td>Services</td>
+          <td>D&D reference tool (static site)</td>
+          <td><span class="badge badge-purple">Service</span></td>
+        </tr>
+        <tr>
+          <td>wazuh</td>
+          <td>Mgmt</td>
+          <td>Wazuh v4.14 — SIEM (indexer + manager + dashboard)</td>
+          <td><span class="badge badge-red">Security</span></td>
+        </tr>
+        <tr>
+          <td>uptime-kuma</td>
+          <td>Mgmt</td>
+          <td>Uptime Kuma v2.2 — HTTP uptime monitors</td>
+          <td><span class="badge badge-purple">Service</span></td>
+        </tr>
+        <tr>
+          <td>garrison</td>
+          <td>Services</td>
+          <td>Automation agents (PM2, PostgreSQL) — Ansible control node</td>
+          <td><span class="badge badge-green">HA</span></td>
+        </tr>
+        <tr>
+          <td>umami</td>
+          <td>Data</td>
+          <td>Umami — Self-hosted web analytics (Next.js, PostgreSQL)</td>
+          <td><span class="badge badge-purple">Service</span></td>
+        </tr>
+        <tr>
+          <td>minecraft</td>
+          <td>Gaming</td>
+          <td>Modded game server — Crafty Controller, 449 mods</td>
+          <td><span class="badge badge-amber">Gaming</span></td>
+        </tr>
+      </table>
+
+      <h3>Node 3 — Storage & Backup (3 LXCs)</h3>
+      <table>
+        <tr>
+          <th>Name</th>
+          <th>VLAN</th>
+          <th>Service</th>
+          <th>Category</th>
+        </tr>
+        <tr>
+          <td>ollama</td>
+          <td>Services</td>
+          <td>Ollama — Local LLM inference</td>
+          <td><span class="badge badge-purple">Service</span></td>
+        </tr>
+        <tr>
+          <td>samba</td>
+          <td>Data</td>
+          <td>Samba — Network file shares</td>
+          <td><span class="badge badge-blue">Data</span></td>
+        </tr>
+        <tr>
+          <td>pbs</td>
+          <td>Data</td>
+          <td>Proxmox Backup Server</td>
+          <td><span class="badge badge-blue">Data</span></td>
+        </tr>
+      </table>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 04. NETWORK -->
+    <section id="network">
+      <h2><span class="section-num">04</span> Network Segmentation</h2>
+
+      <p class="lead">
+        Traffic is segmented into 4 VLANs by function, enforced at the
+        switch/bridge level. Cross-VLAN routing is controlled — the gaming VLAN
+        is fully isolated with no access to management or service zones.
+      </p>
+
+      <table>
+        <tr>
+          <th>VLAN</th>
+          <th>Purpose</th>
+          <th>Access Policy</th>
+          <th>Containers</th>
+        </tr>
+        <tr>
+          <td><span class="badge badge-green">Management</span></td>
+          <td>DNS, proxy, monitoring, SIEM</td>
+          <td>Full cluster access</td>
+          <td>7 containers</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-blue">Services</span></td>
+          <td>Applications, AI, automation</td>
+          <td>Ingress from mgmt only</td>
+          <td>3 containers</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-purple">Data</span></td>
+          <td>Storage, secrets, sync, backup</td>
+          <td>Restricted, no public ingress</td>
+          <td>5 containers</td>
+        </tr>
+        <tr>
+          <td><span class="badge badge-amber">Gaming</span></td>
+          <td>Game servers (isolated)</td>
+          <td>No cross-VLAN access</td>
+          <td>1 container</td>
+        </tr>
+      </table>
+
+      <h3>Remote Access</h3>
+      <ul>
+        <li>
+          <strong>Tailscale mesh VPN:</strong> Encrypted overlay network with
+          dual subnet routers for failover. Primary and backup on separate
+          physical nodes. Tested failover 2026-04-02.
+        </li>
+        <li>
+          <strong>Traefik reverse proxy:</strong> All internal services served
+          via <code>*.lan</code> hostnames with locally-trusted TLS certificates
+          (17 SANs).
+        </li>
+        <li>
+          <strong>AdGuard DNS:</strong> Local DNS rewrites for all service
+          hostnames, plus network-wide ad/tracker filtering.
+        </li>
+      </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 05. OBSERVABILITY -->
+    <section id="observability">
+      <h2><span class="section-num">05</span> Observability Stack</h2>
+
+      <p class="lead">
+        Three-tier observability: centralized logs (Loki + Alloy), metrics
+        (Prometheus + node_exporter), and uptime monitoring (Uptime Kuma). All
+        converge on Grafana for unified dashboards and alerting.
+      </p>
+
+      <h3>Logging Pipeline</h3>
+      <div class="flow">
+        <div class="flow-item">16 LXCs</div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item" style="border-color: var(--blue)">
+          Grafana Alloy v1.15
+        </div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item" style="border-color: var(--emerald)">
+          Loki v3.7 (TSDB v13)
+        </div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item" style="border-color: var(--purple)">
+          Grafana + Operator Dashboard
+        </div>
+      </div>
+
+      <table>
+        <tr>
+          <th>Component</th>
+          <th>Version</th>
+          <th>Scope</th>
+          <th>Key Detail</th>
+        </tr>
+        <tr>
+          <td><strong>Grafana Alloy</strong></td>
+          <td>v1.15.0</td>
+          <td>All 16 LXCs</td>
+          <td>
+            River/HCL config, file-based scraping (journal fails silently in
+            unprivileged LXC). Ansible-templated per container.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Grafana Loki</strong></td>
+          <td>v3.7.1</td>
+          <td>Centralized</td>
+          <td>
+            TSDB v13 schema, 7-day retention, ingestion rate raised to 32 MB/s
+            to handle 16 simultaneous agents.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Prometheus</strong></td>
+          <td>v2.42</td>
+          <td>Centralized</td>
+          <td>
+            Scrapes node_exporter on all containers plus Proxmox VE exporter on
+            the host.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>node_exporter</strong></td>
+          <td>v1.7.0</td>
+          <td>All 16 LXCs</td>
+          <td>
+            Idempotent Ansible-managed install with version-gated download
+            logic.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Grafana</strong></td>
+          <td>v12.4.1</td>
+          <td>Centralized</td>
+          <td>
+            2 datasources (Prometheus + Loki), 13 file-provisioned alert rules,
+            custom NOC dashboard.
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Uptime Kuma</strong></td>
+          <td>v2.2.1</td>
+          <td>Centralized</td>
+          <td>
+            11+ HTTP monitors covering all critical services, 60-second
+            intervals.
+          </td>
+        </tr>
+      </table>
+
+      <h3>Log Label Schema</h3>
+      <p>
+        Every log line carries 4 labels, enabling precise filtering in both
+        Grafana and the operator dashboard:
+      </p>
+      <table>
+        <tr>
+          <th>Label</th>
+          <th>Derivation</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td><code>host</code></td>
+          <td>LXC VMID</td>
+          <td>Unique container identifier</td>
+        </tr>
+        <tr>
+          <td><code>container</code></td>
+          <td>Hostname</td>
+          <td>Human-readable name</td>
+        </tr>
+        <tr>
+          <td><code>node</code></td>
+          <td>Proxmox node</td>
+          <td>Physical host grouping</td>
+        </tr>
+        <tr>
+          <td><code>job</code></td>
+          <td>Log source</td>
+          <td>Service-specific filtering (syslog, grafana, wazuh, etc.)</td>
+        </tr>
+      </table>
+
+      <div class="callout">
+        <strong>Key Decision:</strong> Promtail reached EOL in February 2026. We
+        use Grafana Alloy, the official successor. Journal scraping was avoided
+        because it fails silently in unprivileged LXC containers — all agents
+        use file-based targets, which is the reliable path for containerized
+        environments.
+      </div>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 06. INFRASTRUCTURE AS CODE -->
+    <section id="iac">
+      <h2><span class="section-num">06</span> Infrastructure as Code</h2>
+
+      <p class="lead">
+        Every container's desired state is declared in Ansible. A single
+        <code>site.yml</code> playbook converges all 16 containers. New
+        containers are provisioned with a one-command playbook that chains base
+        roles automatically.
+      </p>
+
+      <h3>Repository Structure</h3>
+      <div class="diagram">
+        infra-ansible/ ├── site.yml # Master playbook — converges everything ├──
+        inventory/production/ │ ├── hosts.yml # 16 LXCs, 4 VLANs, 3 node groups
+        │ ├── group_vars/ # Per-node and cluster-wide variables │ └── host_vars/
+        # Per-container log paths and overrides ├── roles/ │ ├──
+        <span class="em">common</span>/ # Base packages, SSH hardening, timezone
+        │ ├── <span class="em">node_exporter</span>/ # Prometheus metrics
+        (idempotent install) │ ├── <span class="em">alloy</span>/ # Log
+        collection (Jinja2 → River/HCL) │ ├──
+        <span class="bl">20+ service roles</span>/ # One per container (adguard,
+        traefik, ...) │ └── <span class="pu">minecraft</span>/ # Documented-only
+        (isolated VLAN, manual mgmt) ├── playbooks/ │ ├── common.yml # Base
+        roles for all containers │ ├── alloy.yml # Log agents (serial: 3
+        staggered deploy) │ ├── {node}.yml # Per-node service roles │ └──
+        create-container.yml # One-command new LXC provisioning └── vault/ └──
+        secrets.yml # AES-256 encrypted (Ansible Vault)
+      </div>
+
+      <h3>Key Practices</h3>
+      <ul>
+        <li>
+          <strong>Audit-first role authoring:</strong> Every service role was
+          written after a live SSH audit of the container's actual state — not
+          from assumptions. This prevents "codifying drift" where the role
+          captures stale or incorrect state.
+        </li>
+        <li>
+          <strong>Version-gated idempotency:</strong> Binary downloads use a
+          version check (not file existence) to gate downloads. This eliminates
+          spurious <code>changed</code> reports in check mode and ensures
+          upgrades happen reliably.
+        </li>
+        <li>
+          <strong>Staggered deployments:</strong> The Alloy playbook uses
+          <code>serial: 3</code> to avoid overwhelming Loki's ingestion rate
+          when 16 agents connect simultaneously.
+        </li>
+        <li>
+          <strong>Encrypted secrets:</strong> All credentials are encrypted with
+          Ansible Vault. A pre-commit hook prevents accidental password file
+          commits.
+        </li>
+        <li>
+          <strong>Conservative roles for critical services:</strong> Wazuh, PBS,
+          and Vaultwarden roles manage service state only — they never attempt
+          reinstallation, protecting complex single-package installs from
+          Ansible-induced breakage.
+        </li>
+      </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 07. CONTROL PANEL -->
+    <section id="controlpanel">
+      <h2><span class="section-num">07</span> Custom Operator Dashboard</h2>
+
+      <p class="lead">
+        A purpose-built React + Express dashboard providing unified visibility
+        into infrastructure, automation agents, projects, and centralized logs —
+        without requiring Grafana access for day-to-day operations.
+      </p>
+
+      <h3>Stack</h3>
+      <p>
+        Express 5 + React 19 + Vite 6 + Tailwind CSS 4 + TypeScript + SQLite
+        (WAL mode). 12 scheduled collector jobs feed data automatically.
+      </p>
+
+      <h3>Pages</h3>
+      <table>
+        <tr>
+          <th>Page</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td><strong>Hub</strong></td>
+          <td>
+            Project grid with health status, priority board, weekly pulse,
+            compact infra/agent summaries
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Logs</strong></td>
+          <td>
+            Centralized log search — proxies Loki LogQL with container,
+            severity, and time range filters
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Infrastructure</strong></td>
+          <td>
+            Node cards with sparklines, container status, service health (Uptime
+            Kuma), backup status, alerts
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Runs</strong></td>
+          <td>
+            Automation agent run history with filtering and summary statistics
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Company</strong></td>
+          <td>OKR tracking, project status, business KPIs</td>
+        </tr>
+        <tr>
+          <td><strong>GTD</strong></td>
+          <td>
+            Task management — next actions, projects, waiting-for (syncs from
+            Obsidian vault via SSH)
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Costs</strong></td>
+          <td>AI API cost tracking with model breakdown and forecasting</td>
+        </tr>
+        <tr>
+          <td><strong>System</strong></td>
+          <td>Scheduled job visibility, build log, activity stats, settings</td>
+        </tr>
+      </table>
+
+      <h3>Logs Page Architecture</h3>
+      <div class="flow">
+        <div class="flow-item">Browser</div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item">Express Proxy</div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item">Loki LogQL API</div>
+        <span class="flow-arrow">&#x2192;</span>
+        <div class="flow-item">React Log Table</div>
+      </div>
+      <p>
+        The browser never queries Loki directly. Express translates frontend
+        filter parameters into LogQL and proxies the response. Container and
+        severity dropdowns are dynamically populated from Loki label values.
+      </p>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 08. SECURITY -->
+    <section id="security">
+      <h2><span class="section-num">08</span> Security Posture</h2>
+
+      <h3>SIEM — Wazuh</h3>
+      <p>
+        Full Wazuh deployment (indexer + manager + dashboard + filebeat) on a
+        dedicated LXC with agents on 12 of 16 containers. Provides endpoint
+        monitoring, file integrity monitoring, log analysis, vulnerability
+        detection, and compliance reporting.
+      </p>
+
+      <h3>Network Security</h3>
+      <ul>
+        <li>
+          <strong>VLAN segmentation:</strong> 4 zones isolate management,
+          services, data, and gaming. The gaming VLAN is fully isolated — no
+          cross-VLAN routing.
+        </li>
+        <li>
+          <strong>Encrypted mesh VPN:</strong> Tailscale with dual subnet
+          routers on separate physical nodes for failover.
+        </li>
+        <li>
+          <strong>TLS everywhere:</strong> All internal services behind Traefik
+          with locally-trusted certificates (17 SANs).
+        </li>
+        <li>
+          <strong>DNS filtering:</strong> AdGuard Home blocks ads, trackers, and
+          malicious domains at the network level.
+        </li>
+      </ul>
+
+      <h3>Access Control</h3>
+      <ul>
+        <li>
+          <strong>SSH:</strong> Key-only authentication. Password authentication
+          disabled on all containers. Root login restricted to key-based access.
+        </li>
+        <li>
+          <strong>Secrets management:</strong> Ansible Vault (AES-256) for all
+          infrastructure credentials. Pre-commit hook prevents accidental
+          exposure. Self-hosted Vaultwarden for operator password management.
+        </li>
+        <li>
+          <strong>Principle of least privilege:</strong> Services run as
+          dedicated system users (nologin shell). Alloy log collectors use
+          targeted group membership for read access rather than running as root.
+        </li>
+      </ul>
+    </section>
+
+    <!-- 09. BACKUP & DR -->
+    <section id="backup">
+      <h2><span class="section-num">09</span> Backup & Disaster Recovery</h2>
+
+      <h3>Backup Strategy</h3>
+      <ul>
+        <li>
+          <strong>Proxmox Backup Server:</strong> Daily full backups of all 16
+          LXCs with deduplication
+        </li>
+        <li>
+          <strong>Grafana alerting:</strong> Automated alert fires if any
+          container misses its backup window
+        </li>
+        <li>
+          <strong>Ansible as code backup:</strong> All container configs exist
+          in the infra-ansible repo — a PBS restore +
+          <code>site.yml</code> converge fully rebuilds any container
+        </li>
+      </ul>
+
+      <h3>DR Validation</h3>
+      <div class="callout">
+        <strong>DR smoke test passed (April 2026):</strong> The automation agent
+        container was restored from PBS to a different physical node. All 8
+        agents, scheduled jobs, and database were verified intact. Full recovery
+        completed in under 10 minutes.
+      </div>
+
+      <h3>Redundancy</h3>
+      <ul>
+        <li>
+          <strong>VPN failover:</strong> Dual subnet routers on separate
+          physical nodes. Tested by killing the primary — all services remained
+          reachable via backup.
+        </li>
+        <li>
+          <strong>HA restart:</strong> 5 critical containers auto-restart on
+          failure (up to 2 attempts)
+        </li>
+        <li>
+          <strong>IaC rebuild:</strong> Any container can be recreated from
+          Ansible playbooks after a PBS restore or from scratch
+        </li>
+      </ul>
+    </section>
+
+    <div class="page-break"></div>
+
+    <!-- 10. MONITORING & ALERTING -->
+    <section id="alerting">
+      <h2><span class="section-num">10</span> Monitoring & Alerting</h2>
+
+      <h3>Grafana Alert Rules (13)</h3>
+      <table>
+        <tr>
+          <th>Category</th>
+          <th>Rules</th>
+          <th>What It Catches</th>
+        </tr>
+        <tr>
+          <td><strong>Disk</strong></td>
+          <td>4 rules (warning + critical, legacy + new)</td>
+          <td>Per-container disk usage at 70/80/85/90% thresholds</td>
+        </tr>
+        <tr>
+          <td><strong>Memory</strong></td>
+          <td>3 rules (warning + critical)</td>
+          <td>Per-container RAM usage at 85/90/95% thresholds</td>
+        </tr>
+        <tr>
+          <td><strong>CPU</strong></td>
+          <td>1 rule</td>
+          <td>Sustained CPU &gt;90% across any container</td>
+        </tr>
+        <tr>
+          <td><strong>Availability</strong></td>
+          <td>2 rules</td>
+          <td>Node unreachable, container unexpectedly stopped</td>
+        </tr>
+        <tr>
+          <td><strong>Compliance</strong></td>
+          <td>2 rules</td>
+          <td>Backup missed, TLS certificate expiring (&lt;30 days)</td>
+        </tr>
+        <tr>
+          <td><strong>Security</strong></td>
+          <td>1 rule</td>
+          <td>Wazuh agent disconnected from SIEM manager</td>
+        </tr>
+      </table>
+
+      <p>
+        All alert rules are <strong>file-provisioned</strong> (GitOps-managed
+        YAML in the Grafana provisioning directory), not manually created via
+        UI. Alerts fire to an email contact point.
+      </p>
+
+      <div class="callout">
+        <strong>Origin story:</strong> The new disk/RAM alert rules were created
+        after a cluster audit discovered 3 containers silently overflowing their
+        disk allocations. The original alert only checked
+        <code>fstype="ext4"</code>, missing other filesystem types. The
+        replacement uses a negation filter
+        (<code>fstype!~"tmpfs|overlay"</code>) to catch all real filesystems.
+      </div>
+
+      <h3>Additional Monitoring</h3>
+      <ul>
+        <li>
+          <strong>Uptime Kuma:</strong> 11+ HTTP monitors covering all critical
+          services at 60-second intervals
+        </li>
+        <li>
+          <strong>Grafana NOC Dashboard:</strong> Active container count, log
+          volume by container, logs/minute rate, live log stream, log rate by
+          node
+        </li>
+        <li>
+          <strong>Operator Dashboard /infra:</strong> Container cards, service
+          health, backup status, alert summary — without needing Grafana access
+        </li>
+      </ul>
+    </section>
+
+    <!-- 11. KEY DECISIONS -->
+    <section id="decisions">
+      <h2><span class="section-num">11</span> Key Engineering Decisions</h2>
+
+      <p class="lead">
+        Every infrastructure decision has a documented rationale. These are the
+        non-obvious choices that shaped the NOC.
+      </p>
+
+      <table>
+        <tr>
+          <th>Decision</th>
+          <th>Rationale</th>
+        </tr>
+        <tr>
+          <td>Grafana Alloy over Promtail</td>
+          <td>
+            Promtail reached EOL Feb 2026. Alloy is the official successor with
+            active development.
+          </td>
+        </tr>
+        <tr>
+          <td>File-based log scraping, no journald</td>
+          <td>
+            Journal access fails silently in unprivileged LXC containers. File
+            targets are reliable and explicit.
+          </td>
+        </tr>
+        <tr>
+          <td>Loki ingestion rate raised to 32 MB/s</td>
+          <td>
+            Default 4 MB/s silently drops logs when 16 agents connect.
+            Discovered during load testing.
+          </td>
+        </tr>
+        <tr>
+          <td>TSDB v13 schema from day one</td>
+          <td>
+            Loki's schema is write-once. Starting with the latest schema avoids
+            a painful future migration.
+          </td>
+        </tr>
+        <tr>
+          <td>Ansible Vault over external secrets manager</td>
+          <td>
+            Zero-dependency encryption for a single-operator environment. Vault
+            password file is gitignored with a pre-commit hook guard.
+          </td>
+        </tr>
+        <tr>
+          <td>Conservative roles for complex services</td>
+          <td>
+            Wazuh, PBS, and Vaultwarden roles manage service state only — never
+            reinstall. Prevents Ansible from breaking complex single-package
+            deployments.
+          </td>
+        </tr>
+        <tr>
+          <td>Staggered Alloy deployment (serial: 3)</td>
+          <td>
+            Deploying 16 log agents simultaneously could exceed Loki's burst
+            ingestion limit. Staggering prevents silent log drops.
+          </td>
+        </tr>
+        <tr>
+          <td>DNS server applied last in rollouts</td>
+          <td>
+            Applying Ansible to the DNS server (AdGuard) first caused a
+            network-wide outage. Lesson learned: DNS is always last, with
+            explicit health checks.
+          </td>
+        </tr>
+        <tr>
+          <td>Express proxy for Loki queries</td>
+          <td>
+            Browser-to-Loki direct queries create CORS complexity and expose the
+            log API. Express proxies all LogQL, keeping Loki internal-only.
+          </td>
+        </tr>
+        <tr>
+          <td>Audit-first role authoring</td>
+          <td>
+            SSH-auditing each container before writing its Ansible role prevents
+            "codifying drift" — where roles encode stale manual state as truth.
+          </td>
+        </tr>
+      </table>
+    </section>
+
+    <div class="footer">
+      SJVIK Labs &bull; Network Operations Center &bull; Architecture Overview
+      &bull; April 2026<br />
+      Built and operated by Steven J. Vik &bull;
+      <a href="https://github.com/sjviklabs" style="color: var(--emerald)"
+        >github.com/sjviklabs</a
+      >
+    </div>
+  </body>
+</html>
