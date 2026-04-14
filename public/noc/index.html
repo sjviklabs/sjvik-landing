@@ -6,7 +6,7 @@
     <title>SJVIK NOC — Architecture Overview</title>
     <meta
       name="description"
-      content="A 3-node Proxmox HA cluster running 16 LXC containers with centralized logging, SIEM, infrastructure-as-code, and automated alerting."
+      content="A 3-node Proxmox HA cluster running 13 LXC containers with centralized logging, SIEM, infrastructure-as-code, and automated alerting."
     />
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
@@ -432,7 +432,7 @@
       <div class="cover-meta">
         <strong>Author:</strong> Steven J. Vik<br />
         <strong>Date:</strong> April 2026<br />
-        <strong>Cluster:</strong> 3-node Proxmox HA &bull; 16 LXC containers
+        <strong>Cluster:</strong> 3-node Proxmox HA &bull; 13 LXC containers
         &bull; 4 VLANs
       </div>
     </div>
@@ -504,7 +504,7 @@
         The SJVIK NOC is a production-grade operations center running on a
         3-node Proxmox VE high-availability cluster. It provides centralized
         logging, SIEM, infrastructure-as-code, automated alerting, and a custom
-        React-based operator dashboard for 16 LXC containers across 4
+        React-based operator dashboard for 13 LXC containers across 4
         VLAN-segmented network zones.
       </p>
 
@@ -627,7 +627,7 @@
         <span class="pu">mkcert TLS</span>
 
         <span class="em">IaC (Ansible)</span> ──→
-        <span class="bl">SSH to all 16 LXCs</span> ──→
+        <span class="bl">SSH to all LXCs</span> ──→
         <span class="em">site.yml</span> ──→
         <span class="pu">Converged State</span>
       </div>
@@ -726,12 +726,6 @@
           <td>Mgmt</td>
           <td>Uptime Kuma v2.2 — HTTP uptime monitors</td>
           <td><span class="badge badge-purple">Service</span></td>
-        </tr>
-        <tr>
-          <td>garrison</td>
-          <td>Services</td>
-          <td>Automation agents (PM2, PostgreSQL) — Ansible control node</td>
-          <td><span class="badge badge-green">HA</span></td>
         </tr>
         <tr>
           <td>umami</td>
@@ -854,7 +848,7 @@
 
       <h3>Logging Pipeline</h3>
       <div class="flow">
-        <div class="flow-item">16 LXCs</div>
+        <div class="flow-item">13 LXCs</div>
         <span class="flow-arrow">&#x2192;</span>
         <div class="flow-item" style="border-color: var(--blue)">
           Grafana Alloy v1.15
@@ -879,7 +873,7 @@
         <tr>
           <td><strong>Grafana Alloy</strong></td>
           <td>v1.15.0</td>
-          <td>All 16 LXCs</td>
+          <td>All 13 LXCs</td>
           <td>
             River/HCL config, file-based scraping (journal fails silently in
             unprivileged LXC). Ansible-templated per container.
@@ -906,7 +900,7 @@
         <tr>
           <td><strong>node_exporter</strong></td>
           <td>v1.7.0</td>
-          <td>All 16 LXCs</td>
+          <td>All 13 LXCs</td>
           <td>
             Idempotent Ansible-managed install with version-gated download
             logic.
@@ -982,7 +976,7 @@
 
       <p class="lead">
         Every container's desired state is declared in Ansible. A single
-        <code>site.yml</code> playbook converges all 16 containers. New
+        <code>site.yml</code> playbook converges all containers. New
         containers are provisioned with a one-command playbook that chains base
         roles automatically.
       </p>
@@ -990,7 +984,7 @@
       <h3>Repository Structure</h3>
       <div class="diagram">
         infra-ansible/ ├── site.yml # Master playbook — converges everything ├──
-        inventory/production/ │ ├── hosts.yml # 16 LXCs, 4 VLANs, 3 node groups
+        inventory/production/ │ ├── hosts.yml # 13 LXCs, 4 VLANs, 3 node groups
         │ ├── group_vars/ # Per-node and cluster-wide variables │ └── host_vars/
         # Per-container log paths and overrides ├── roles/ │ ├──
         <span class="em">common</span>/ # Base packages, SSH hardening, timezone
@@ -1137,7 +1131,7 @@
       <h3>SIEM — Wazuh</h3>
       <p>
         Full Wazuh deployment (indexer + manager + dashboard + filebeat) on a
-        dedicated LXC with agents on 12 of 16 containers. Provides endpoint
+        dedicated LXC with agents on production containers. Provides endpoint
         monitoring, file integrity monitoring, log analysis, vulnerability
         detection, and compliance reporting.
       </p>

@@ -6,7 +6,7 @@ import Footer from '../components/Footer.astro';
 const projects = [
   {
     name: "SJVIK NOC",
-    description: "Production operations center: 3-node Proxmox HA cluster, 16 LXC containers across 4 VLANs. Centralized logging (Loki/Alloy), Wazuh SIEM, 13 Grafana alert rules, Ansible IaC (20+ roles, site.yml converges all), and a custom React operator dashboard with log search.",
+    description: "Production operations center: 3-node Proxmox HA cluster, 13 LXC containers across 4 VLANs. Centralized logging (Loki/Alloy), Wazuh SIEM, 13 Grafana alert rules, Ansible IaC (20+ roles, site.yml converges all), and a custom React operator dashboard with log search.",
     tags: ["Linux", "Proxmox", "VLANs", "Ansible", "Wazuh", "Grafana", "Loki"],
     url: "/experience/nexus-lab",
     urlLabel: "Case Study",
@@ -33,9 +33,12 @@ const projects = [
     tags: ["JavaScript", "Python", "Express", "Cron"]
   },
   {
-    name: "Garrison Agent System",
-    description: "8 autonomous AI agents on heartbeat schedules — SRE, Content, Career, Comms, Analytics, Product, DevOps, Security. Self-driving orchestration on dedicated LXC with PostgreSQL state tracking.",
-    tags: ["Node.js", "Claude Code", "PM2", "PostgreSQL"]
+    name: "Squire Mod v2",
+    description: "Ground-up rebuild of a Minecraft companion mod. Custom FSM, handler-per-behavior architecture, mining/farming/fishing work system, mounted combat, Geckolib animations. 80+ Java files, 170+ commits.",
+    tags: ["Java", "NeoForge", "Geckolib", "Minecraft"],
+    url: "https://github.com/sjviklabs/squire-mod-v2",
+    urlLabel: "GitHub",
+    external: true
   }
 ];
 

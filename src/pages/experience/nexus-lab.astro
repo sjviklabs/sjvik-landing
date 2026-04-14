@@ -5,7 +5,7 @@ import Footer from '../../components/Footer.astro';
 
 const nodes = [
   { role: "Primary compute", name: "Node 1", spec: "64 GB · NVMe + SATA · 7 LXCs", services: ["DNS filtering (AdGuard)", "Reverse proxy (Traefik + TLS)", "Monitoring stack (Grafana, Prometheus, Loki)", "Operator dashboard (React + Express)", "Vault sync", "Password vault (Vaultwarden)"] },
-  { role: "AI + Services", name: "Node 2", spec: "64 GB · NVMe + 932 GB SATA · 6 LXCs", services: ["SIEM (Wazuh v4.14)", "Automation agents (Garrison)", "Web analytics (Umami)", "LLM inference (Ollama)", "Uptime monitoring"] },
+  { role: "AI + Services", name: "Node 2", spec: "64 GB · NVMe + 932 GB SATA · 4 LXCs", services: ["SIEM (Wazuh v4.14)", "Web analytics (Umami)", "LLM inference (Ollama)", "Uptime monitoring"] },
   { role: "Storage + Backup", name: "Node 3", spec: "64 GB · NVMe + SATA array · 3 LXCs", services: ["Proxmox Backup Server", "Network file shares (Samba)", "Local AI inference"] },
 ];
 
@@ -13,17 +13,17 @@ const services = [
   {
     label: "Centralized Logging",
     name: "Loki + Alloy Pipeline",
-    description: "Grafana Loki v3.7 ingests logs from all 16 containers via Grafana Alloy agents. TSDB v13 schema with 7-day retention. Each agent labels logs with host, container, node, and job for precise filtering. Alloy configs are Ansible-templated — adding a new container to the pipeline is automatic."
+    description: "Grafana Loki v3.7 ingests logs from all containers via Grafana Alloy agents. TSDB v13 schema with 7-day retention. Each agent labels logs with host, container, node, and job for precise filtering. Alloy configs are Ansible-templated — adding a new container to the pipeline is automatic."
   },
   {
     label: "SIEM",
     name: "Wazuh Security Monitoring",
-    description: "Full Wazuh deployment (indexer + manager + dashboard) with agents on 12 containers. Provides endpoint monitoring, file integrity monitoring, log analysis, vulnerability detection, and compliance reporting."
+    description: "Full Wazuh deployment (indexer + manager + dashboard) with agents on production containers. Provides endpoint monitoring, file integrity monitoring, log analysis, vulnerability detection, and compliance reporting."
   },
   {
     label: "Infrastructure as Code",
     name: "Ansible — 20+ Roles, One Command",
-    description: "Every container's desired state is declared in Ansible. A single site.yml playbook converges all 16 containers. Audit-first role authoring ensures roles capture real state, not assumptions. Ansible Vault encrypts all secrets. New containers are provisioned with one command via create-container.yml."
+    description: "Every container's desired state is declared in Ansible. A single site.yml playbook converges all containers. Audit-first role authoring ensures roles capture real state, not assumptions. Ansible Vault encrypts all secrets. New containers are provisioned with one command via create-container.yml."
   },
   {
     label: "Operator Dashboard",
@@ -43,11 +43,11 @@ const services = [
 ];
 
 const domains = [
-  { num: "01", title: "Infrastructure as Code", desc: "20+ Ansible roles, site.yml converges all 16 containers. Audit-first role authoring prevents codifying drift. Encrypted secrets via Ansible Vault." },
+  { num: "01", title: "Infrastructure as Code", desc: "20+ Ansible roles, site.yml converges all containers. Audit-first role authoring prevents codifying drift. Encrypted secrets via Ansible Vault." },
   { num: "02", title: "Centralized Observability", desc: "Every container ships logs to Loki, exports metrics to Prometheus, and is health-checked by Uptime Kuma. 13 Grafana alert rules cover disk, RAM, CPU, backups, and SIEM." },
   { num: "03", title: "Defense in Depth", desc: "4 VLANs, Wazuh SIEM with 12 agents, SSH key-only auth, least-privilege service users, DNS filtering. Gaming VLAN fully isolated." },
   { num: "04", title: "Operational Discipline", desc: "Every change committed. Staggered deployments (serial:3). Conservative roles for critical services. DNS server is always last in any rollout." },
-  { num: "05", title: "Disaster Recovery", desc: "Daily PBS backups for all 16 containers. DR smoke test passed — full container restored to a different node in under 10 minutes. Dual Tailscale failover tested." },
+  { num: "05", title: "Disaster Recovery", desc: "Daily PBS backups for all containers. DR smoke test passed — full container restored to a different node in under 10 minutes. Dual Tailscale failover tested." },
   { num: "06", title: "Full-Stack Engineering", desc: "Custom React + Express operator dashboard. Loki LogQL proxy. 12 scheduled collectors. Jinja2 → River/HCL template generation for Alloy configs." },
 ];
 
@@ -55,7 +55,7 @@ const tech = [
   "Linux", "Proxmox VE", "LXC containers", "Ansible", "TypeScript", "Node.js",
   "React 19", "Express 5", "Python", "Bash", "Grafana", "Prometheus", "Loki",
   "Grafana Alloy", "Wazuh SIEM", "Traefik", "AdGuard DNS", "Tailscale",
-  "Vaultwarden", "PostgreSQL", "SQLite", "Git", "SSH"
+  "Vaultwarden", "SQLite", "Git", "SSH"
 ];
 ---
 
@@ -90,7 +90,7 @@ const tech = [
       <div class="bg-layer-1 rounded p-6 mb-12 relative">
         <span class="absolute -top-2.5 left-4 font-mono text-xs font-semibold text-emerald bg-base px-2">// README</span>
         <p class="text-text-variant text-sm leading-relaxed">
-          The SJVIK NOC is a production-grade operations center running 16 LXC containers across a 3-node Proxmox HA cluster with 4 VLAN-segmented network zones. Every container ships logs to a centralized Loki instance, exports metrics to Prometheus, and is monitored by 13 Grafana alert rules. All infrastructure is codified in Ansible — new containers are one command. A custom React dashboard provides operator-facing log search, infrastructure health, and automation visibility without requiring Grafana access.
+          The SJVIK NOC is a production-grade operations center running 13 LXC containers across a 3-node Proxmox HA cluster with 4 VLAN-segmented network zones. Every container ships logs to a centralized Loki instance, exports metrics to Prometheus, and is monitored by 13 Grafana alert rules. All infrastructure is codified in Ansible — new containers are one command. A custom React dashboard provides operator-facing log search, infrastructure health, and automation visibility without requiring Grafana access.
         </p>
         <a href="/noc/" class="inline-flex items-center gap-1 font-mono text-xs text-emerald hover:underline mt-3">
           Full architecture document &rarr;
@@ -100,7 +100,7 @@ const tech = [
       <!-- Cluster topology -->
       <section class="mb-10">
         <p class="kicker mb-2">// infrastructure</p>
-        <h2 class="font-display text-xl font-bold mb-4">3-node HA cluster — 16 containers across 4 VLANs</h2>
+        <h2 class="font-display text-xl font-bold mb-4">3-node HA cluster — 13 containers across 4 VLANs</h2>
 
         <div class="grid md:grid-cols-3 gap-px bg-text-dim/20 rounded overflow-hidden mb-6">
           {nodes.map((node) => (
