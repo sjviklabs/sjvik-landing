@@ -1,14 +1,45 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import Hero from '../components/Hero.astro';
-import Footer from '../components/Footer.astro';
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import HeroTerminal from "../components/sections/HeroTerminal.astro";
+import HeroEditorial from "../components/sections/HeroEditorial.astro";
+import WorkSection from "../components/sections/WorkSection.astro";
+import ProjectsSection from "../components/sections/ProjectsSection.astro";
+import GuidesSection from "../components/sections/GuidesSection.astro";
+import ContactSection from "../components/sections/ContactSection.astro";
 ---
 
 <Layout>
   <Nav />
-  <main>
-    <Hero />
+  <main id="main" tabindex="-1">
+    {/*
+      Hero variant switch — render BOTH variants, hide one with CSS based on
+      the data-variant attribute on <html> (set by the pre-hydration script
+      in Layout and updated live by StoreSync when the user picks from ⌘K or
+      the tweaks panel). CSS-driven toggle means no hydration flash and both
+      variants are statically pre-rendered for SEO crawlers.
+    */}
+    <div data-hero="terminal">
+      <HeroTerminal />
+    </div>
+    <div data-hero="editorial">
+      <HeroEditorial />
+    </div>
+
+    <WorkSection />
+    <ProjectsSection />
+    <GuidesSection />
+    <ContactSection />
   </main>
   <Footer />
 </Layout>
+
+<style is:global>
+  /* Hero variant toggle — CSS-driven, no React flash. */
+  [data-hero="terminal"]  { display: block; }
+  [data-hero="editorial"] { display: none; }
+
+  html[data-variant="editorial"] [data-hero="terminal"]  { display: none; }
+  html[data-variant="editorial"] [data-hero="editorial"] { display: block; }
+</style>

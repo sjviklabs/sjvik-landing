@@ -1,50 +1,22 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
-
-const jobs = [
-  {
-    title: "Engineer — Network Operations Center",
-    company: "Sound Transit",
-    via: "via Infojini",
-    location: "Seattle, WA",
-    dates: "Feb 2024 – Mar 2025",
-    description: "Monitored 3,000+ endpoints across critical transit IT and OT infrastructure in a 24/7 NOC. Authored SOPs, developed Python automation and Django-based internal tools reducing MTTR by 40%. Managed endpoint security tooling including CrowdStrike Falcon, Defender for Endpoint, and Entra ID. Enforced CJIS and NIST 800-53 compliance with zero audit violations.",
-    tags: ["Splunk", "SolarWinds", "Python", "CrowdStrike", "NIST 800-53", "CJIS"],
-    caseStudy: "/experience/sound-transit",
-    accent: "emerald"
-  },
-  {
-    title: "Enterprise Technology Auditor",
-    company: "TES USA / Amazon Campus",
-    location: "Tukwila, WA",
-    dates: "Jul 2023 – Jan 2024",
-    description: "Coordinated infrastructure audits across 20+ Amazon buildings — AV systems, Cisco hardware, and projector infrastructure. Streamlined asset inventory documentation and developed improved tracking processes that shortened audit cycles and improved equipment accuracy across campuses.",
-    tags: ["Asset Inventory", "Cisco", "Infrastructure Auditing", "Documentation"],
-    accent: "secondary"
-  },
-  {
-    title: "IT System Engineer",
-    company: "Seattle University & City of Medina PD",
-    location: "Seattle, WA",
-    dates: "2020 – 2021",
-    description: "Deployed Cisco Communicator and unified communications infrastructure supporting the COVID-19 continuity transition — configuring help desk phone lines, student services lines, and online classroom capability for 200+ faculty, staff, and students. Enforced CJIS compliance and developed incident response playbooks.",
-    tags: ["Cisco UC", "CJIS", "Incident Response", "PowerShell"],
-    accent: "secondary"
-  },
-  {
-    title: "IT Security Specialist",
-    company: "Joint Base Lewis-McChord",
-    via: "via TEKsystems",
-    location: "Tacoma, WA",
-    dates: "Mar 2017 – Mar 2018",
-    description: "Rebuilt DoD security environments for 500+ users. Managed DISA STIG-compliant Windows 10 deployment — 25% reduction in unauthorized access. Developed Splunk SIEM threat hunting protocols and vulnerability management strategies that delivered a 35% stronger security posture.",
-    tags: ["Splunk", "DISA STIG", "Windows Server", "Threat Hunting", "Vulnerability Management"],
-    caseStudy: "/experience/jblm",
-    accent: "amber"
-  }
-];
+/**
+ * /experience — full professional timeline.
+ *
+ * Content source: src/data/content.ts (EXPERIENCE, EDUCATION, CERTS_ACTIVE,
+ * CERTS_EXAM_READY). Renders using the same .section / .section-head /
+ * .frame / .tag patterns as the home WorkSection, but lays out every role
+ * plus education + both cert buckets (active + exam-ready).
+ */
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import {
+  EXPERIENCE,
+  EDUCATION,
+  CERTS_ACTIVE,
+  CERTS_EXAM_READY,
+  CONTACT,
+} from "../data/content";
 ---
 
 <Layout
@@ -52,58 +24,121 @@ const jobs = [
   description="Professional experience: enterprise NOC operations, DoD compliance, law enforcement IT, and infrastructure auditing."
 >
   <Nav />
-  <main class="pt-24 pb-16 px-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="mb-12">
-        <p class="kicker mb-2">// experience</p>
-        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">Professional background</h1>
-        <p class="text-text-variant max-w-xl mb-4">Enterprise NOC operations, DoD compliance, law enforcement IT, and infrastructure auditing.</p>
-        <div class="inline-flex items-center gap-2 px-4 py-2 rounded bg-emerald/8 font-mono text-sm text-emerald">
-          <span class="w-2 h-2 rounded-full bg-emerald animate-pulse"></span>
-          Available for cybersecurity, DevOps, and infrastructure roles
+  <main id="main" tabindex="-1">
+    <section class="section">
+      <div class="page">
+        <div class="section-head">
+          <div class="label"><span class="bullet"></span>experience · full</div>
+          <h2>
+            Enterprise NOC, DoD compliance, <em>and law enforcement IT.</em>
+          </h2>
+          <div class="meta mono">{EXPERIENCE.length} roles</div>
+        </div>
+
+        <div style="display: grid; gap: 0;">
+          {EXPERIENCE.map((e, i) => (
+            <article style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; padding: 28px 0; border-top: 1px solid var(--line); align-items: start;">
+              <div class="mono" style="font-size: 12px; color: var(--fg-dim);">{e.dates}</div>
+              <div>
+                <div style="font-size: 20px; font-weight: 500; letter-spacing: -0.015em; margin-bottom: 4px;">
+                  {e.title}
+                </div>
+                <div class="dim" style="font-size: 14px; margin-bottom: 12px;">
+                  {e.company}{e.via && <span> {e.via}</span>} &middot; {e.location}
+                </div>
+                <p style="margin: 0 0 12px; color: var(--fg-mute); font-size: 14px; line-height: 1.55;">
+                  {e.description}
+                </p>
+                <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                  {e.tags.map((t) => <span class="tag">{t}</span>)}
+                  {e.caseStudyUrl && (
+                    <a href={e.caseStudyUrl} class="mono accent" style="font-size: 12px; margin-left: auto;">
+                      Case study →
+                    </a>
+                  )}
+                </div>
+              </div>
+              <div class="mono" style="font-size: 11px; color: var(--fg-dim); text-align: right;">
+                #{String(i + 1).padStart(2, "0")}
+              </div>
+            </article>
+          ))}
         </div>
       </div>
+    </section>
 
-      <div class="space-y-6">
-        {jobs.map((job) => (
-          <div class="bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors">
-            <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-3">
-              <div>
-                <h2 class="text-lg font-bold">{job.title}</h2>
-                <p class="font-mono text-sm text-text-outline">
-                  {job.company}
-                  {job.via && <span class="text-text-dim"> {job.via}</span>}
-                  <span class="mx-1 text-text-dim">&middot;</span>
-                  {job.location}
+    <section class="section">
+      <div class="page">
+        <div class="section-head">
+          <div class="label"><span class="bullet"></span>education</div>
+          <h2>Academic background.</h2>
+          <div class="meta mono">{EDUCATION.length} schools</div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          {EDUCATION.map((ed) => (
+            <div class="frame">
+              <div class="frame-head">
+                <div class="left"><span>{ed.school}</span></div>
+                <span class="mono dim2">{ed.status}</span>
+              </div>
+              <div class="frame-body">
+                <div style="font-size: 16px; font-weight: 500; margin-bottom: 8px;">{ed.degree}</div>
+                <p style="margin: 0; color: var(--fg-mute); font-size: 14px; line-height: 1.55;">
+                  {ed.description}
                 </p>
               </div>
-              <span class="font-mono text-sm text-text-outline shrink-0">{job.dates}</span>
             </div>
-            <p class="text-text-variant text-sm leading-relaxed mb-4">{job.description}</p>
-            <div class="flex flex-wrap items-center gap-2">
-              {job.tags.map((tag) => (
-                <span class="chip">{tag}</span>
-              ))}
-              {job.caseStudy && (
-                <a href={job.caseStudy} class="ml-auto font-mono text-sm text-emerald hover:text-emerald-deep transition-colors">
-                  Case Study &rarr;
-                </a>
-              )}
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="section" style="border-bottom: 0;">
+      <div class="page">
+        <div class="section-head">
+          <div class="label"><span class="bullet"></span>credentials</div>
+          <h2>Certifications <em>— active + exam-ready.</em></h2>
+          <div class="meta mono">
+            {CERTS_ACTIVE.length} active · {CERTS_EXAM_READY.length} pending
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px;">
+          <div class="frame">
+            <div class="frame-head">
+              <div class="left"><span>/active</span></div>
+              <span class="mono accent">{CERTS_ACTIVE.length}</span>
+            </div>
+            <div class="frame-body" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              {CERTS_ACTIVE.map((c) => <span class="tag on">{c}</span>)}
             </div>
           </div>
-        ))}
-      </div>
+          <div class="frame">
+            <div class="frame-head">
+              <div class="left"><span>/exam-ready</span></div>
+              <span class="mono" style="color: var(--amber);">{CERTS_EXAM_READY.length}</span>
+            </div>
+            <div class="frame-body" style="display: flex; flex-wrap: wrap; gap: 6px;">
+              {CERTS_EXAM_READY.map((c) => (
+                <span
+                  class="tag"
+                  style="color: var(--amber); border-color: color-mix(in oklab, var(--amber) 40%, var(--line));"
+                >
+                  {c}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
 
-      <!-- Resume CTA -->
-      <div class="mt-12 text-center">
-        <a href="/Steven_Vik_Resume.pdf" class="inline-flex items-center gap-2 px-6 py-3 cta-gradient text-white font-mono font-semibold rounded hover:opacity-90 transition-opacity">
-          Download Resume (PDF)
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        </a>
+        <div style="text-align: center;">
+          <a class="cta solid" href={CONTACT.resumeUrl}>
+            <span>↓</span> résumé.pdf
+          </a>
+        </div>
       </div>
-    </div>
+    </section>
   </main>
   <Footer />
 </Layout>

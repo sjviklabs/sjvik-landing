@@ -1,0 +1,95 @@
+---
+/**
+ * HeroTerminal — the "terminal" variant hero.
+ * Two-column layout: MOTD + headline + CTAs on the left, live widget stack on
+ * the right (NowCard / SocFeed / UptimeGrid). All three widgets hydrate via
+ * React islands with client:load so they tick immediately.
+ */
+import { CONTACT } from "../../data/content";
+import NowCard from "../react/NowCard";
+import SocFeed from "../react/SocFeed";
+import UptimeGrid from "../react/UptimeGrid";
+import Typewriter from "../react/Typewriter";
+
+const motdLines = [
+  "> whoami",
+  "  steve vik — cybersecurity engineer / devops",
+  "  enterprise noc ops · incident response · infra hardening",
+  "> status --availability",
+  `  OPEN · ${CONTACT.location} · remote or hybrid`,
+];
+---
+
+<section
+  id="home"
+  class="section"
+  style="padding: 56px 0 64px; border-bottom: 1px solid var(--line);"
+>
+  <div
+    class="page"
+    style="display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 48px; align-items: start;"
+  >
+    {/* LEFT: pill + headline + CTAs + MOTD */}
+    <div>
+      <div class="pill" style="margin-bottom: 22px;">
+        <span class="led"></span>
+        {CONTACT.availability.toLowerCase()}
+      </div>
+
+      <h1 style="
+        font-family: var(--font-sans);
+        font-size: clamp(44px, 6.2vw, 86px);
+        line-height: 0.98;
+        letter-spacing: -0.035em;
+        margin: 0 0 22px;
+        font-weight: 500;
+      ">
+        I secure<br />
+        <span style="color: var(--green);">the unglamorous</span><br />
+        parts of the stack.
+      </h1>
+
+      <p style="max-width: 560px; font-size: 16.5px; line-height: 1.55; color: var(--fg-mute); margin: 0 0 28px;">
+        8+ years across enterprise NOC monitoring, incident response, and
+        compliance. I build the runbooks, harden the systems, and keep the
+        alerts honest — so the rest of the team can sleep.
+      </p>
+
+      <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 40px;">
+        <a class="cta solid" href={CONTACT.resumeUrl}>
+          <span>↓</span> résumé.pdf
+        </a>
+        <a class="cta" href="#projects">
+          <span>❯</span> see the work
+        </a>
+        <button
+          type="button"
+          class="cta ghost"
+          onclick="window.dispatchEvent(new CustomEvent('open-palette'))"
+        >
+          <span class="kbd" style="padding: 1px 6px; border-color: transparent;">⌘K</span> commands
+        </button>
+      </div>
+
+      <div class="frame" style="max-width: 560px;">
+        <div class="frame-head">
+          <div class="left"><span>/etc/motd</span></div>
+          <span class="mono" style="color: var(--green);">● secured</span>
+        </div>
+        <div
+          class="frame-body"
+          style="font-family: var(--font-mono); font-size: 12.5px; line-height: 1.75; min-height: 120px; color: var(--fg-mute);"
+        >
+          <Typewriter client:load lines={motdLines} />
+        </div>
+      </div>
+    </div>
+
+    {/* RIGHT: widget stack */}
+    <div style="display: grid; gap: 16px;">
+      <NowCard client:load />
+      <SocFeed client:load />
+      <UptimeGrid client:load />
+    </div>
+  </div>
+</section>

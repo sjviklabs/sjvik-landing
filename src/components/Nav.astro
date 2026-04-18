@@ -1,45 +1,91 @@
 ---
+/**
+ * Nav — sticky top bar with hybrid navigation.
+ *
+ * On the home page (/) the nav uses in-page hash anchors (#work, #projects,
+ * #guides, #contact) with scroll-spy highlighting via IntersectionObserver.
+ *
+ * On deep pages (/experience, /projects, etc.) it switches to absolute route
+ * links so navigation still works from anywhere on the site.
+ *
+ * ⌘K CTA dispatches the palette open event; theme toggle keeps its legacy
+ * inline-script click handler (defined in Layout.astro) until this component
+ * gets a React-island rewrite. GitHub link routes to sjviklabs org.
+ */
 const currentPath = Astro.url.pathname;
-const links = [
-  { href: "/experience", label: "Experience" },
-  { href: "/projects", label: "Projects" },
-  { href: "/guides", label: "Guides" },
-  { href: "/about", label: "About" },
-  { href: "/Steven_Vik_Resume.pdf", label: "Resume" },
-];
+const isHome = currentPath === "/" || currentPath === "";
+
+const links = isHome
+  ? [
+      { href: "#work",     label: "Work"     },
+      { href: "#projects", label: "Projects" },
+      { href: "#guides",   label: "Guides"   },
+      { href: "#contact",  label: "Contact"  },
+    ]
+  : [
+      { href: "/experience", label: "Experience" },
+      { href: "/projects",   label: "Projects"   },
+      { href: "/guides",     label: "Guides"     },
+      { href: "/about",      label: "About"      },
+    ];
 ---
 
-<nav class="fixed top-0 w-full z-50 glass">
-  <div class="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-2.5 no-underline group">
-      <img src="/logo.png" alt="" class="w-7 h-7 rounded" />
-      <span class="font-display text-sm font-semibold tracking-wide text-text-primary group-hover:text-emerald transition-colors">SJVIK Labs</span>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="/" class="brand" aria-label="SJVIK Labs — home">
+      <img src="/logo.png" alt="" />
+      <span>sjvik<span class="dot">.</span>labs</span>
     </a>
 
-    <div class="flex items-center gap-1">
-      <div class="hidden md:flex items-center gap-1">
-        {links.map((link) => (
-          <a
-            href={link.href}
-            class:list={[
-              "text-[0.8125rem] font-[450] px-3 py-1.5 rounded transition-all",
-              currentPath.startsWith(link.href)
-                ? "text-emerald bg-emerald/8"
-                : "text-text-outline hover:text-text-primary hover:bg-white/[0.06]"
-            ]}
-          >
-            {link.label}
-          </a>
-        ))}
-        <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="text-[0.8125rem] font-[450] text-text-outline px-3 py-1.5 rounded hover:text-text-primary hover:bg-white/[0.06] transition-all">GitHub</a>
-      </div>
+    <nav class="nav" aria-label="Primary">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          data-nav-link={isHome && link.href.startsWith("#") ? link.href.slice(1) : undefined}
+          class:list={[
+            !isHome && currentPath.startsWith(link.href) ? "active" : undefined,
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
 
-      <button class="theme-toggle" id="theme-toggle" aria-label="Theme: auto">
-        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    <div class="topright">
+      <button
+        type="button"
+        class="iconbtn"
+        aria-label="Open command palette (Ctrl+K)"
+        onclick="window.dispatchEvent(new CustomEvent('open-palette'))"
+      >
+        <span class="mono" style="font-size: 10px;">⌘K</span>
+      </button>
+
+      <button
+        class="theme-toggle"
+        id="theme-toggle"
+        aria-label="Theme: auto"
+      >
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="3" width="20" height="14" rx="2" />
+          <path d="M8 21h8M12 17v4" />
+        </svg>
         <span id="theme-label">System</span>
       </button>
 
-      <button class="md:hidden ml-2 p-2 text-text-outline hover:text-text-primary transition-colors" id="mobile-menu-btn" aria-label="Menu">
+      <a
+        href="/Steven_Vik_Resume.pdf"
+        class="cta"
+        aria-label="Download résumé PDF"
+      >
+        <span>↓</span> résumé
+      </a>
+
+      <button
+        class="iconbtn md:hidden"
+        id="mobile-menu-btn"
+        aria-label="Open menu"
+      >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -47,34 +93,70 @@ const links = [
     </div>
   </div>
 
-  <div class="hidden md:hidden bg-layer-1" id="mobile-menu">
-    <div class="px-6 pb-4 space-y-1">
+  {/* Mobile menu panel */}
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <div style="padding: 12px 32px; display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--line); background: var(--surface);">
       {links.map((link) => (
         <a
           href={link.href}
-          class:list={[
-            "block text-sm font-[450] px-3 py-2 rounded transition-all",
-            currentPath.startsWith(link.href)
-              ? "text-emerald bg-emerald/8"
-              : "text-text-outline hover:text-text-primary hover:bg-white/[0.06]"
-          ]}
+          style="padding: 10px 12px; color: var(--fg-mute); text-decoration: none; border-radius: 4px; font-family: var(--font-mono); font-size: 13px;"
         >
           {link.label}
         </a>
       ))}
-      <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="block text-sm font-[450] text-text-outline px-3 py-2 rounded hover:text-text-primary hover:bg-white/[0.06] transition-all">GitHub</a>
+      <a
+        href="https://github.com/sjviklabs"
+        target="_blank"
+        rel="noopener"
+        style="padding: 10px 12px; color: var(--fg-mute); text-decoration: none; border-radius: 4px; font-family: var(--font-mono); font-size: 13px;"
+      >
+        GitHub
+      </a>
     </div>
   </div>
-</nav>
+</header>
 
-<script is:inline>
-  document.addEventListener('DOMContentLoaded', function() {
-    var btn = document.getElementById('mobile-menu-btn');
-    var menu = document.getElementById('mobile-menu');
-    if (btn && menu) {
-      btn.addEventListener('click', function() {
-        menu.classList.toggle('hidden');
+<script>
+  // ── Mobile menu toggle ──
+  const menuBtn = document.getElementById("mobile-menu-btn");
+  const menu = document.getElementById("mobile-menu");
+  if (menuBtn && menu) {
+    menuBtn.addEventListener("click", () => {
+      menu.hidden = !menu.hidden;
+    });
+  }
+
+  // ── Scroll-spy for in-page anchor nav ──
+  // Only applies on the home page (where data-nav-link attrs are set).
+  const anchorLinks = document.querySelectorAll<HTMLAnchorElement>("[data-nav-link]");
+  if (anchorLinks.length > 0 && "IntersectionObserver" in window) {
+    const sections: HTMLElement[] = [];
+    anchorLinks.forEach((a) => {
+      const id = a.dataset.navLink;
+      if (id) {
+        const el = document.getElementById(id);
+        if (el) sections.push(el);
+      }
+    });
+
+    const setActive = (id: string | null) => {
+      anchorLinks.forEach((a) => {
+        a.classList.toggle("active", a.dataset.navLink === id);
       });
-    }
-  });
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) {
+          setActive(visible[0].target.id);
+        }
+      },
+      { rootMargin: "-40% 0px -40% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+
+    sections.forEach((s) => io.observe(s));
+  }
 </script>

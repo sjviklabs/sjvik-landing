@@ -1,0 +1,55 @@
+---
+/**
+ * HeroEditorial — the "paper" variant hero.
+ * Grid-paper background, large serif wordmark, smaller body column + widget stack.
+ *
+ * SocFeed + UptimeGrid widgets are real React islands, hydrated on client:load
+ * so they tick even when the user lands directly on this variant.
+ */
+import { CONTACT } from "../../data/content";
+import SocFeed from "../react/SocFeed";
+import UptimeGrid from "../react/UptimeGrid";
+---
+
+<section id="home" class="section paper" style="padding: 96px 0;">
+  <div class="page">
+    <div class="label" style="margin-bottom: 36px;">
+      <span class="bullet"></span>portfolio · mmxxvi
+    </div>
+
+    <h1 class="serif" style="
+      font-family: var(--font-serif);
+      font-size: clamp(52px, 9vw, 140px);
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      margin: 0 0 32px;
+      font-weight: 400;
+    ">
+      Steven <em style="font-style: italic; color: var(--green);">Vik</em>,<br />
+      cybersecurity &amp; devops.
+    </h1>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 64px; align-items: start;">
+      <p style="font-size: 17px; line-height: 1.6; color: var(--fg-mute); max-width: 480px; margin: 0;">
+        {CONTACT.bio[0]}
+      </p>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <SocFeed client:load />
+        <UptimeGrid client:load />
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 44px;">
+      <a class="cta solid" href={CONTACT.resumeUrl}>
+        <span>↓</span> résumé.pdf
+      </a>
+      <a class="cta" href="#projects">
+        <span>❯</span> selected work
+      </a>
+      <a class="cta ghost" href={`mailto:${CONTACT.email}`}>
+        <span>✉</span> {CONTACT.email}
+      </a>
+    </div>
+  </div>
+</section>

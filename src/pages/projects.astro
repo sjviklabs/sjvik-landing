@@ -1,61 +1,15 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Nav from '../components/Nav.astro';
-import Footer from '../components/Footer.astro';
-
-const projects = [
-  {
-    name: "SJVIK NOC",
-    description: "Production operations center: 3-node Proxmox HA cluster, 13 LXC containers across 4 VLANs. Centralized logging (Loki/Alloy), Wazuh SIEM, 13 Grafana alert rules, Ansible IaC (20+ roles, site.yml converges all), and a custom React operator dashboard with log search.",
-    tags: ["Linux", "Proxmox", "VLANs", "Ansible", "Wazuh", "Grafana", "Loki"],
-    url: "/experience/nexus-lab",
-    urlLabel: "Case Study",
-    status: "Online"
-  },
-  {
-    name: "SOC Lab",
-    description: "Incident response playbooks, Sigma detection rules, Ansible hardening roles, and automation scripts. Public portfolio-quality security demonstrations.",
-    tags: ["Splunk", "IR", "Detection", "Sigma", "Ansible"],
-    url: "https://github.com/sjviklabs/sec-lab",
-    urlLabel: "GitHub",
-    external: true
-  },
-  {
-    name: "Lab Control Center",
-    description: "Full-stack orchestration dashboard with real-time node health, agent management, project hub, Loki log search, scheduler, and command center. Express 5 + SQLite + React 19.",
-    tags: ["TypeScript", "React", "Express", "SQLite", "Loki"],
-    url: "/noc/",
-    urlLabel: "Architecture"
-  },
-  {
-    name: "Job Tracker",
-    description: "Job search mission control with automated daily scraper across 8 profiles, O*NET-aligned scoring, cover letter templates, and email integration.",
-    tags: ["JavaScript", "Python", "Express", "Cron"]
-  },
-  {
-    name: "Squire Mod v2",
-    description: "Ground-up rebuild of a Minecraft companion mod. Custom FSM, handler-per-behavior architecture, mining/farming/fishing work system, mounted combat, Geckolib animations. 80+ Java files, 170+ commits.",
-    tags: ["Java", "NeoForge", "Geckolib", "Minecraft"],
-    url: "https://github.com/sjviklabs/squire-mod-v2",
-    urlLabel: "GitHub",
-    external: true
-  }
-];
-
-const products = [
-  {
-    name: "Proxmox Homelab: Zero to Production",
-    description: "131-page guide to building a production-grade homelab from scratch. Real configs, real patterns.",
-    price: "$20",
-    url: "https://stevenjvik.gumroad.com/l/gxcefj"
-  },
-  {
-    name: "SOC Analyst Interview Kit",
-    description: "160 pages — 200+ flashcards, 25 scenarios, Splunk SPL & Sentinel KQL exercises.",
-    price: "$25",
-    url: "https://stevenjvik.gumroad.com/l/pwemdd"
-  }
-];
+/**
+ * /projects — full project grid with filter tabs by kind.
+ *
+ * Renders the same ProjectsSection used on the home page, plus a digital
+ * products row (guides) below for cross-sell.
+ */
+import Layout from "../layouts/Layout.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import ProjectsSection from "../components/sections/ProjectsSection.astro";
+import { GUIDES } from "../data/content";
 ---
 
 <Layout
@@ -63,62 +17,44 @@ const products = [
   description="Security tools, infrastructure operations, automation, and digital products by Steven Vik."
 >
   <Nav />
-  <main class="pt-24 pb-16 px-6">
-    <div class="max-w-5xl mx-auto">
-      <div class="mb-12">
-        <p class="kicker mb-2">// projects</p>
-        <h1 class="font-display text-3xl sm:text-4xl font-bold mb-3">What I'm building</h1>
-        <p class="text-text-variant max-w-xl">Applied security engineering, infrastructure automation, and full-stack applications — running in production.</p>
-      </div>
+  <main id="main" tabindex="-1">
+    <ProjectsSection />
 
-      <div class="grid md:grid-cols-2 gap-4 mb-16">
-        {projects.map((project) => (
-          <div class="bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors flex flex-col">
-            <div class="flex items-start justify-between mb-2">
-              <h2 class="font-mono font-bold text-text-primary">{project.name}</h2>
-              {project.status && (
-                <span class="font-mono text-xs text-ok px-2 py-0.5 rounded bg-ok/8">{project.status}</span>
-              )}
-            </div>
-            <p class="text-text-variant text-sm leading-relaxed mb-4 flex-1">{project.description}</p>
-            <div class="flex flex-wrap items-center gap-2">
-              {project.tags.map((tag) => (
-                <span class="chip">{tag}</span>
-              ))}
-              {project.url && (
-                <a
-                  href={project.url}
-                  target={project.external ? "_blank" : undefined}
-                  rel={project.external ? "noopener" : undefined}
-                  class="ml-auto font-mono text-sm text-emerald hover:text-emerald-deep transition-colors"
-                >
-                  {project.urlLabel} &rarr;
-                </a>
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
+    <section class="section" style="border-bottom: 0;">
+      <div class="page">
+        <div class="section-head">
+          <div class="label"><span class="bullet"></span>digital products</div>
+          <h2>Guides — <em>built from real production experience.</em></h2>
+          <div class="meta mono">{GUIDES.length} titles</div>
+        </div>
 
-      <!-- Digital Products -->
-      <div class="mb-8">
-        <p class="kicker mb-2">// digital products</p>
-        <h2 class="font-display text-2xl font-bold mb-3">Guides</h2>
-        <p class="text-text-variant max-w-xl mb-6">Practical guides built from real experience. <a href="/guides" class="text-emerald hover:text-emerald-deep transition-colors">See full details and sample chapters &rarr;</a></p>
-      </div>
-      <div class="grid md:grid-cols-2 gap-4">
-        {products.map((product) => (
-          <a href={product.url} target="_blank" rel="noopener" class="group block bg-layer-1 rounded p-6 hover:bg-layer-2 transition-colors">
-            <div class="flex items-center justify-between mb-2">
-              <span class="font-mono text-lg font-bold text-emerald">{product.price}</span>
-              <span class="text-xs font-mono px-2 py-1 rounded bg-emerald/8 text-emerald">PDF</span>
-            </div>
-            <h3 class="font-bold mb-2 group-hover:text-emerald transition-colors">{product.name}</h3>
-            <p class="text-text-variant text-sm">{product.description}</p>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+          {GUIDES.map((g) => (
+            <a
+              href={g.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="tile"
+              style="text-decoration: none; color: inherit;"
+            >
+              <div style="display: flex; justify-content: space-between; align-items: baseline;">
+                <span class="mono accent" style="font-size: 16px;">{g.price}</span>
+                <span class="tag on">PDF</span>
+              </div>
+              <div class="tile-title" style="font-size: 16px;">{g.title}</div>
+              <div class="tile-desc">{g.description}</div>
+              <div class="mono dim2" style="font-size: 11px;">{g.pages}</div>
+            </a>
+          ))}
+        </div>
+
+        <div style="margin-top: 28px; text-align: right;">
+          <a href="/guides" class="mono dim" style="font-size: 12px; letter-spacing: 0.04em;">
+            sample chapters →
           </a>
-        ))}
+        </div>
       </div>
-    </div>
+    </section>
   </main>
   <Footer />
 </Layout>

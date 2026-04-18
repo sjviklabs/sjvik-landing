@@ -1,0 +1,81 @@
+---
+/**
+ * WorkSection — experience timeline.
+ * Three-column row per role: dates | role+company+description+tags | index number.
+ * Education + certifications frames below the timeline.
+ */
+import { EXPERIENCE, EDUCATION, CERTS_ACTIVE } from "../../data/content";
+---
+
+<section id="work" class="section" style="padding: 72px 0; border-bottom: 1px solid var(--line);">
+  <div class="page">
+    <div class="section-head" style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; align-items: baseline; margin-bottom: 36px;">
+      <div class="label"><span class="bullet"></span>01 · experience</div>
+      <h2 style="font-family: var(--font-sans); font-size: clamp(28px, 3.2vw, 42px); letter-spacing: -0.02em; margin: 0; font-weight: 500; line-height: 1.05;">
+        Enterprise NOC, DoD compliance, <em style="font-style: normal; color: var(--fg-mute);">and law enforcement IT.</em>
+      </h2>
+      <div class="meta mono" style="font-size: 12px; color: var(--fg-dim);">{EXPERIENCE.length} roles</div>
+    </div>
+
+    <div style="display: grid; gap: 0;">
+      {EXPERIENCE.map((e, i) => (
+        <article style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; padding: 28px 0; border-top: 1px solid var(--line); align-items: start;">
+          <div class="mono" style="font-size: 12px; color: var(--fg-dim);">{e.dates}</div>
+          <div>
+            <div style="font-size: 20px; font-weight: 500; letter-spacing: -0.015em; margin-bottom: 4px;">
+              {e.title}
+            </div>
+            <div class="dim" style="font-size: 14px; margin-bottom: 12px;">
+              {e.company}{e.via && <span> {e.via}</span>} &middot; {e.location}
+            </div>
+            <p style="margin: 0 0 12px; color: var(--fg-mute); font-size: 14px; line-height: 1.55;">
+              {e.description}
+            </p>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+              {e.tags.map((t) => <span class="tag">{t}</span>)}
+              {e.caseStudyUrl && (
+                <a href={e.caseStudyUrl} class="mono accent" style="font-size: 12px; margin-left: auto;">
+                  Case study →
+                </a>
+              )}
+            </div>
+          </div>
+          <div class="mono" style="font-size: 11px; color: var(--fg-dim); text-align: right;">
+            #{String(i + 1).padStart(2, "0")}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px;">
+      <div class="frame">
+        <div class="frame-head"><div class="left"><span>/education</span></div></div>
+        <div class="frame-body" style="display: grid; gap: 12px;">
+          {EDUCATION.map((ed) => (
+            <div>
+              <div style="font-size: 15px; font-weight: 500;">{ed.degree}</div>
+              <div class="dim" style="font-size: 13px; margin-top: 2px;">
+                {ed.school} &middot; {ed.status}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="frame">
+        <div class="frame-head">
+          <div class="left"><span>/certifications</span></div>
+          <span class="mono">{CERTS_ACTIVE.length}</span>
+        </div>
+        <div class="frame-body" style="display: flex; flex-wrap: wrap; gap: 6px;">
+          {CERTS_ACTIVE.map((c) => <span class="tag on">{c}</span>)}
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px; text-align: right;">
+      <a href="/experience" class="mono dim" style="font-size: 12px; letter-spacing: 0.04em;">
+        full experience →
+      </a>
+    </div>
+  </div>
+</section>

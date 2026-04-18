@@ -1,0 +1,152 @@
+---
+/**
+ * ProjectsSection — filterable project grid.
+ * Filter dimension is `kind` (infra / tool / sec / mod) rather than the
+ * prototype's status, since real projects have richer categories than
+ * live/public/internal/archived.
+ *
+ * Filter behavior uses vanilla JS toggling data-filter on the wrapper —
+ * no React island needed for a 5-item grid.
+ */
+import { PROJECTS } from "../../data/content";
+
+// Tally kinds present in current data — drives the filter tab bar.
+const kinds = Array.from(new Set(PROJECTS.map((p) => p.kind).filter(Boolean))) as string[];
+const KIND_LABELS: Record<string, string> = {
+  infra: "infrastructure",
+  tool: "tools",
+  sec: "security",
+  web: "web",
+  mod: "mods",
+  data: "data",
+};
+---
+
+<section id="projects" class="section" style="padding: 72px 0; border-bottom: 1px solid var(--line);">
+  <div class="page">
+    <div class="section-head" style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; align-items: baseline; margin-bottom: 36px;">
+      <div class="label"><span class="bullet"></span>02 · selected work</div>
+      <h2 style="font-family: var(--font-sans); font-size: clamp(28px, 3.2vw, 42px); letter-spacing: -0.02em; margin: 0; font-weight: 500; line-height: 1.05;">
+        Projects, tools, <em style="font-style: normal; color: var(--fg-mute);">and things I built because no one else would.</em>
+      </h2>
+      <div class="meta mono" style="font-size: 12px; color: var(--fg-dim);">{PROJECTS.length} projects</div>
+    </div>
+
+    <div
+      id="projects-filter"
+      role="tablist"
+      aria-label="Filter projects by kind"
+      style="display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap;"
+    >
+      <button
+        type="button"
+        role="tab"
+        aria-selected="true"
+        data-filter-btn="all"
+        class="mono filter-btn active"
+        style="font-size: 11px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--green); color: var(--green); text-transform: uppercase; letter-spacing: 0.08em; background: color-mix(in oklab, var(--green) 10%, transparent); cursor: pointer;"
+      >
+        all ({PROJECTS.length})
+      </button>
+      {kinds.map((k) => (
+        <button
+          type="button"
+          role="tab"
+          aria-selected="false"
+          data-filter-btn={k}
+          class="mono filter-btn"
+          style="font-size: 11px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); color: var(--fg-mute); text-transform: uppercase; letter-spacing: 0.08em; background: transparent; cursor: pointer;"
+        >
+          {KIND_LABELS[k] || k} ({PROJECTS.filter((p) => p.kind === k).length})
+        </button>
+      ))}
+    </div>
+
+    <div
+      id="projects-grid"
+      style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px;"
+    >
+      {PROJECTS.map((p, i) => (
+        <article class="tile" data-kind={p.kind || "misc"}>
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <span class="mono" style="font-size: 10.5px; color: var(--fg-dim); letter-spacing: 0.08em;">
+              {String(i + 1).padStart(2, "0")}{p.year && ` · ${p.year}`}
+            </span>
+            {p.status && (
+              <span class="mono" style="font-size: 10.5px; color: var(--green); letter-spacing: 0.08em;">
+                ● {p.status.toLowerCase()}
+              </span>
+            )}
+          </div>
+          <div>
+            <div class="tile-title">{p.name}</div>
+            {p.kind && (
+              <div class="mono" style="font-size: 12px; color: var(--fg-dim); margin-top: 4px;">
+                {KIND_LABELS[p.kind] || p.kind}
+              </div>
+            )}
+          </div>
+          <div class="tile-desc">{p.description}</div>
+          <div style="display: flex; justify-content: space-between; align-items: end; gap: 12px;">
+            <div class="tile-tags">
+              {p.tags.map((t) => <span class="tag">{t}</span>)}
+            </div>
+            {p.url && (
+              <a
+                href={p.url}
+                target={p.external ? "_blank" : undefined}
+                rel={p.external ? "noopener noreferrer" : undefined}
+                class="mono accent"
+                style="font-size: 12px; white-space: nowrap;"
+              >
+                {p.urlLabel || "View"} →
+              </a>
+            )}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div style="margin-top: 28px; text-align: right;">
+      <a href="/projects" class="mono dim" style="font-size: 12px; letter-spacing: 0.04em;">
+        all projects →
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Vanilla filter logic — toggles visibility via data-kind match.
+  const filterBar = document.getElementById("projects-filter");
+  const grid = document.getElementById("projects-grid");
+  if (filterBar && grid) {
+    filterBar.addEventListener("click", (ev) => {
+      const target = ev.target as HTMLElement;
+      const btn = target.closest<HTMLButtonElement>("[data-filter-btn]");
+      if (!btn) return;
+      const filter = btn.dataset.filterBtn || "all";
+
+      // Update button states
+      filterBar.querySelectorAll<HTMLButtonElement>("[data-filter-btn]").forEach((b) => {
+        const active = b === btn;
+        b.setAttribute("aria-selected", active ? "true" : "false");
+        b.classList.toggle("active", active);
+        if (active) {
+          b.style.borderColor = "var(--green)";
+          b.style.color = "var(--green)";
+          b.style.background = "color-mix(in oklab, var(--green) 10%, transparent)";
+        } else {
+          b.style.borderColor = "var(--line)";
+          b.style.color = "var(--fg-mute)";
+          b.style.background = "transparent";
+        }
+      });
+
+      // Toggle tiles
+      grid.querySelectorAll<HTMLElement>("[data-kind]").forEach((tile) => {
+        const show = filter === "all" || tile.dataset.kind === filter;
+        tile.style.display = show ? "" : "none";
+      });
+    });
+  }
+</script>

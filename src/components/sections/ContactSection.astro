@@ -1,0 +1,130 @@
+---
+/**
+ * ContactSection — two-column layout: form on left, direct contact + now list on right.
+ *
+ * Form is front-end only for now (shows a success state locally). Actual
+ * submission backend (Formspree, Netlify Forms, or mailto) can be wired in
+ * Step 11. For urgent contact the direct email link works today.
+ */
+import { CONTACT } from "../../data/content";
+
+// "What I'm working on right now" — extend/edit freely, purely decorative.
+const NOW: string[] = [
+  "Finishing WGU B.S. Cybersecurity — ~7 courses left",
+  "Hardening the SJVIK NOC — Wazuh 4.14 + Loki/Alloy pipeline",
+  "Job hunting — cybersecurity engineer / DevOps roles",
+  "Writing the next guide — architecture + incident response",
+];
+---
+
+<section
+  id="contact"
+  class="section"
+  style="padding: 72px 0; border-bottom: 0;"
+>
+  <div class="page">
+    <div class="section-head" style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; align-items: baseline; margin-bottom: 36px;">
+      <div class="label"><span class="bullet"></span>04 · contact</div>
+      <h2 style="font-family: var(--font-sans); font-size: clamp(28px, 3.2vw, 42px); letter-spacing: -0.02em; margin: 0; font-weight: 500; line-height: 1.05;">
+        Open to cybersecurity, DevOps, and <em style="font-style: normal; color: var(--fg-mute);">interesting problems.</em>
+      </h2>
+      <div class="meta mono" style="font-size: 12px; color: var(--fg-dim);">&lt; 24h reply</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 32px;">
+      {/* Form frame */}
+      <div class="frame">
+        <div class="frame-head">
+          <div class="left"><span>/contact/form</span></div>
+          <span class="mono">POST</span>
+        </div>
+        <div class="frame-body" style="display: grid; gap: 14px;">
+          <form id="contact-form" style="display: grid; gap: 14px; margin: 0;">
+            <label style="display: grid; gap: 6px;">
+              <span class="label">name</span>
+              <input name="name" placeholder="your name" required />
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span class="label">email</span>
+              <input name="email" type="email" placeholder="you@company.com" required />
+            </label>
+            <label style="display: grid; gap: 6px;">
+              <span class="label">message</span>
+              <textarea name="message" rows="5" placeholder="brief context — role, project, timeline" required></textarea>
+            </label>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="mono" style="font-size: 11px; color: var(--fg-dim);">direct email below</span>
+              <button type="submit" class="cta solid">
+                <span>❯</span> transmit
+              </button>
+            </div>
+          </form>
+          <div id="contact-sent" hidden style="padding: 28px 4px;">
+            <div class="mono accent" style="font-size: 12px; margin-bottom: 6px;">[200 OK]</div>
+            <div style="font-size: 16px;">
+              Message captured locally — for a live reply please use the direct email link.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right column: direct contact + now */}
+      <div style="display: grid; gap: 16px;">
+        <div class="frame">
+          <div class="frame-head"><div class="left"><span>/contact/direct</span></div></div>
+          <div class="frame-body" style="display: grid; gap: 14px;">
+            <div style="display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;">
+              <span class="label">email</span>
+              <a href={`mailto:${CONTACT.email}`} style="border-bottom: 1px solid var(--line); padding-bottom: 2px;">
+                {CONTACT.email}
+              </a>
+            </div>
+            <div style="display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;">
+              <span class="label">linkedin</span>
+              <a href={CONTACT.linkedin} target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid var(--line); padding-bottom: 2px;">
+                /in/stevenjvik
+              </a>
+            </div>
+            <div style="display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;">
+              <span class="label">github</span>
+              <a href={CONTACT.github} target="_blank" rel="noopener noreferrer" style="border-bottom: 1px solid var(--line); padding-bottom: 2px;">
+                @sjviklabs
+              </a>
+            </div>
+            <div style="display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;">
+              <span class="label">resume</span>
+              <a href={CONTACT.resumeUrl} style="border-bottom: 1px solid var(--line); padding-bottom: 2px;">
+                Steven_Vik_Resume.pdf
+              </a>
+            </div>
+            <div style="display: grid; grid-template-columns: 90px 1fr; gap: 12px; align-items: baseline;">
+              <span class="label">location</span>
+              <span>{CONTACT.location}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="frame marks">
+          <span class="tr"></span><span class="bl"></span>
+          <div class="frame-head"><div class="left"><span>/now · public</span></div></div>
+          <div class="frame-body mono" style="font-size: 12.5px; line-height: 1.8; color: var(--fg-mute);">
+            {NOW.map((n) => <div>› {n}</div>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Simple form handler — shows local success state. Wire to real backend in Step 11.
+  const form = document.getElementById("contact-form") as HTMLFormElement | null;
+  const sent = document.getElementById("contact-sent");
+  if (form && sent) {
+    form.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      form.hidden = true;
+      sent.hidden = false;
+    });
+  }
+</script>

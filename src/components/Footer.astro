@@ -1,15 +1,46 @@
 ---
+/**
+ * Footer — minimal prototype-style bar.
+ * Left: copyright + location. Right: version pill + status LED + quick links.
+ */
+const year = new Date().getFullYear();
 ---
-<footer class="py-12 px-6 bg-lowest">
-  <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-    <div class="font-mono text-sm text-text-outline">
-      <span class="text-emerald">SJVIK Labs</span> &copy; {new Date().getFullYear()} Steven Vik
+
+<footer style="padding: 32px 0 56px; border-top: 1px solid var(--line);">
+  <div
+    class="page"
+    style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;"
+  >
+    <div
+      class="mono"
+      style="font-size: 11.5px; color: var(--fg-dim); letter-spacing: 0.08em;"
+    >
+      © {year} steven j. vik · sjvik labs · built &amp; self-hosted · seattle, wa
     </div>
-    <div class="flex items-center gap-6 font-mono text-sm text-text-outline">
-      <a href="/Steven_Vik_Resume.pdf" class="hover:text-emerald transition-colors">Resume</a>
-      <a href="https://github.com/sjviklabs" target="_blank" rel="noopener" class="hover:text-emerald transition-colors">GitHub</a>
-      <a href="https://www.linkedin.com/in/stevenjvik/" target="_blank" rel="noopener" class="hover:text-emerald transition-colors">LinkedIn</a>
-      <a href="/guides" class="hover:text-emerald transition-colors">Guides</a>
+
+    <div
+      class="mono"
+      style="font-size: 11.5px; color: var(--fg-dim); display: flex; gap: 18px; align-items: center;"
+    >
+      <a href="/Steven_Vik_Resume.pdf" style="color: inherit;">résumé</a>
+      <a
+        href="https://github.com/sjviklabs"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="color: inherit;"
+      >
+        github
+      </a>
+      <a
+        href="https://www.linkedin.com/in/stevenjvik/"
+        target="_blank"
+        rel="noopener noreferrer"
+        style="color: inherit;"
+      >
+        linkedin
+      </a>
+      <span>v2.0</span>
+      <span class="accent">● all systems nominal</span>
     </div>
   </div>
 </footer>

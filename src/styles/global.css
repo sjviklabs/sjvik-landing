@@ -1,107 +1,605 @@
 @import "tailwindcss";
 
+/* ═════════════════════════════════════════════════════════════
+   DESIGN TOKENS — stevenjvik.tech v2
+   Dark-first terminal palette; light mode inverts to warm paper.
+   Accent override via [data-accent="green|amber|ice|mono"].
+   ═════════════════════════════════════════════════════════════ */
+
 @theme {
-  /* ── Primary: Bright Emerald ── */
-  --color-emerald: #4edea3;
-  --color-emerald-deep: #10b981;
-  --color-emerald-glow: rgba(78, 222, 163, 0.2);
+  /* ── Surfaces ── */
+  --color-ink: #0a1311;
+  --color-surface: #0f1d1a;
+  --color-surface-2: #142723;
+  --color-line: #1e3832;
+  --color-line-soft: #172823;
 
-  /* ── Accent: Warm Amber ── */
-  --color-amber: #ffb690;
-  --color-amber-deep: #ff7e2d;
+  /* ── Foreground ── */
+  --color-fg: #e6efe9;
+  --color-fg-mute: #8ea69c;
+  --color-fg-dim: #5b736b;
 
-  /* ── Surfaces: Material 3 layers ── */
-  --color-base: #0b1326;
-  --color-lowest: #060e20;
-  --color-layer-1: #171f33;
-  --color-layer-2: #222a3d;
-  --color-layer-3: #2d3449;
-  --color-bright: #31394d;
+  /* ── Accents (default: green) ── */
+  --color-green: #6fbf8e;
+  --color-green-soft: #4a8a68;
+  --color-amber: #e8b87a;
+  --color-amber-soft: #c08e54;
+  --color-red: #e67f6f;
+  --color-blue: #7fb0d6;
 
-  /* ── Text ── */
-  --color-text-primary: #dae2fd;
-  --color-text-variant: #bbcabf;
-  --color-text-outline: #86948a;
-  --color-text-dim: #3c4a42;
-
-  /* ── Semantic ── */
-  --color-error: #ffb4ab;
-  --color-secondary: #b9c7df;
-  --color-ok: #4edea3;
+  /* ── Legacy aliases — keep deep pages rendering until Step 9 ── */
+  --color-emerald: #6fbf8e;
+  --color-emerald-deep: #4a8a68;
+  --color-emerald-glow: rgba(111, 191, 142, 0.2);
+  --color-amber-deep: #c08e54;
+  --color-base: #0a1311;
+  --color-lowest: #050908;
+  --color-layer-1: #0f1d1a;
+  --color-layer-2: #142723;
+  --color-layer-3: #1c3029;
+  --color-bright: #1e3832;
+  --color-text-primary: #e6efe9;
+  --color-text-variant: #8ea69c;
+  --color-text-outline: #8ea69c;
+  --color-text-dim: #5b736b;
+  --color-error: #e67f6f;
+  --color-secondary: #8ea69c;
+  --color-ok: #6fbf8e;
 
   /* ── Typography ── */
   --font-display: "Outfit", "Arial", sans-serif;
   --font-body: "Inter Tight", "Helvetica Neue", sans-serif;
-  --font-mono: "JetBrains Mono", "Cascadia Code", monospace;
+  --font-mono: "JetBrains Mono", "Cascadia Code", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Geist", "Inter Tight", ui-sans-serif, system-ui, "Helvetica Neue", sans-serif;
+  --font-serif: "Newsreader", ui-serif, Georgia, serif;
+
+  /* ── Layout ── */
+  --grid-gap: 24px;
+  --maxw: 1400px;
 }
 
-/* ── Light Mode ── */
+/* ═════════════════════════════════════════════════════════════
+   LIGHT MODE — warm paper palette (prototype)
+   ═════════════════════════════════════════════════════════════ */
 [data-theme="light"] {
-  --color-base: #f0f2f7;
-  --color-lowest: #e4e7ee;
-  --color-layer-1: #ffffff;
-  --color-layer-2: #f5f6fa;
-  --color-layer-3: #ebedf3;
-  --color-bright: #d8dbe4;
-  --color-emerald: #059669;
-  --color-emerald-deep: #047857;
-  --color-amber: #EA580C;
-  --color-amber-deep: #C2410C;
-  --color-text-primary: #0f172a;
-  --color-text-variant: #334155;
-  --color-text-outline: #64748b;
-  --color-text-dim: #94a3b8;
-  --color-error: #DC2626;
-  --color-secondary: #475569;
-  --color-ok: #059669;
+  --color-ink: #f4f1ea;
+  --color-surface: #ebe6dc;
+  --color-surface-2: #e0d9cb;
+  --color-line: #c9bfa9;
+  --color-line-soft: #d8d0be;
+  --color-fg: #141916;
+  --color-fg-mute: #4f5b54;
+  --color-fg-dim: #7b8780;
+  --color-green: #2d7a52;
+  --color-green-soft: #4a8a68;
+  --color-amber: #a06a1e;
+  --color-amber-soft: #c08e54;
+
+  /* Legacy alias sync */
+  --color-emerald: #2d7a52;
+  --color-emerald-deep: #4a8a68;
+  --color-emerald-glow: rgba(45, 122, 82, 0.2);
+  --color-base: #f4f1ea;
+  --color-lowest: #e4dfd2;
+  --color-layer-1: #ebe6dc;
+  --color-layer-2: #e0d9cb;
+  --color-layer-3: #d6ccb8;
+  --color-bright: #c9bfa9;
+  --color-text-primary: #141916;
+  --color-text-variant: #4f5b54;
+  --color-text-outline: #4f5b54;
+  --color-text-dim: #7b8780;
+  --color-error: #a03830;
+  --color-secondary: #4f5b54;
+  --color-ok: #2d7a52;
 }
 
-/* ── Glass panels ── */
+/* ═════════════════════════════════════════════════════════════
+   ACCENT OVERRIDES — remap --color-green to chosen accent
+   ═════════════════════════════════════════════════════════════ */
+[data-accent="amber"] {
+  --color-green: var(--color-amber);
+  --color-green-soft: var(--color-amber-soft);
+  --color-emerald: var(--color-amber);
+  --color-emerald-deep: var(--color-amber-soft);
+}
+[data-accent="ice"] {
+  --color-green: #9ad0e8;
+  --color-green-soft: #5a8caa;
+  --color-emerald: #9ad0e8;
+  --color-emerald-deep: #5a8caa;
+}
+[data-accent="mono"] {
+  --color-green: var(--color-fg);
+  --color-green-soft: var(--color-fg-mute);
+  --color-emerald: var(--color-fg);
+  --color-emerald-deep: var(--color-fg-mute);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BARE-NAME ALIASES — allow prototype component CSS (var(--green))
+   and ported inline styles to work without Tailwind class rewrites
+   ═════════════════════════════════════════════════════════════ */
+:root {
+  --ink: var(--color-ink);
+  --surface: var(--color-surface);
+  --surface-2: var(--color-surface-2);
+  --line: var(--color-line);
+  --line-soft: var(--color-line-soft);
+  --fg: var(--color-fg);
+  --fg-mute: var(--color-fg-mute);
+  --fg-dim: var(--color-fg-dim);
+  --green: var(--color-green);
+  --green-soft: var(--color-green-soft);
+  --amber: var(--color-amber);
+  --amber-soft: var(--color-amber-soft);
+  --red: var(--color-red);
+  --blue: var(--color-blue);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   BASE ELEMENTS
+   ═════════════════════════════════════════════════════════════ */
+body {
+  font-size: 15px;
+  line-height: 1.55;
+  font-feature-settings: "ss01", "cv11";
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--green); color: var(--ink); }
+
+/* Accessible focus ring (prototype had browser default only) */
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Reduced motion respect — pairs with nanostores motion toggle */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+[data-motion="off"] *, [data-motion="off"] *::before, [data-motion="off"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   PROTOTYPE UTILITY CLASSES
+   ═════════════════════════════════════════════════════════════ */
+.mono { font-family: var(--font-mono); }
+.serif { font-family: var(--font-serif); }
+.dim { color: var(--fg-mute); }
+.dim2 { color: var(--fg-dim); }
+.accent { color: var(--green); }
+
+.kbd {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface-2);
+  color: var(--fg-mute);
+}
+
+.hairline { border-top: 1px solid var(--line); }
+.hairline-b { border-bottom: 1px solid var(--line); }
+
+.page {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ═════════════════════════════════════════════════════════════
+   LAYOUT — topbar + section structure (prototype port)
+   Missed in initial Step 2 port; added in Step 8.5 hotfix.
+   ═════════════════════════════════════════════════════════════ */
+
+/* ── Top bar (sticky) ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: color-mix(in oklab, var(--ink) 78%, transparent);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 24px;
+  align-items: center;
+  height: 56px;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* ── Brand wordmark + logo ── */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  text-decoration: none;
+  color: inherit;
+}
+.brand img {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+.brand .dot {
+  color: var(--green);
+}
+
+/* ── Nav link row ── */
+.nav {
+  display: flex;
+  gap: 2px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+}
+.nav a {
+  padding: 6px 12px;
+  color: var(--fg-mute);
+  border-radius: 4px;
+  text-decoration: none;
+  transition: color 0.15s, background 0.15s;
+}
+.nav a:hover {
+  color: var(--fg);
+  background: var(--surface);
+}
+.nav a.active {
+  color: var(--green);
+}
+.nav a.active::before {
+  content: "▸ ";
+  color: var(--green);
+}
+
+/* ── Top-right controls cluster ── */
+.topright {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Section wrapper ── */
+.section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+/* ── Section heading row (label | h2 | meta) ── */
+.section-head {
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
+  gap: 32px;
+  align-items: baseline;
+  margin-bottom: 36px;
+}
+.section-head h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(28px, 3.2vw, 42px);
+  letter-spacing: -0.02em;
+  margin: 0;
+  font-weight: 500;
+  line-height: 1.05;
+}
+.section-head h2 em {
+  font-style: normal;
+  color: var(--fg-mute);
+}
+.section-head .meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-dim);
+}
+
+/* ── Responsive: hide nav + hero glyph + collapse section heads on narrow ── */
+@media (max-width: 900px) {
+  .nav { display: none; }
+  .section-head {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .hero-glyph { display: none; }
+}
+
+/* ── Tiny caps section label ── */
+.label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-dim);
+}
+.label .bullet {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 99px;
+  background: var(--green);
+  margin-right: 8px;
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--green) 25%, transparent);
+}
+
+/* ── Data frame (for widgets) ── */
+.frame {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 8px;
+  position: relative;
+}
+.frame-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--fg-dim);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.frame-head .left { display: flex; gap: 10px; align-items: center; }
+.frame-body { padding: 18px; }
+
+/* ── Corner marks (engineering blueprint look) ── */
+.marks::before,
+.marks::after,
+.marks > .tl,
+.marks > .tr,
+.marks > .bl {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--green-soft);
+  opacity: 0.6;
+}
+.marks::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.marks::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.marks > .tr { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.marks > .bl { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+
+/* ── Tile / card (project grid, etc.) ── */
+.tile {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.tile:hover {
+  border-color: var(--green-soft);
+  background: var(--surface-2);
+}
+.tile .tile-title {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.tile .tile-desc {
+  color: var(--fg-mute);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.tile .tile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--fg-mute);
+  text-transform: uppercase;
+}
+.tag.on {
+  color: var(--green);
+  border-color: var(--green-soft);
+}
+
+/* ── Status pill (live indicator) ── */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  padding: 4px 10px 4px 8px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--fg-mute);
+}
+.pill .led {
+  width: 7px;
+  height: 7px;
+  border-radius: 99px;
+  background: var(--green);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--green) 22%, transparent);
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+/* ── Terminal caret cursor ── */
+.caret::after {
+  content: "▌";
+  color: var(--green);
+  margin-left: 2px;
+  animation: blink 1s steps(2) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── CTA buttons ── */
+.cta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding: 7px 14px;
+  border: 1px solid var(--green);
+  color: var(--green);
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.cta:hover { background: var(--green); color: var(--ink); }
+.cta.solid { background: var(--green); color: var(--ink); }
+.cta.solid:hover { background: var(--fg); border-color: var(--fg); }
+.cta.ghost { border-color: var(--line); color: var(--fg-mute); }
+.cta.ghost:hover {
+  color: var(--fg);
+  border-color: var(--fg-mute);
+  background: transparent;
+}
+
+/* ── Icon button ── */
+.iconbtn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: var(--fg-mute);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.iconbtn:hover {
+  color: var(--fg);
+  border-color: var(--green-soft);
+  background: var(--surface);
+}
+
+/* ── Grid-paper background (editorial hero variant) ── */
+.paper {
+  background-image:
+    linear-gradient(to right, var(--line-soft) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line-soft) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: -1px -1px;
+}
+
+/* ── Hero ASCII glyph ── */
+.hero-glyph {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1.15;
+  color: var(--green-soft);
+  white-space: pre;
+  opacity: 0.55;
+  user-select: none;
+}
+
+/* ── Form inputs ── */
+input, textarea {
+  background: var(--ink);
+  border: 1px solid var(--line);
+  color: var(--fg);
+  font: inherit;
+  padding: 10px 12px;
+  border-radius: 6px;
+  outline: none;
+  width: 100%;
+}
+input:focus, textarea:focus {
+  border-color: var(--green);
+  outline: none;
+}
+
+/* ── Scramble text ── */
+.scramble { font-variant-numeric: tabular-nums; }
+
+/* ── Reveal-on-scroll ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.7s, transform 0.7s;
+}
+.reveal.in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--ink); }
+::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--green-soft); }
+
+/* ═════════════════════════════════════════════════════════════
+   LEGACY COMPONENT CLASSES — kept so existing deep pages render
+   Updated to reference new tokens (auto-retheme via CSS vars).
+   Will be audited/trimmed in Step 9.
+   ═════════════════════════════════════════════════════════════ */
 .glass {
-  background: rgba(23, 31, 51, 0.6);
+  background: color-mix(in oklab, var(--surface) 80%, transparent);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
-[data-theme="light"] .glass {
-  background: rgba(255, 255, 255, 0.7);
-}
 
-/* ── CTA gradient ── */
 .cta-gradient {
-  background: linear-gradient(135deg, #4edea3 0%, #10b981 100%);
-}
-[data-theme="light"] .cta-gradient {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  background: linear-gradient(135deg, var(--green) 0%, var(--green-soft) 100%);
 }
 
-/* ── Emerald glow ── */
 .emerald-glow {
-  box-shadow: 0 0 15px rgba(78, 222, 163, 0.2);
+  box-shadow: 0 0 15px color-mix(in oklab, var(--green) 30%, transparent);
 }
 
-/* ── Ghost border (accessibility fallback, No-Line Rule) ── */
 .ghost-border {
-  outline: 1px solid rgba(134, 148, 138, 0.15);
+  outline: 1px solid color-mix(in oklab, var(--fg-mute) 15%, transparent);
 }
 
-/* ── Theme Toggle Button ── */
 .theme-toggle {
   display: inline-flex;
   align-items: center;
   gap: 0.375rem;
-  background: rgba(134, 148, 138, 0.1);
+  background: color-mix(in oklab, var(--fg-mute) 10%, transparent);
   border: none;
   border-radius: 4px;
-  color: var(--color-text-outline);
+  color: var(--fg-mute);
   cursor: pointer;
   padding: 0.375rem 0.75rem;
   font-size: 0.75rem;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   transition: color 0.15s, background 0.15s;
 }
 .theme-toggle:hover {
-  color: var(--color-text-primary);
-  background: rgba(134, 148, 138, 0.18);
+  color: var(--fg);
+  background: color-mix(in oklab, var(--fg-mute) 18%, transparent);
 }
 .theme-toggle svg {
   width: 16px;
@@ -111,43 +609,36 @@
   stroke-width: 2;
 }
 
-/* ── Chip / tag component ── */
 .chip {
   font-family: var(--font-mono);
   font-size: 0.76rem;
   font-weight: 500;
   padding: 0.25rem 0.6rem;
   border-radius: 2px;
-  background: rgba(78, 222, 163, 0.06);
-  color: var(--color-text-variant);
+  background: color-mix(in oklab, var(--green) 6%, transparent);
+  color: var(--fg-mute);
   letter-spacing: 0.02em;
 }
 
-/* ── Work item card ── */
 .work-item {
   padding: 1.5rem;
-  background: var(--color-layer-1);
-  border-left: 3px solid var(--color-emerald);
+  background: var(--surface);
+  border-left: 3px solid var(--green);
   border-radius: 0 2px 2px 0;
   margin-bottom: 1rem;
   transition: border-left-color 0.2s, background 0.2s;
 }
 .work-item:hover {
-  border-left-color: var(--color-amber);
-  background: var(--color-layer-2);
+  border-left-color: var(--amber);
+  background: var(--surface-2);
 }
 
-/* ── Section kicker ── */
 .kicker {
   font-family: var(--font-mono);
   font-size: 0.82rem;
   font-weight: 500;
-  color: var(--color-emerald);
+  color: var(--green);
   letter-spacing: 0.04em;
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--color-lowest); }
-::-webkit-scrollbar-thumb { background: var(--color-bright); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-outline); }
+/* Responsive breakpoint consolidated into the layout section above. */

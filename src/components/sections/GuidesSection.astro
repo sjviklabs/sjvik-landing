@@ -1,0 +1,70 @@
+---
+/**
+ * GuidesSection — practical PDF products.
+ * 2 Gumroad titles. Each card: diagonal-stripe cover + title + price + blurb.
+ * Grid auto-fills so 2-item view renders as wider cards; extensible if Steve
+ * ships more guides.
+ */
+import { GUIDES } from "../../data/content";
+---
+
+<section id="guides" class="section" style="padding: 72px 0; border-bottom: 1px solid var(--line);">
+  <div class="page">
+    <div class="section-head" style="display: grid; grid-template-columns: 180px 1fr auto; gap: 32px; align-items: baseline; margin-bottom: 36px;">
+      <div class="label"><span class="bullet"></span>03 · guides</div>
+      <h2 style="font-family: var(--font-sans); font-size: clamp(28px, 3.2vw, 42px); letter-spacing: -0.02em; margin: 0; font-weight: 500; line-height: 1.05;">
+        Practical PDFs — <em style="font-style: normal; color: var(--fg-mute);">no filler, no fluff.</em>
+      </h2>
+      <div class="meta mono" style="font-size: 12px; color: var(--fg-dim);">{GUIDES.length} titles</div>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;">
+      {GUIDES.map((g, i) => (
+        <a
+          href={g.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="tile"
+          style="text-decoration: none; color: inherit;"
+        >
+          {/* Diagonal-stripe cover placeholder — ports the prototype look */}
+          <div style="
+            aspect-ratio: 3/4;
+            background: repeating-linear-gradient(135deg, var(--surface-2) 0 12px, color-mix(in oklab, var(--surface-2) 70%, var(--green) 15%) 12px 24px);
+            border: 1px solid var(--line);
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 18px;
+          ">
+            <div class="mono" style="font-size: 10px; color: var(--fg-dim); letter-spacing: 0.14em; text-transform: uppercase;">
+              Vol. {String(i + 1).padStart(2, "0")}
+            </div>
+            <div class="serif" style="font-size: 20px; line-height: 1.1; color: var(--fg); text-shadow: 0 2px 8px var(--ink);">
+              {g.title}
+            </div>
+            <div class="mono" style="font-size: 10px; color: var(--fg-dim);">
+              {g.pages.replace(" pages", "pp")} · pdf
+            </div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <div class="tile-title" style="font-size: 15px;">{g.title}</div>
+            <span class="mono accent" style="font-size: 13px;">{g.price}</span>
+          </div>
+          <div class="tile-desc" style="font-size: 13px;">
+            {g.description}
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div style="margin-top: 28px; text-align: right;">
+      <a href="/guides" class="mono dim" style="font-size: 12px; letter-spacing: 0.04em;">
+        sample chapters →
+      </a>
+    </div>
+  </div>
+</section>
