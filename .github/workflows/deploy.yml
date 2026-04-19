@@ -29,7 +29,7 @@ jobs:
     steps:
       - name: Download CI build artifact
         if: github.event_name == 'workflow_run'
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: dist-${{ github.event.workflow_run.head_sha }}
           path: dist
