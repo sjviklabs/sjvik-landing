@@ -60,10 +60,17 @@ jobs:
           fi
 
       - name: Deploy to Hostinger via FTPS
+        # Hard cap so a hung FTP connection doesn't burn a full job-hour.
+        # Hostinger occasionally rate-limits after burst connections from the
+        # same runner IP; we want to fail fast and let Steve rerun.
+        timeout-minutes: 8
         env:
           HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
           HOSTINGER_PASS: ${{ secrets.HOSTINGER_PASS }}
         run: |
+          # Small randomized jitter (1–20s) so back-to-back deploys from the
+          # same commit race-condition don't open FTP sessions simultaneously.
+          sleep $(( RANDOM % 20 + 1 ))
           sudo apt-get install -y lftp > /dev/null 2>&1
           # --delete        removes obsolete files on the remote (clean cutover)
           # --exclude        preserves peer subdomain folders + our .htaccess
