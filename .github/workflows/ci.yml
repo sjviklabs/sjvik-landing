@@ -42,3 +42,5 @@ jobs:
           path: dist/
           retention-days: 7
           if-no-files-found: error
+          # Required to include dist/.htaccess — the action skips dotfiles by default.
+          include-hidden-files: true
