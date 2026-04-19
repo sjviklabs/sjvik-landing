@@ -40,7 +40,7 @@ jobs:
       # `gh workflow run Deploy` works without a pending CI run.
       - name: Checkout (manual dispatch only)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup Node (manual dispatch only)
         if: github.event_name == 'workflow_dispatch'
