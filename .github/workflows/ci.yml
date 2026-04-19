@@ -6,6 +6,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -19,8 +23,22 @@ jobs:
 
       - run: npm ci
 
-      - name: Type check
-        run: npx astro check || true
-
       - name: Build
         run: npm run build
+
+      # Copy opt-in beta PDFs (not committed to the repo) into the build
+      # output, matching the current deploy step's behavior.
+      - name: Include beta PDFs if present
+        run: |
+          if [ -d static-assets/beta ]; then
+            mkdir -p dist/beta
+            cp -v static-assets/beta/* dist/beta/
+          fi
+
+      - name: Upload dist artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.sha }}
+          path: dist/
+          retention-days: 7
+          if-no-files-found: error

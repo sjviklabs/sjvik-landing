@@ -1,38 +1,111 @@
 name: Deploy
 
 on:
-  push:
+  # Fire automatically after a successful CI run on main.
+  workflow_run:
+    workflows: [CI]
     branches: [main]
+    types: [completed]
+  # Also allow manual re-deploy from the Actions tab.
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    name: deploy-production
+    # Only run if the triggering CI workflow succeeded OR this is a manual dispatch.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+    environment:
+      name: production
+      url: https://stevenjvik.tech
 
-      - uses: actions/setup-node@v4
+    steps:
+      - name: Download CI build artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ github.event.workflow_run.head_sha }}
+          path: dist
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      # Manual dispatch path — rebuild from the current main tip so
+      # `gh workflow run Deploy` works without a pending CI run.
+      - name: Checkout (manual dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@v4
+
+      - name: Setup Node (manual dispatch only)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
 
-      - run: npm ci
-
-      - name: Build
-        run: npx astro build
-
-      - name: Copy beta PDFs into dist
+      - name: Install + build (manual dispatch only)
+        if: github.event_name == 'workflow_dispatch'
         run: |
+          npm ci
+          npm run build
           if [ -d static-assets/beta ]; then
             mkdir -p dist/beta
-            cp static-assets/beta/* dist/beta/
+            cp -v static-assets/beta/* dist/beta/
           fi
 
-      - name: Deploy to Hostinger via FTP
+      - name: Deploy to Hostinger via FTPS
+        env:
+          HOSTINGER_USER: ${{ secrets.HOSTINGER_USER }}
+          HOSTINGER_PASS: ${{ secrets.HOSTINGER_PASS }}
         run: |
           sudo apt-get install -y lftp > /dev/null 2>&1
-          lftp -u "${{ secrets.HOSTINGER_USER }},${{ secrets.HOSTINGER_PASS }}" ftp://191.101.13.246 -e "
+          # --delete        removes obsolete files on the remote (clean cutover)
+          # --exclude        preserves peer subdomain folders + our .htaccess
+          #                  redirect for /assets/Steven_J_Vik_Resume.pdf → /Steven_Vik_Resume.pdf
+          # --parallel=4    uploads 4 files in parallel (faster)
+          lftp -u "$HOSTINGER_USER,$HOSTINGER_PASS" ftp://191.101.13.246 -e "
             set ssl:verify-certificate no;
             set ftp:ssl-allow yes;
-            mirror --reverse --delete --verbose --exclude tahala/ --exclude homelab/ --exclude stories/ --exclude genealogy/ --exclude preview/ dist/ domains/stevenjvik.tech/public_html/;
+            set net:timeout 30;
+            set net:max-retries 2;
+            mirror --reverse --delete --verbose --parallel=4 \
+              --exclude-glob tahala/ --exclude-glob tahala/** \
+              --exclude-glob homelab/ --exclude-glob homelab/** \
+              --exclude-glob stories/ --exclude-glob stories/** \
+              --exclude-glob genealogy/ --exclude-glob genealogy/** \
+              --exclude-glob preview/ --exclude-glob preview/** \
+              --exclude-glob .htaccess \
+              --exclude-glob DO_NOT_UPLOAD_HERE \
+              dist/ domains/stevenjvik.tech/public_html/;
             bye
           "
+
+      - name: Smoke-test the live site
+        run: |
+          echo "Waiting 10s for FTP writes + Cloudflare edge to settle..."
+          sleep 10
+          fail=0
+          for path in "/" "/experience" "/projects" "/guides" "/about" "/noc/"; do
+            status=$(curl -sI -L -o /dev/null -w "%{http_code}" -A "ci-smoke-test" "https://stevenjvik.tech$path")
+            if [ "$status" = "200" ]; then
+              echo "  ✓ $path → $status"
+            else
+              echo "  ✗ $path → $status (expected 200)"
+              fail=1
+            fi
+          done
+          # Verify the stale-resume redirect survived the deploy
+          status=$(curl -sI -o /dev/null -w "%{http_code}" "https://stevenjvik.tech/assets/Steven_J_Vik_Resume.pdf")
+          if [ "$status" = "301" ]; then
+            echo "  ✓ /assets/Steven_J_Vik_Resume.pdf → 301 (redirect preserved)"
+          else
+            echo "  ✗ .htaccess redirect missing — got $status, expected 301"
+            fail=1
+          fi
+          exit $fail
