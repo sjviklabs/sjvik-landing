@@ -40,11 +40,11 @@ jobs:
       # `gh workflow run Deploy` works without a pending CI run.
       - name: Checkout (manual dispatch only)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node (manual dispatch only)
         if: github.event_name == 'workflow_dispatch'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -72,9 +72,11 @@ jobs:
           lftp -u "$HOSTINGER_USER,$HOSTINGER_PASS" ftp://191.101.13.246 -e "
             set ssl:verify-certificate no;
             set ftp:ssl-allow yes;
-            set net:timeout 30;
-            set net:max-retries 2;
-            mirror --reverse --delete --verbose --parallel=4 \
+            set net:timeout 60;
+            set net:reconnect-interval-base 5;
+            set net:reconnect-interval-multiplier 1;
+            set net:max-retries 5;
+            mirror --reverse --delete --verbose --parallel=2 \
               --exclude-glob tahala/ --exclude-glob tahala/** \
               --exclude-glob homelab/ --exclude-glob homelab/** \
               --exclude-glob stories/ --exclude-glob stories/** \
