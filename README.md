@@ -68,7 +68,19 @@ Deploys use the GitHub Environment `production` (URL: `https://stevenjvik.tech`)
 
 ### Dependabot
 
-`.github/dependabot.yml` runs weekly npm updates (grouped by ecosystem: astro / tailwind / react / nanostores) and monthly GitHub Actions updates.
+`.github/dependabot.yml` runs weekly npm updates (grouped by ecosystem: astro / tailwind / react / nanostores) and monthly GitHub Actions updates. Auto-merge is enabled on the repo — Dependabot PRs with green CI merge themselves.
+
+### Rollback
+
+Every production deploy is preceded by an implicit rollback point: the prior deploy's git SHA. To revert:
+
+```bash
+# Identify the last known-good SHA (look at the Environments tab in GitHub)
+git revert <bad-sha> -m 1     # reverse the bad merge
+git push origin main          # triggers CI + Deploy with the reverted state
+```
+
+For a full remote-side rollback without a git operation (e.g. a Hostinger-level issue), a recent snapshot lives on the lab LXC 101 at `/tmp/sjvik-rollback-*` and can be re-uploaded via the manual `scripts/` mirror flow.
 
 ## Project layout
 
