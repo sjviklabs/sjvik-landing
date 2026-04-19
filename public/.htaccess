@@ -1,0 +1,5 @@
+# Redirect stale Google-indexed resume URL.
+# The site historically had the résumé at /assets/Steven_J_Vik_Resume.pdf;
+# current location is /Steven_Vik_Resume.pdf. Keep the 301 so the old
+# Google index entry resolves correctly.
+Redirect 301 /assets/Steven_J_Vik_Resume.pdf /Steven_Vik_Resume.pdf

@@ -82,7 +82,6 @@ jobs:
               --exclude-glob stories/ --exclude-glob stories/** \
               --exclude-glob genealogy/ --exclude-glob genealogy/** \
               --exclude-glob preview/ --exclude-glob preview/** \
-              --exclude-glob .htaccess \
               --exclude-glob DO_NOT_UPLOAD_HERE \
               dist/ domains/stevenjvik.tech/public_html/;
             bye
