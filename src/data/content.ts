@@ -193,15 +193,15 @@ export const PROJECTS: ProjectItem[] = [
   },
   {
     id: "squire-mod",
-    name: "Squire Mod v2",
+    name: "Squire Mod",
     description:
-      "Ground-up rebuild of a Minecraft companion mod. Custom FSM, handler-per-behavior architecture, mining/farming/fishing work system, mounted combat, Geckolib animations. 80+ Java files, 170+ commits.",
-    tags: ["Java", "NeoForge", "Geckolib", "Minecraft"],
-    url: "https://github.com/sjviklabs/squire-mod-v2",
-    urlLabel: "GitHub",
+      "Loyal NPC companion mod for Minecraft NeoForge 1.21.1, built on MineColonies' AI primitives. Walks, fights, mines, chops, farms, fishes, patrols, levels, and carries gear — no teleports, no cheats. v4.0 rewrote a racing custom FSM into seven focused Job AIs on MineColonies' TickRateStateMachine + ThreatTable (net −8,100 / +2,300 LOC). 5-tier XP progression, closed-loop inventory with keep-best deposit and auto-restock.",
+    tags: ["Java", "NeoForge", "MineColonies", "Geckolib", "Minecraft"],
+    url: "https://sjviklabs.github.io/squire-mod-v2/",
+    urlLabel: "Site",
     external: true,
     kind: "mod",
-    year: 2025,
+    year: 2026,
   },
 ];
 
