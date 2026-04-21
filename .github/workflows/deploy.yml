@@ -64,7 +64,7 @@ jobs:
         # Hostinger has been inconsistent about accepting FTPS connections
         # from GitHub-hosted Azure runners; fail fast so we can retry.
         timeout-minutes: 10
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
         with:
           server: 191.101.13.246
           username: ${{ secrets.HOSTINGER_USER }}
