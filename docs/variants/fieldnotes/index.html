@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-tier="labs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steve Vik — Variant: Field Notes</title>
+    <meta name="description" content="Steve Vik — Cybersecurity Engineer. Field Notes variant: engineering journal aesthetic." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@400;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../_shared.css" />
+    <style>
+      /* Field Notes: engineering journal / handwritten-marginalia.
+         Distinct from terminal (CLI) and editorial (magazine) — humanizes via journal voice.
+         Defaults to LIGHT theme for the warm-paper feel; dark works too. */
+
+      body {
+        background:
+          repeating-linear-gradient(
+            transparent 0,
+            transparent 27px,
+            color-mix(in srgb, var(--line) 20%, transparent) 27px,
+            color-mix(in srgb, var(--line) 20%, transparent) 28px
+          );
+      }
+
+      .fn-page {
+        max-width: 880px;
+        margin: 32px auto;
+        padding: 0 32px 80px;
+        position: relative;
+      }
+
+      /* Top journal header */
+      .fn-masthead {
+        padding: 24px 0 16px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--line);
+        display: flex; justify-content: space-between; align-items: baseline; gap: 24px;
+      }
+      .fn-masthead .title {
+        font-family: var(--font-serif);
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        color: var(--fg);
+      }
+      .fn-masthead .meta {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+      .fn-masthead .meta .vol { color: var(--green); }
+
+      /* Hero entry */
+      .fn-entry {
+        position: relative;
+        padding: 24px 0;
+      }
+      .fn-entry .datestamp {
+        position: absolute;
+        top: 24px;
+        left: -120px;
+        width: 100px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        text-align: right;
+      }
+      .fn-entry .datestamp .day {
+        font-family: var(--font-serif);
+        font-size: 32px;
+        font-weight: 600;
+        color: var(--fg);
+        line-height: 1;
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .fn-headline {
+        font-family: var(--font-serif);
+        font-size: clamp(34px, 5vw, 54px);
+        font-weight: 500;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        color: var(--fg);
+        margin: 0 0 16px;
+      }
+      .fn-handnote {
+        font-family: 'Caveat', cursive;
+        font-size: 22px;
+        color: var(--green);
+        transform: rotate(-1.5deg);
+        display: inline-block;
+        margin-left: 6px;
+        line-height: 1;
+      }
+      .fn-byline {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 24px;
+      }
+
+      .fn-deck {
+        font-family: var(--font-serif);
+        font-size: 19px;
+        line-height: 1.55;
+        color: var(--fg);
+        max-width: 60ch;
+        margin: 0 0 24px;
+      }
+      .fn-deck strong { font-weight: 600; }
+
+      /* Hand-drawn outcome margin */
+      .fn-outcomes {
+        position: relative;
+        margin: 24px 0 32px;
+        padding: 16px 18px;
+        border: 1px solid var(--fg);
+        background: color-mix(in srgb, var(--green) 6%, transparent);
+        font-family: var(--font-serif);
+        max-width: 60ch;
+      }
+      .fn-outcomes::before {
+        content: "what shipped:";
+        position: absolute;
+        top: -10px;
+        left: 14px;
+        background: var(--ink);
+        padding: 0 8px;
+        font-family: 'Caveat', cursive;
+        font-size: 16px;
+        color: var(--green-soft);
+        font-weight: 600;
+      }
+      .fn-outcomes ul { margin: 0; }
+      .fn-outcomes li {
+        position: relative;
+        padding: 4px 0 4px 22px;
+        line-height: 1.5;
+        color: var(--fg);
+        font-size: 15px;
+      }
+      .fn-outcomes li::before {
+        content: "✓";
+        position: absolute;
+        left: 0; top: 4px;
+        font-family: 'Caveat', cursive;
+        font-size: 20px;
+        color: var(--green);
+        font-weight: 700;
+      }
+      .fn-outcomes li strong {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--green);
+        font-weight: 700;
+        margin-right: 6px;
+      }
+
+      .fn-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 24px; }
+
+      /* Margin annotations */
+      .fn-section {
+        position: relative;
+        padding: 32px 0 24px;
+        border-top: 1px dashed var(--line);
+        margin-top: 24px;
+      }
+      .fn-section .margin {
+        position: absolute;
+        top: 36px;
+        left: -180px;
+        width: 160px;
+        font-family: 'Caveat', cursive;
+        font-size: 17px;
+        color: var(--green-soft);
+        line-height: 1.3;
+        text-align: right;
+        transform: rotate(-1deg);
+      }
+      .fn-section .margin .arrow {
+        display: block;
+        font-family: var(--font-serif);
+        font-size: 22px;
+        margin-top: 4px;
+        color: var(--green);
+      }
+
+      .fn-section h2 {
+        font-family: var(--font-serif);
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 6px;
+        color: var(--fg);
+        letter-spacing: -0.01em;
+      }
+      .fn-section .sub {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-bottom: 18px;
+      }
+
+      /* Case study entry list */
+      .fn-cases { display: flex; flex-direction: column; gap: 18px; }
+      .fn-case {
+        display: grid;
+        grid-template-columns: 100px 1fr;
+        gap: 18px;
+        padding: 16px 0;
+        border-bottom: 1px dotted var(--line);
+      }
+      .fn-case:last-child { border-bottom: none; }
+      .fn-case .when {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        line-height: 1.4;
+      }
+      .fn-case .when .num {
+        font-family: var(--font-serif);
+        font-size: 18px;
+        color: var(--fg);
+        font-weight: 600;
+        display: block;
+        margin-bottom: 4px;
+      }
+      .fn-case h3 {
+        font-family: var(--font-serif);
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        line-height: 1.2;
+      }
+      .fn-case .tag-mono {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--green);
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        margin-bottom: 8px;
+      }
+      .fn-case p {
+        font-family: var(--font-serif);
+        font-size: 16px;
+        line-height: 1.55;
+        color: var(--fg);
+        margin: 0 0 8px;
+      }
+      .fn-case .marginalia {
+        font-family: 'Caveat', cursive;
+        font-size: 16px;
+        color: var(--green-soft);
+        margin-top: 6px;
+        display: inline-block;
+        transform: rotate(-1deg);
+      }
+      .fn-case a {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--green);
+        text-decoration: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .fn-case a:hover { text-decoration: underline; }
+
+      /* Toolkit "what's in the bag" */
+      .fn-toolkit {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 32px;
+        padding: 16px 0;
+      }
+      .fn-tool h4 {
+        font-family: 'Caveat', cursive;
+        font-size: 22px;
+        color: var(--green);
+        margin: 0 0 6px;
+        font-weight: 700;
+      }
+      .fn-tool p {
+        font-family: var(--font-serif);
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--fg);
+        margin: 0 0 6px;
+      }
+      .fn-tool .toolset {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+        letter-spacing: 0.04em;
+      }
+
+      /* Sign-off block */
+      .fn-signoff {
+        margin-top: 48px;
+        padding: 24px;
+        border: 2px solid var(--fg);
+        background: var(--surface);
+        position: relative;
+      }
+      .fn-signoff::before {
+        content: "—";
+        position: absolute;
+        top: -16px;
+        left: 16px;
+        background: var(--ink);
+        padding: 0 8px;
+        font-family: 'Caveat', cursive;
+        font-size: 24px;
+        color: var(--green);
+        font-weight: 700;
+      }
+      .fn-signoff h3 {
+        font-family: var(--font-serif);
+        font-size: 24px;
+        font-weight: 600;
+        margin: 0 0 6px;
+      }
+      .fn-signoff p {
+        font-family: var(--font-serif);
+        font-size: 15px;
+        color: var(--fg);
+        margin: 0 0 14px;
+        max-width: 60ch;
+      }
+      .fn-signoff .signature {
+        font-family: 'Caveat', cursive;
+        font-size: 32px;
+        color: var(--green);
+        margin: 14px 0 4px;
+        font-weight: 700;
+        line-height: 1;
+      }
+      .fn-signoff .signature-meta {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: 16px;
+      }
+      .fn-signoff .row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+      .fn-foot {
+        text-align: center;
+        margin-top: 32px;
+        font-family: 'Caveat', cursive;
+        color: var(--fg-mute);
+        font-size: 18px;
+      }
+
+      @media (max-width: 1100px) {
+        .fn-entry .datestamp { position: static; width: auto; text-align: left; margin-bottom: 8px; }
+        .fn-entry .datestamp .day { display: inline-block; margin-right: 8px; font-size: 18px; }
+        .fn-section .margin { position: static; width: auto; text-align: left; margin-bottom: 8px; transform: none; }
+        .fn-section .margin .arrow { display: none; }
+      }
+      @media (max-width: 600px) {
+        .fn-page { padding: 0 18px 40px; }
+        .fn-toolkit { grid-template-columns: 1fr; }
+        .fn-case { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <span class="v-tag">VARIANT · FIELD NOTES</span>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="#top" class="brand">sjvik<span class="dot">.</span>labs<span class="vmode">// FIELD NOTES</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#cases">Case studies</a>
+          <a href="#toolkit">Toolkit</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top" class="fn-page">
+
+      <!-- Masthead -->
+      <header class="fn-masthead">
+        <div class="title">Field Notes — engineering journal</div>
+        <div class="meta">VOL. <span class="vol">VIII</span> · NO. 04 · 2026</div>
+      </header>
+
+      <!-- Hero entry -->
+      <article class="fn-entry">
+        <div class="datestamp">
+          <span class="day">28</span>
+          APR<br/>2026
+        </div>
+
+        <div class="fn-byline">By Steven J. Vik · Seattle, WA · Reply &lt; 24h</div>
+        <h1 class="fn-headline">
+          Cybersecurity engineer<br/>
+          who runs the lab <span class="fn-handnote">— and the runbook.</span>
+        </h1>
+
+        <p class="fn-deck">
+          Eight years across enterprise NOC, DoD compliance, and transit security.
+          I keep a <strong>3-node SOC homelab</strong> running so I can test
+          patterns in production-shaped conditions before I ship them at work.
+          Currently <strong>open to roles</strong> — remote or Seattle metro.
+        </p>
+
+        <div class="fn-outcomes" aria-label="Quantified outcomes">
+          <ul>
+            <li><strong>40%</strong> MTTR reduction at Sound Transit (Python alert validation, 24/7 SOC, 3,000+ endpoints)</li>
+            <li><strong>0</strong> CJIS audit violations across federal, transit, and law-enforcement work</li>
+            <li><strong>25% &amp; 35%</strong> fewer unauth events / stronger posture rebuilding DoD environments at JBLM</li>
+          </ul>
+        </div>
+
+        <div class="fn-actions">
+          <a class="cta solid" href="mailto:steven@stevenjvik.tech">Email steven@stevenjvik.tech</a>
+          <a class="cta" href="#cases">Read the entries →</a>
+          <a class="cta ghost" href="/Steven_Vik_Resume.pdf">Résumé.pdf</a>
+        </div>
+      </article>
+
+      <!-- Case studies as journal entries -->
+      <section class="fn-section" id="cases">
+        <div class="margin">
+          three cases<br/>
+          worth a deep<br/>
+          read
+          <span class="arrow">↓</span>
+        </div>
+        <h2>Three entries worth opening</h2>
+        <p class="sub">// case_studies — what the problem was, what shipped, what the numbers became</p>
+
+        <div class="fn-cases">
+          <article class="fn-case">
+            <div class="when">
+              <span class="num">01</span>
+              FEB 2024 –<br/>MAR 2025
+            </div>
+            <div>
+              <div class="tag-mono">SOUND TRANSIT · 24/7 NOC</div>
+              <h3>Cutting MTTR by 40% with Python alert validation</h3>
+              <p>3,000+ endpoints across critical transit IT/OT. Authored SOPs, built Django internal tools, managed CrowdStrike + Defender + Entra ID. Zero CJIS audit violations through the entire engagement.</p>
+              <span class="marginalia">— the SOPs are still in use.</span><br/>
+              <a href="/experience/sound-transit">Open the case study →</a>
+            </div>
+          </article>
+
+          <article class="fn-case">
+            <div class="when">
+              <span class="num">02</span>
+              MAR 2017 –<br/>MAR 2018
+            </div>
+            <div>
+              <div class="tag-mono">JBLM · DoD · DISA STIG</div>
+              <h3>Rebuilding DoD security environments for 500+ users</h3>
+              <p>DISA STIG-compliant Windows 10 deployment cut unauthorized access by 25%. Splunk SIEM threat-hunting protocols + vulnerability management delivered a 35% stronger overall posture.</p>
+              <span class="marginalia">— hardest scope, learned the most.</span><br/>
+              <a href="/experience/jblm">Open the case study →</a>
+            </div>
+          </article>
+
+          <article class="fn-case">
+            <div class="when">
+              <span class="num">03</span>
+              ONGOING<br/>2024 →
+            </div>
+            <div>
+              <div class="tag-mono">NEXUS LAB · SELF-HOSTED</div>
+              <h3>The 3-node SOC homelab where new patterns get tested</h3>
+              <p>HA Proxmox cluster, 16 LXCs across 4 VLANs, Wazuh SIEM, 13 Grafana alert rules, Loki/Alloy logging, Ansible IaC (20+ roles, single site.yml converges all), custom React operator dashboard.</p>
+              <span class="marginalia">— prod-shaped, runs 24/7.</span><br/>
+              <a href="/experience/nexus-lab">Open the case study →</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Toolkit -->
+      <section class="fn-section" id="toolkit">
+        <div class="margin">
+          what I reach<br/>
+          for first
+          <span class="arrow">→</span>
+        </div>
+        <h2>What's in the bag</h2>
+        <p class="sub">// toolkit — the stuff I actually use, not the stuff on the resume</p>
+
+        <div class="fn-toolkit">
+          <div class="fn-tool">
+            <h4>For the SIEM</h4>
+            <p>Splunk SPL is muscle memory at this point. Wazuh in the lab when I want to own the stack end-to-end. SolarWinds in NOC contexts.</p>
+            <div class="toolset">Splunk · Wazuh · SolarWinds · CrowdStrike · Defender · Sentinel</div>
+          </div>
+          <div class="fn-tool">
+            <h4>For the runbook</h4>
+            <p>Python first for anything past 3 lines. Bash + PowerShell for glue. Ansible when the change has to land on more than one box.</p>
+            <div class="toolset">Python · PowerShell · Bash · Ansible · Terraform · Git</div>
+          </div>
+          <div class="fn-tool">
+            <h4>For compliance</h4>
+            <p>NIST 800-53 + CJIS Level 4 are the two I've shipped against in production. STIG hardening and ITIL tickets in the same week, more than once.</p>
+            <div class="toolset">NIST 800-53 · CJIS · DISA STIG · NIST CSF · ISO 27001 · ITIL</div>
+          </div>
+          <div class="fn-tool">
+            <h4>For the lab</h4>
+            <p>Proxmox is the bedrock — 3 nodes, HA, VLANs. Loki/Alloy for logs, Grafana for the alerts I want to wake up to. React on the dashboard.</p>
+            <div class="toolset">Proxmox · Loki · Grafana · Wazuh · React · Express</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sign-off / contact -->
+      <section class="fn-signoff" id="contact">
+        <h3>Want to talk?</h3>
+        <p>If you're hiring for cybersecurity, DevOps, or infrastructure work — I'd love to chat. Remote or Seattle metro. I read every email and reply within 24 hours.</p>
+        <div class="signature">Steve Vik</div>
+        <div class="signature-meta">Seattle, WA · 2026-04-28</div>
+        <div class="row">
+          <a class="cta solid" href="mailto:steven@stevenjvik.tech">steven@stevenjvik.tech</a>
+          <a class="cta" href="https://linkedin.com/in/stevenjvik" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="cta" href="https://github.com/sjviklabs" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </section>
+
+      <p class="fn-foot">— end of entry —</p>
+    </main>
+  </body>
+</html>

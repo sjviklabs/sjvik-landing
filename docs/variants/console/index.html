@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-tier="labs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steve Vik — Variant: Console</title>
+    <meta name="description" content="Steve Vik — Cybersecurity Engineer. Console variant: NOC HUD multi-pane dashboard." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../_shared.css" />
+    <style>
+      /* Console: multi-pane HUD dashboard layout — distinct from terminal (linear/text) and editorial (paper) */
+      .console-shell {
+        display: grid;
+        grid-template-columns: 280px minmax(0, 1fr) 280px;
+        grid-template-rows: auto auto auto;
+        gap: 1px;
+        background: var(--line-soft);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        margin-top: 0;
+        min-height: calc(100vh - 56px);
+      }
+      .console-shell > section { background: var(--ink); padding: 20px; }
+
+      /* LEFT SIDEBAR — system identity + status leds */
+      .pane-id { grid-column: 1; grid-row: 1 / span 3; border-right: 1px solid var(--line-soft); }
+      .id-block .photo {
+        width: 100%;
+        aspect-ratio: 1;
+        background: var(--surface-2);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        margin-bottom: 14px;
+        display: grid;
+        place-items: center;
+        font-family: var(--font-mono);
+        font-size: 60px;
+        font-weight: 700;
+        color: var(--green);
+        letter-spacing: -0.04em;
+      }
+      .id-block h1 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 4px;
+        color: var(--fg);
+      }
+      .id-block .role {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--green);
+        margin-bottom: 16px;
+      }
+      .id-block .meta-rows { font-family: var(--font-mono); font-size: 11px; }
+      .id-block .meta-rows .row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .id-block .meta-rows .row:last-child { border-bottom: none; }
+      .id-block .meta-rows .key { color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.08em; }
+      .id-block .meta-rows .val { color: var(--fg); }
+      .id-block .meta-rows .led {
+        display: inline-block;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 4px var(--green);
+        margin-right: 4px;
+        animation: pulse 2.4s ease-in-out infinite;
+      }
+
+      .id-actions {
+        display: flex; flex-direction: column; gap: 8px;
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line-soft);
+      }
+      .id-actions .cta { justify-content: center; }
+
+      /* CENTER — primary identity headline + metric tiles */
+      .pane-main { grid-column: 2; grid-row: 1; padding: 32px 28px !important; }
+      .pane-main .headline {
+        font-family: var(--font-sans);
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.025em;
+        margin: 0 0 12px;
+        color: var(--fg);
+      }
+      .pane-main .headline .accent { color: var(--green); }
+      .pane-main .deck {
+        font-family: var(--font-sans);
+        font-size: 15px;
+        line-height: 1.55;
+        color: var(--fg-mute);
+        max-width: 60ch;
+        margin: 0 0 20px;
+      }
+      .pane-main .deck strong { color: var(--fg); font-weight: 600; }
+
+      .pane-main .stack {
+        display: flex; flex-wrap: wrap; gap: 6px;
+      }
+      .pane-main .stack .tag {
+        background: var(--surface-2);
+        color: var(--fg);
+        font-weight: 500;
+      }
+
+      /* CENTER LOWER — metric panel grid */
+      .pane-metrics { grid-column: 2; grid-row: 2; border-top: 1px solid var(--line-soft); padding: 24px 28px !important; }
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+      }
+      .metric-tile {
+        padding: 16px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 4px;
+        position: relative;
+      }
+      .metric-tile::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0;
+        width: 36px; height: 2px;
+        background: var(--green);
+      }
+      .metric-tile .key {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--fg-dim);
+        margin-bottom: 8px;
+        display: flex; align-items: center; gap: 6px;
+      }
+      .metric-tile .led { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2.4s ease-in-out infinite; }
+      .metric-tile .val {
+        font-family: var(--font-sans);
+        font-size: clamp(28px, 3.5vw, 40px);
+        font-weight: 700;
+        line-height: 1;
+        color: var(--fg);
+        margin-bottom: 6px;
+        letter-spacing: -0.03em;
+      }
+      .metric-tile .val .unit { font-size: 0.5em; color: var(--green); margin-left: 0.1em; }
+      .metric-tile .where { font-size: 12px; color: var(--fg-mute); line-height: 1.4; }
+
+      /* CENTER BOTTOM — case study deck */
+      .pane-cases { grid-column: 2; grid-row: 3; border-top: 1px solid var(--line-soft); padding: 24px 28px !important; }
+      .pane-cases h2 { font-size: 16px; font-weight: 700; margin: 0 0 12px; }
+      .case-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .case-tile {
+        padding: 12px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        border-radius: 4px;
+        display: flex; flex-direction: column;
+      }
+      .case-tile .num-tag {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--green);
+        margin-bottom: 4px;
+      }
+      .case-tile h3 { font-size: 14px; font-weight: 700; margin: 0 0 4px; }
+      .case-tile .meta { font-family: var(--font-mono); font-size: 10px; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 8px; }
+      .case-tile p { font-size: 12px; color: var(--fg-mute); line-height: 1.5; flex: 1; margin: 0 0 10px; }
+      .case-tile a { font-family: var(--font-mono); font-size: 11px; color: var(--green); text-decoration: none; font-weight: 600; }
+      .case-tile a:hover { text-decoration: underline; }
+
+      /* RIGHT SIDEBAR — live feeds */
+      .pane-feed { grid-column: 3; grid-row: 1 / span 3; border-left: 1px solid var(--line-soft); padding: 20px; }
+      .feed-block { margin-bottom: 24px; }
+      .feed-block h3 {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--fg-dim);
+        margin: 0 0 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .feed-row {
+        display: flex; justify-content: space-between; gap: 8px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        padding: 6px 0;
+      }
+      .feed-row .ts { color: var(--fg-dim); }
+      .feed-row .lvl { color: var(--green); }
+      .feed-row .msg { color: var(--fg-mute); flex: 1; }
+
+      .uptime-grid {
+        display: grid;
+        grid-template-columns: repeat(20, 1fr);
+        gap: 2px;
+      }
+      .uptime-grid div {
+        height: 14px;
+        background: var(--green);
+        opacity: 0.7;
+        border-radius: 1px;
+      }
+      .uptime-grid div.warn { background: var(--amber); opacity: 0.7; }
+
+      /* Bottom strip — full-width skills + connect */
+      .pane-skills {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        border-top: 1px solid var(--line);
+        padding: 32px 28px !important;
+      }
+      .pane-skills h2 { font-size: 18px; font-weight: 700; margin: 0 0 12px; }
+      .skills-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+      }
+      .skill-cat h4 {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--green);
+        margin: 0 0 8px;
+      }
+      .skill-cat .tag-list { display: flex; flex-wrap: wrap; gap: 4px; }
+      .skill-cat .tag-list span {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 2px 6px;
+        background: var(--surface);
+        border: 1px solid var(--line-soft);
+        color: var(--fg-mute);
+        border-radius: 2px;
+      }
+
+      /* Connect block */
+      .pane-connect {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        border-top: 1px solid var(--line);
+        padding: 28px !important;
+        text-align: center;
+      }
+      .pane-connect h2 { font-size: 22px; margin: 0 0 8px; }
+      .pane-connect p { color: var(--fg-mute); margin: 0 0 16px; font-size: 14px; }
+      .connect-row { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+      @media (max-width: 1100px) {
+        .console-shell { grid-template-columns: 1fr; }
+        .pane-id, .pane-main, .pane-metrics, .pane-cases, .pane-feed, .pane-skills, .pane-connect {
+          grid-column: 1;
+          grid-row: auto;
+          border-right: none !important; border-left: none !important;
+        }
+        .metric-grid, .case-grid { grid-template-columns: 1fr 1fr; }
+        .skills-row { grid-template-columns: 1fr 1fr; }
+      }
+      @media (max-width: 600px) {
+        .metric-grid, .case-grid, .skills-row { grid-template-columns: 1fr; }
+        .uptime-grid { grid-template-columns: repeat(15, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <span class="v-tag">VARIANT · CONSOLE</span>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="#top" class="brand">sjvik<span class="dot">.</span>labs<span class="vmode">// CONSOLE</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#cases">Case studies</a>
+          <a href="#work">Work</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <div class="console-shell">
+
+        <!-- LEFT — Identity panel -->
+        <section class="pane-id frame">
+          <div class="id-block">
+            <div class="photo">SV</div>
+            <h1>Steven Vik</h1>
+            <div class="role">Cybersecurity Engineer</div>
+
+            <div class="meta-rows">
+              <div class="row"><span class="key">STATUS</span><span class="val"><span class="led"></span>OPEN</span></div>
+              <div class="row"><span class="key">BASED</span><span class="val">Seattle, WA</span></div>
+              <div class="row"><span class="key">MODE</span><span class="val">Remote / Hybrid</span></div>
+              <div class="row"><span class="key">CLEARANCE</span><span class="val">CJIS L4</span></div>
+              <div class="row"><span class="key">EXP</span><span class="val">8+ yrs</span></div>
+              <div class="row"><span class="key">REPLY</span><span class="val">&lt; 24h</span></div>
+            </div>
+
+            <div class="id-actions">
+              <a class="cta solid" href="mailto:steven@stevenjvik.tech">Email me</a>
+              <a class="cta" href="/Steven_Vik_Resume.pdf">Résumé.pdf</a>
+              <a class="cta ghost" href="https://linkedin.com/in/stevenjvik" target="_blank" rel="noopener">LinkedIn ↗</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- CENTER TOP — Headline -->
+        <section class="pane-main">
+          <div class="label">/ identity / 2026.04.28</div>
+          <h2 class="headline">
+            Cybersecurity engineer<br/>
+            running a <span class="accent">3-node SOC lab</span><br/>
+            and 8+ years of NOC ops.
+          </h2>
+          <p class="deck">
+            <strong>Sound Transit, JBLM, Amazon campuses.</strong> Splunk-driven incident response,
+            Python alert validation, CJIS-graded compliance. I build runbooks, harden systems,
+            and keep alerts honest — and I run the lab where the patterns get tested first.
+          </p>
+          <div class="stack" aria-label="Primary stack">
+            <span class="tag">Splunk</span>
+            <span class="tag">SolarWinds</span>
+            <span class="tag">Python</span>
+            <span class="tag">CrowdStrike</span>
+            <span class="tag">NIST 800-53</span>
+            <span class="tag">CJIS</span>
+            <span class="tag">Linux</span>
+            <span class="tag">Wazuh</span>
+            <span class="tag">Ansible</span>
+          </div>
+        </section>
+
+        <!-- CENTER MID — Metric tiles -->
+        <section class="pane-metrics">
+          <div class="label">/ outcomes / quantified</div>
+          <div class="metric-grid" role="region" aria-label="Career metrics">
+            <div class="metric-tile">
+              <div class="key"><span class="led"></span>MTTR_REDUCTION</div>
+              <div class="val">40<span class="unit">%</span></div>
+              <div class="where">Sound Transit · Python alert validation</div>
+            </div>
+            <div class="metric-tile">
+              <div class="key"><span class="led"></span>ENDPOINTS_MONITORED</div>
+              <div class="val">3,000<span class="unit">+</span></div>
+              <div class="where">24/7 NOC · 99.9% uptime</div>
+            </div>
+            <div class="metric-tile">
+              <div class="key"><span class="led"></span>CJIS_VIOLATIONS</div>
+              <div class="val">0</div>
+              <div class="where">Federal &amp; law enforcement environments</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- CENTER BOTTOM — Case studies -->
+        <section class="pane-cases" id="cases">
+          <div class="label">/ case_studies / proof</div>
+          <h2>Three deep-dives</h2>
+          <div class="case-grid">
+            <div class="case-tile">
+              <div class="num-tag">CASE 01</div>
+              <h3>Sound Transit SOC</h3>
+              <div class="meta">2024–2025 · 24/7 NOC</div>
+              <p>3,000+ endpoints, Python alert validation, 40% MTTR cut, 0 CJIS audit violations.</p>
+              <a href="/experience/sound-transit">Read →</a>
+            </div>
+            <div class="case-tile">
+              <div class="num-tag">CASE 02</div>
+              <h3>JBLM Hardening</h3>
+              <div class="meta">2017–2018 · DoD · DISA STIG</div>
+              <p>Rebuilt DoD environments. 25% fewer unauth events. 35% stronger posture.</p>
+              <a href="/experience/jblm">Read →</a>
+            </div>
+            <div class="case-tile">
+              <div class="num-tag">CASE 03</div>
+              <h3>Nexus Lab</h3>
+              <div class="meta">ongoing · 3-node Proxmox</div>
+              <p>HA cluster, 16 LXCs, Wazuh SIEM, Ansible IaC, dashboard with log search.</p>
+              <a href="/experience/nexus-lab">Read →</a>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT — Live feeds -->
+        <aside class="pane-feed">
+          <div class="feed-block">
+            <h3>// uptime · last 60 days</h3>
+            <div class="uptime-grid" aria-hidden="true">
+              <script>document.write(Array.from({length:60},(_,i)=>`<div class="${i===8||i===37?'warn':''}"></div>`).join(''));</script>
+            </div>
+            <div class="feed-row" style="margin-top:8px;">
+              <span class="ts">avg</span><span class="msg">99.91%</span><span class="lvl">OK</span>
+            </div>
+          </div>
+
+          <div class="feed-block">
+            <h3>// activity · recent</h3>
+            <div class="feed-row"><span class="ts">04-26</span><span class="msg">phase 4 noc cluster</span><span class="lvl">SHIP</span></div>
+            <div class="feed-row"><span class="ts">04-22</span><span class="msg">brand v2 design system</span><span class="lvl">DOC</span></div>
+            <div class="feed-row"><span class="ts">04-16</span><span class="msg">portfolio repo reorg</span><span class="lvl">REFACTOR</span></div>
+            <div class="feed-row"><span class="ts">04-08</span><span class="msg">soc-lab v0.4</span><span class="lvl">SHIP</span></div>
+            <div class="feed-row"><span class="ts">04-01</span><span class="msg">cluster rebalance</span><span class="lvl">OPS</span></div>
+          </div>
+
+          <div class="feed-block">
+            <h3>// stack · live</h3>
+            <div class="feed-row"><span class="msg">splunk-soc</span><span class="lvl">●</span></div>
+            <div class="feed-row"><span class="msg">wazuh-siem</span><span class="lvl">●</span></div>
+            <div class="feed-row"><span class="msg">grafana-13-alerts</span><span class="lvl">●</span></div>
+            <div class="feed-row"><span class="msg">loki-ingest</span><span class="lvl">●</span></div>
+            <div class="feed-row"><span class="msg">ansible-iac</span><span class="lvl">●</span></div>
+          </div>
+        </aside>
+
+        <!-- BOTTOM — Skills full-width -->
+        <section class="pane-skills" id="skills">
+          <div class="label">/ capabilities</div>
+          <h2>Toolkit</h2>
+          <div class="skills-row">
+            <div class="skill-cat">
+              <h4>SIEM &amp; Detection</h4>
+              <div class="tag-list"><span>Splunk</span><span>SolarWinds</span><span>CrowdStrike</span><span>Wazuh</span><span>Defender</span><span>Sentinel</span></div>
+            </div>
+            <div class="skill-cat">
+              <h4>Cloud &amp; Identity</h4>
+              <div class="tag-list"><span>AWS</span><span>Azure</span><span>Entra ID</span><span>Defender</span><span>CSPM</span></div>
+            </div>
+            <div class="skill-cat">
+              <h4>Compliance</h4>
+              <div class="tag-list"><span>NIST 800-53</span><span>CJIS</span><span>DISA STIG</span><span>ISO 27001</span><span>ITIL</span></div>
+            </div>
+            <div class="skill-cat">
+              <h4>DevOps / IaC</h4>
+              <div class="tag-list"><span>Linux</span><span>Proxmox</span><span>Ansible</span><span>Terraform</span><span>Python</span><span>Git</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- BOTTOM — Connect -->
+        <section class="pane-connect" id="contact">
+          <div class="label">/ contact</div>
+          <h2>Open file with hiring team</h2>
+          <p>Cybersecurity, DevOps, and infrastructure roles. Remote or Seattle metro. Reply within 24h.</p>
+          <div class="connect-row">
+            <a class="cta solid" href="mailto:steven@stevenjvik.tech">steven@stevenjvik.tech</a>
+            <a class="cta" href="https://linkedin.com/in/stevenjvik" target="_blank" rel="noopener">LinkedIn</a>
+            <a class="cta" href="https://github.com/sjviklabs" target="_blank" rel="noopener">GitHub</a>
+            <a class="cta ghost" href="/Steven_Vik_Resume.pdf">Résumé</a>
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <footer class="foot"><p>&copy; 2026 Steve Vik · CONSOLE variant</p></footer>
+  </body>
+</html>

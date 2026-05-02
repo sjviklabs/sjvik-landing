@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-tier="labs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>stevenjvik.tech — Variant Comparison</title>
+    <meta name="description" content="Three new direction variants for stevenjvik.tech: Console, Dossier, Field Notes." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,500;0,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./_shared.css" />
+    <style>
+      .v-intro {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 80px 24px 24px;
+      }
+      .v-intro .label { margin-bottom: 12px; }
+      .v-intro h1 {
+        font-family: var(--font-sans);
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 700;
+        letter-spacing: -0.025em;
+        line-height: 1.05;
+        margin: 0 0 12px;
+        color: var(--fg);
+      }
+      .v-intro h1 .accent { color: var(--green); }
+      .v-intro p {
+        font-size: 16px;
+        line-height: 1.6;
+        color: var(--fg-mute);
+        max-width: 70ch;
+        margin: 0 0 8px;
+      }
+      .v-intro .note {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-top: 12px;
+      }
+
+      /* Toolbar */
+      .v-toolbar {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 24px 16px;
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+      .v-toolbar .group {
+        display: flex;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      .v-toolbar .group button {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 8px 12px;
+        background: transparent;
+        color: var(--fg-mute);
+        border: none;
+        border-right: 1px solid var(--line);
+        cursor: pointer;
+        transition: color 150ms ease, background 150ms ease;
+      }
+      .v-toolbar .group button:last-child { border-right: none; }
+      .v-toolbar .group button:hover { color: var(--fg); background: var(--surface); }
+      .v-toolbar .group button.on {
+        color: var(--green);
+        background: color-mix(in srgb, var(--green) 8%, transparent);
+      }
+      .v-toolbar a {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        padding: 8px 12px;
+        background: var(--surface);
+        color: var(--fg-mute);
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        text-decoration: none;
+        transition: color 150ms ease, border-color 150ms ease;
+      }
+      .v-toolbar a:hover { color: var(--green); border-color: var(--green); }
+      .v-toolbar .spacer { flex: 1; }
+      .v-toolbar .label { font-family: var(--font-mono); font-size: 10px; color: var(--fg-dim); margin-right: 6px; text-transform: uppercase; letter-spacing: 0.12em; }
+
+      /* Compare grid */
+      .v-compare {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 16px 24px 64px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 24px;
+      }
+      @media (max-width: 1100px) {
+        .v-compare { grid-template-columns: 1fr 1fr; }
+        .v-card:nth-child(3) { grid-column: 1 / -1; }
+      }
+      @media (max-width: 720px) {
+        .v-compare { grid-template-columns: 1fr; }
+        .v-card:nth-child(3) { grid-column: auto; }
+      }
+
+      .v-card {
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 200ms ease;
+      }
+      .v-card:hover { border-color: var(--green); }
+
+      .v-card-head {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line-soft);
+      }
+      .v-card-head .num {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--green);
+        margin-bottom: 4px;
+      }
+      .v-card-head h2 {
+        font-family: var(--font-sans);
+        font-size: 20px;
+        font-weight: 700;
+        margin: 0 0 4px;
+        letter-spacing: -0.01em;
+        color: var(--fg);
+      }
+      .v-card-head p {
+        font-size: 13px;
+        line-height: 1.5;
+        color: var(--fg-mute);
+        margin: 6px 0 0;
+      }
+      .v-card-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-top: 10px;
+      }
+      .v-card-tags span {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 2px 6px;
+        background: color-mix(in srgb, var(--green) 8%, transparent);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        color: var(--fg-mute);
+        letter-spacing: 0.04em;
+      }
+
+      .v-frame-shell {
+        position: relative;
+        background: var(--ink);
+        border-bottom: 1px solid var(--line-soft);
+        overflow: hidden;
+      }
+      .v-frame-wrap {
+        position: relative;
+        width: 100%;
+        height: 0;
+        padding-bottom: 75%;
+        overflow: hidden;
+      }
+      .v-frame-wrap iframe {
+        position: absolute;
+        top: 0; left: 0;
+        border: none;
+        background: var(--ink);
+        transform-origin: top left;
+        pointer-events: none;
+      }
+      .v-frame-shell[data-vw="mobile"] .v-frame-wrap { padding-bottom: 130%; }
+      .v-frame-shell[data-vw="tablet"] .v-frame-wrap { padding-bottom: 95%; }
+      .v-frame-shell[data-vw="desktop"] .v-frame-wrap { padding-bottom: 65%; }
+
+      .v-card-foot {
+        padding: 12px 18px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .v-foot-meta {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        color: var(--fg-dim);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .v-open {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--ink);
+        background: var(--green);
+        padding: 6px 12px;
+        border-radius: 3px;
+        text-decoration: none;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        transition: opacity 150ms ease;
+      }
+      .v-open:hover { opacity: 0.9; }
+
+      /* Notes block */
+      .v-notes {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 24px 80px;
+      }
+      .v-notes h3 {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--green);
+        margin: 0 0 12px;
+      }
+      .v-notes ul {
+        margin: 0;
+        padding-left: 20px;
+        line-height: 1.65;
+        color: var(--fg-mute);
+        font-size: 14px;
+      }
+      .v-notes ul li { margin-bottom: 8px; padding-left: 4px; list-style: square; }
+      .v-notes strong { color: var(--fg); }
+      .v-notes code {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 1px 6px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        color: var(--green);
+      }
+
+      .v-notes-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+        margin-bottom: 32px;
+      }
+      @media (max-width: 800px) { .v-notes-grid { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="/" class="brand">sjvik<span class="dot">.</span>labs<span class="vmode">// VARIANTS</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="/">Live site</a>
+          <a href="./console/index.html">Console</a>
+          <a href="./dossier/index.html">Dossier</a>
+          <a href="./fieldnotes/index.html">Field Notes</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="v-intro">
+        <div class="label">/ variant comparison · 2026-04-28</div>
+        <h1>
+          Three <span class="accent">new directions</span><br/>
+          for stevenjvik.tech.
+        </h1>
+        <p>
+          Each variant is a complete homepage that addresses every P0 from the audit:
+          email CTA in hero, quantified metrics ribbon (40% / 3,000+ / 0), promoted case studies,
+          primary tech stack surfaced, and reduced-motion safeguarded. They use the real
+          brand-site palette (forest green on near-black) and reuse existing tokens — the
+          implementation pass converts the chosen direction into an Astro
+          <code>HeroX.astro</code> component plus a <code>$variant</code> store entry.
+        </p>
+        <p>
+          These are <strong>distinct from the existing terminal and editorial variants</strong> —
+          each occupies a different aesthetic axis (HUD dashboard vs. federal file vs.
+          engineering journal) so adding any of them grows the system rather than duplicating it.
+        </p>
+        <p class="note">// click "open full" on any card to view at full width and interact</p>
+      </section>
+
+      <div class="v-toolbar">
+        <div class="group" role="group" aria-label="Theme">
+          <span class="label" style="padding:8px 0 8px 12px;">Theme</span>
+          <button data-theme-set="dark" class="on">Dark</button>
+          <button data-theme-set="light">Light</button>
+        </div>
+        <div class="group" role="group" aria-label="Preview width">
+          <span class="label" style="padding:8px 0 8px 12px;">Width</span>
+          <button data-vw="mobile">Mobile</button>
+          <button data-vw="tablet">Tablet</button>
+          <button data-vw="desktop" class="on">Desktop</button>
+        </div>
+        <div class="spacer"></div>
+        <a href="/" target="_blank" rel="noopener">Live site ↗</a>
+        <a href="/docs/AUDIT-2026-04-28.md" target="_blank" rel="noopener">Audit doc ↗</a>
+      </div>
+
+      <section class="v-compare">
+        <article class="v-card" id="card-console">
+          <div class="v-card-head">
+            <p class="num">VARIANT 01</p>
+            <h2>Console</h2>
+            <p>NOC HUD multi-pane dashboard. Identity sidebar + headline pane + metric tiles + live activity feed + uptime grid. Where terminal is text-on-screen, Console is a control room.</p>
+            <div class="v-card-tags"><span>HUD</span><span>multi-pane</span><span>live feeds</span><span>cyber/SRE</span></div>
+          </div>
+          <div class="v-frame-shell" data-vw="desktop">
+            <div class="v-frame-wrap">
+              <iframe src="./console/index.html" title="Console variant preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="v-card-foot">
+            <span class="v-foot-meta">SOC · SRE · ops</span>
+            <a class="v-open" href="./console/index.html" target="_blank" rel="noopener">Open full →</a>
+          </div>
+        </article>
+
+        <article class="v-card" id="card-dossier">
+          <div class="v-card-head">
+            <p class="num">VARIANT 02</p>
+            <h2>Dossier</h2>
+            <p>Federal candidate-file aesthetic. Stamped section labels (§ I / II / III), classified header bar, metadata table, capability matrix. Niche signal for federal / regulated-industry roles.</p>
+            <div class="v-card-tags"><span>candidate file</span><span>metadata table</span><span>federal</span></div>
+          </div>
+          <div class="v-frame-shell" data-vw="desktop">
+            <div class="v-frame-wrap">
+              <iframe src="./dossier/index.html" title="Dossier variant preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="v-card-foot">
+            <span class="v-foot-meta">DoD · federal · regulated</span>
+            <a class="v-open" href="./dossier/index.html" target="_blank" rel="noopener">Open full →</a>
+          </div>
+        </article>
+
+        <article class="v-card" id="card-fieldnotes">
+          <div class="v-card-head">
+            <p class="num">VARIANT 03</p>
+            <h2>Field Notes</h2>
+            <p>Engineering journal — datestamped entries, marginalia in handwriting, sign-off. Communicates a thinking practitioner, not a stat sheet. Distinctive against the genre.</p>
+            <div class="v-card-tags"><span>journal</span><span>marginalia</span><span>humanizing</span><span>contrarian</span></div>
+          </div>
+          <div class="v-frame-shell" data-vw="desktop">
+            <div class="v-frame-wrap">
+              <iframe src="./fieldnotes/index.html" title="Field Notes variant preview" loading="lazy"></iframe>
+            </div>
+          </div>
+          <div class="v-card-foot">
+            <span class="v-foot-meta">general · senior · cultural fit</span>
+            <a class="v-open" href="./fieldnotes/index.html" target="_blank" rel="noopener">Open full →</a>
+          </div>
+        </article>
+      </section>
+
+      <section class="v-notes">
+        <div class="v-notes-grid">
+          <div>
+            <h3>// what's shared across all 3</h3>
+            <ul>
+              <li>Real brand-site palette via <code>_shared.css</code> mirroring <code>@theme</code> tokens (forest green <code>#6fbf8e</code>, near-black ink <code>#0a1311</code>, warm-paper light)</li>
+              <li>Hero email CTA (P0 fix #1.1)</li>
+              <li>Quantified metric ribbon — 40% / 3,000+ / 0 (P0 fix #1.3)</li>
+              <li>Primary tech stack surfaced above the fold (P1 fix #1.4)</li>
+              <li>Promoted case studies as a top-level destination (P1 fix #1.5)</li>
+              <li><code>prefers-reduced-motion</code> + <code>data-tier="labs"</code></li>
+              <li>Identical content payload — you're judging visual direction, not copy</li>
+            </ul>
+          </div>
+          <div>
+            <h3>// what's distinct from terminal / editorial</h3>
+            <ul>
+              <li><strong>Console</strong> — spatial multi-pane layout (terminal is linear scroll)</li>
+              <li><strong>Dossier</strong> — bureaucratic-formal (editorial is magazine-elegant)</li>
+              <li><strong>Field Notes</strong> — handwritten-personal (neither existing variant goes here)</li>
+              <li>None duplicate the terminal MOTD frame, typewriter, or live widget stack</li>
+              <li>None duplicate the editorial serif wordmark + grid-paper background</li>
+              <li>Each could be added to <code>$variant</code> as a 3rd/4th/5th option without conflict</li>
+            </ul>
+          </div>
+        </div>
+
+        <div>
+          <h3>// implementation path once you pick</h3>
+          <ul>
+            <li>Add value to <code>Variant</code> type in <code>src/components/react/store.ts</code> (e.g., <code>"console"</code>)</li>
+            <li>New <code>src/components/sections/HeroConsole.astro</code> (copy variant CSS into scoped <code>&lt;style&gt;</code>, port content from <code>src/data/content.ts</code>)</li>
+            <li>Add CSS toggle rule in <code>src/pages/index.astro</code> alongside the existing <code>data-hero</code> selectors</li>
+            <li>Add command in <code>CommandPalette.tsx</code> + chip in <code>TweaksPanel.tsx</code></li>
+            <li>Update pre-hydration script in <code>Layout.astro</code> to recognize the new variant</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="foot">stevenjvik.tech &middot; variants comparison &middot; 2026-04-28</footer>
+
+    <script>
+      const themeButtons = document.querySelectorAll('[data-theme-set]');
+      themeButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const t = btn.dataset.themeSet;
+          document.documentElement.dataset.theme = t;
+          themeButtons.forEach(b => b.classList.toggle('on', b === btn));
+          document.querySelectorAll('iframe').forEach(f => {
+            try { f.contentDocument.documentElement.dataset.theme = t; } catch (e) {}
+          });
+        });
+      });
+
+      const vwButtons = document.querySelectorAll('[data-vw]');
+      const widths = { mobile: 390, tablet: 768, desktop: 1280 };
+      const heights = { mobile: 1.3, tablet: 0.95, desktop: 0.65 };
+      function applyWidth(vw) {
+        const target = widths[vw];
+        document.querySelectorAll('.v-frame-shell').forEach(shell => {
+          shell.dataset.vw = vw;
+          const wrap = shell.querySelector('.v-frame-wrap');
+          const iframe = wrap.querySelector('iframe');
+          const shellWidth = wrap.getBoundingClientRect().width;
+          const scale = shellWidth / target;
+          iframe.style.width = target + 'px';
+          iframe.style.height = (heights[vw] * target) + 'px';
+          iframe.style.transform = 'scale(' + scale + ')';
+        });
+      }
+      vwButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const vw = btn.dataset.vw;
+          vwButtons.forEach(b => b.classList.toggle('on', b.dataset.vw === vw));
+          applyWidth(vw);
+        });
+      });
+      window.addEventListener('load', () => applyWidth('desktop'));
+      window.addEventListener('resize', () => {
+        const active = document.querySelector('[data-vw].on');
+        if (active) applyWidth(active.dataset.vw);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="en" data-theme="dark" data-tier="labs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Steve Vik — Variant: Dossier</title>
+    <meta name="description" content="Steve Vik — Cybersecurity Engineer. Dossier variant: federal candidate-file aesthetic." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Newsreader:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="../_shared.css" />
+    <style>
+      /* Dossier: federal candidate-file. Stamped sections, metadata table, document grid.
+         Distinct from editorial (magazine-elegant) — this is bureaucratic-formal. */
+      .doc-frame {
+        max-width: 1080px;
+        margin: 32px auto;
+        padding: 36px 40px 56px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        position: relative;
+      }
+      .doc-frame::before {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        border: 1px solid var(--line-soft);
+        pointer-events: none;
+      }
+
+      .classify-bar {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        text-align: center;
+        letter-spacing: 0.4em;
+        padding: 8px;
+        background: var(--green);
+        color: var(--ink);
+        margin: -36px -40px 32px;
+        text-transform: uppercase;
+      }
+
+      .doc-header {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 32px;
+        padding-bottom: 24px;
+        border-bottom: 2px solid var(--fg);
+        margin-bottom: 32px;
+      }
+
+      .doc-id {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--fg-mute);
+        margin-bottom: 16px;
+      }
+      .doc-id .stamp {
+        display: inline-block;
+        padding: 3px 8px;
+        border: 1px solid var(--fg-mute);
+        margin-right: 8px;
+        color: var(--fg);
+      }
+
+      .doc-title {
+        font-family: var(--font-serif);
+        font-size: clamp(36px, 5.5vw, 60px);
+        font-weight: 600;
+        line-height: 1.0;
+        letter-spacing: -0.025em;
+        color: var(--fg);
+        margin: 0 0 16px;
+      }
+      .doc-title em {
+        font-style: italic;
+        font-weight: 500;
+        color: var(--green);
+      }
+      .doc-subtitle {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        color: var(--fg-mute);
+        max-width: 60ch;
+        line-height: 1.55;
+      }
+
+      /* Quick-fact metadata table */
+      .doc-meta-table {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        min-width: 280px;
+        border-collapse: collapse;
+        border: 1px solid var(--fg);
+      }
+      .doc-meta-table tr { border-bottom: 1px solid var(--line); }
+      .doc-meta-table tr:last-child { border-bottom: none; }
+      .doc-meta-table th {
+        text-align: left;
+        padding: 6px 10px;
+        background: var(--surface-2);
+        color: var(--fg-dim);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        font-size: 10px;
+        width: 40%;
+      }
+      .doc-meta-table td {
+        padding: 6px 10px;
+        color: var(--fg);
+        font-weight: 600;
+      }
+      .doc-meta-table td .led {
+        display: inline-block;
+        width: 6px; height: 6px;
+        border-radius: 50%;
+        background: var(--green);
+        margin-right: 4px;
+      }
+
+      /* Stat ribbon */
+      .doc-ribbon {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+        margin: 0 0 28px;
+        padding: 20px 0;
+        border-top: 1px solid var(--fg);
+        border-bottom: 1px solid var(--fg);
+      }
+      .doc-ribbon > div {
+        text-align: center;
+        padding: 0 16px;
+        border-right: 1px solid var(--line);
+      }
+      .doc-ribbon > div:last-child { border-right: none; }
+      .doc-ribbon .num {
+        font-family: var(--font-serif);
+        font-size: clamp(32px, 4vw, 48px);
+        font-weight: 600;
+        line-height: 1;
+        color: var(--fg);
+        margin-bottom: 6px;
+        letter-spacing: -0.02em;
+      }
+      .doc-ribbon .label {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--fg-mute);
+      }
+
+      .doc-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+      /* Section labels — stamped */
+      .doc-section { padding: 36px 0 16px; }
+      .doc-section-label {
+        display: inline-block;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        padding: 4px 10px;
+        border: 1px solid var(--fg);
+        color: var(--fg);
+        margin-bottom: 18px;
+      }
+      .doc-section h2 {
+        font-family: var(--font-serif);
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 20px;
+        letter-spacing: -0.01em;
+      }
+
+      /* Document grid for entries */
+      .doc-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0;
+        border-top: 1px solid var(--fg);
+        border-left: 1px solid var(--fg);
+      }
+      .doc-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+      .doc-grid article {
+        padding: 18px 20px;
+        border-right: 1px solid var(--fg);
+        border-bottom: 1px solid var(--fg);
+        background: rgba(0,0,0,0.05);
+      }
+      .doc-grid h3 {
+        font-family: var(--font-serif);
+        font-size: 17px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        line-height: 1.2;
+      }
+      .doc-grid .meta {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--fg-dim);
+        margin-bottom: 10px;
+      }
+      .doc-grid p {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+        line-height: 1.55;
+        margin: 0;
+      }
+      .doc-grid .case-link {
+        display: inline-block;
+        margin-top: 10px;
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--green);
+        text-decoration: none;
+        letter-spacing: 0.06em;
+      }
+      .doc-grid .case-link:hover { text-decoration: underline; }
+      .doc-grid .metrics-mini {
+        display: flex;
+        gap: 16px;
+        margin: 10px 0;
+        padding: 8px 0;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      .doc-grid .metrics-mini li {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        color: var(--fg-mute);
+      }
+      .doc-grid .metrics-mini strong {
+        color: var(--green);
+        font-weight: 700;
+        margin-right: 4px;
+      }
+      .doc-grid .tag-row { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+      .doc-grid .tag-row span {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        padding: 2px 6px;
+        border: 1px solid var(--line);
+        border-radius: 2px;
+        color: var(--fg-mute);
+      }
+
+      /* Capabilities list — formal grid */
+      .cap-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+      }
+      .cap-cat h4 {
+        font-family: var(--font-mono);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.14em;
+        color: var(--fg);
+        margin: 0 0 8px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid var(--fg);
+      }
+      .cap-cat ul li {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        padding: 3px 0;
+        color: var(--fg-mute);
+        border-bottom: 1px dotted var(--line);
+      }
+      .cap-cat ul li::before {
+        content: "▸";
+        color: var(--green);
+        margin-right: 6px;
+      }
+
+      /* Connect block */
+      .doc-connect {
+        margin-top: 32px;
+        padding: 24px;
+        border: 2px solid var(--fg);
+        text-align: center;
+      }
+      .doc-connect h3 {
+        font-family: var(--font-serif);
+        font-size: 22px;
+        font-weight: 600;
+        margin: 0 0 6px;
+      }
+      .doc-connect p {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--fg-mute);
+        margin: 0 0 14px;
+      }
+      .doc-connect .row { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+
+      .doc-footer-strip {
+        font-family: var(--font-mono);
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.22em;
+        color: var(--fg-dim);
+        text-align: center;
+        padding: 16px 0 0;
+        border-top: 2px solid var(--fg);
+        margin-top: 32px;
+      }
+
+      @media (max-width: 800px) {
+        .doc-frame { padding: 24px 20px 40px; margin: 16px 12px; }
+        .classify-bar { margin: -24px -20px 24px; }
+        .doc-header { grid-template-columns: 1fr; }
+        .doc-ribbon { grid-template-columns: 1fr; }
+        .doc-ribbon > div { border-right: none; border-bottom: 1px solid var(--line); padding: 12px 0; }
+        .doc-ribbon > div:last-child { border-bottom: none; }
+        .doc-grid, .doc-grid.cols-3 { grid-template-columns: 1fr; }
+        .cap-grid { grid-template-columns: 1fr 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <span class="v-tag">VARIANT · DOSSIER</span>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a href="#top" class="brand">sjvik<span class="dot">.</span>labs<span class="vmode">// DOSSIER</span></a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#cases">Case files</a>
+          <a href="#exp">Experience</a>
+          <a href="#cap">Capabilities</a>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="top">
+      <div class="doc-frame">
+        <div class="classify-bar">// CANDIDATE PROFILE · OPEN FOR ROLE //</div>
+
+        <header class="doc-header">
+          <div>
+            <p class="doc-id">
+              <span class="stamp">FILE-2026-0428</span>
+              <span class="stamp">SJVIK-LLC</span>
+              CANDIDATE DOSSIER
+            </p>
+            <h1 class="doc-title">
+              Steven <em>Vik,</em><br/>
+              cybersecurity<br/>
+              engineer.
+            </h1>
+            <p class="doc-subtitle">
+              Eight years of enterprise NOC operations across federal, transit, and law-enforcement environments.
+              SIEM-driven incident response. Python automation. CJIS Level 4 clearance. 3-node SOC homelab where new patterns get tested first.
+            </p>
+          </div>
+          <div>
+            <table class="doc-meta-table" aria-label="Candidate quick facts">
+              <tr><th>NAME</th><td>Steven J. Vik</td></tr>
+              <tr><th>ROLE</th><td>Cyber / DevOps</td></tr>
+              <tr><th>BASED</th><td>Seattle, WA</td></tr>
+              <tr><th>STATUS</th><td><span class="led"></span>OPEN</td></tr>
+              <tr><th>CLEARANCE</th><td>CJIS L4</td></tr>
+              <tr><th>EXP</th><td>8+ years</td></tr>
+              <tr><th>REPLY</th><td>&lt; 24 hours</td></tr>
+            </table>
+          </div>
+        </header>
+
+        <div class="doc-ribbon">
+          <div>
+            <div class="num">40%</div>
+            <div class="label">MTTR Reduction</div>
+          </div>
+          <div>
+            <div class="num">3,000+</div>
+            <div class="label">Endpoints Monitored</div>
+          </div>
+          <div>
+            <div class="num">0</div>
+            <div class="label">CJIS Audit Violations</div>
+          </div>
+        </div>
+
+        <div class="doc-actions">
+          <a class="cta solid" href="mailto:steven@stevenjvik.tech">Request Interview</a>
+          <a class="cta" href="#cases">Review Case Files →</a>
+          <a class="cta ghost" href="/Steven_Vik_Resume.pdf">Résumé.pdf</a>
+        </div>
+
+        <!-- Cases -->
+        <section id="cases" class="doc-section">
+          <span class="doc-section-label">§ I &middot; Proof of Work</span>
+          <h2>Case files</h2>
+          <div class="doc-grid cols-3">
+            <article>
+              <p class="meta">CASE 01 · ENTERPRISE</p>
+              <h3>Sound Transit SOC</h3>
+              <p>3,000+ endpoints. 24/7 monitoring. Python alert validation cut MTTR 40% with zero CJIS audit violations.</p>
+              <a href="/experience/sound-transit" class="case-link">Open file →</a>
+            </article>
+            <article>
+              <p class="meta">CASE 02 · DEFENSE</p>
+              <h3>JBLM Hardening</h3>
+              <p>Rebuilt DoD security environments for 500+ users. 25% fewer unauthorized access events. 35% stronger posture.</p>
+              <a href="/experience/jblm" class="case-link">Open file →</a>
+            </article>
+            <article>
+              <p class="meta">CASE 03 · APPLIED</p>
+              <h3>Nexus Lab</h3>
+              <p>Production-grade homelab. 3-node Proxmox HA cluster. 16 LXCs. Wazuh SIEM. Ansible IaC. Custom dashboard.</p>
+              <a href="/experience/nexus-lab" class="case-link">Open file →</a>
+            </article>
+          </div>
+        </section>
+
+        <!-- Employment -->
+        <section id="exp" class="doc-section">
+          <span class="doc-section-label">§ II &middot; Employment History</span>
+          <h2>Background</h2>
+          <div class="doc-grid">
+            <article>
+              <p class="meta">2024–2025 · SOUND TRANSIT</p>
+              <h3>Engineer — Network Operations Center</h3>
+              <ul class="metrics-mini">
+                <li><strong>40%</strong>MTTR</li>
+                <li><strong>3,000+</strong>endpoints</li>
+                <li><strong>0</strong>violations</li>
+              </ul>
+              <p>24/7 NOC for transit IT/OT. Authored SOPs, built Python automation and Django tools. Managed CrowdStrike Falcon, Defender, Entra ID. Enforced CJIS &amp; NIST 800-53.</p>
+              <div class="tag-row"><span>Splunk</span><span>SolarWinds</span><span>Python</span><span>CJIS</span></div>
+            </article>
+            <article>
+              <p class="meta">2017–2018 · JBLM</p>
+              <h3>IT Security Specialist</h3>
+              <ul class="metrics-mini">
+                <li><strong>500+</strong>users</li>
+                <li><strong>25%</strong>fewer unauth</li>
+                <li><strong>35%</strong>posture</li>
+              </ul>
+              <p>Rebuilt DoD environments. DISA STIG-compliant Windows 10. Splunk SIEM threat hunting protocols and vulnerability management.</p>
+              <div class="tag-row"><span>Splunk</span><span>DISA STIG</span><span>Threat Hunting</span></div>
+            </article>
+            <article>
+              <p class="meta">2023–2024 · TES USA / AMAZON</p>
+              <h3>Enterprise Technology Auditor</h3>
+              <p>Coordinated infrastructure audits across 20+ Amazon buildings. Streamlined inventory documentation, shortened audit cycles, improved equipment accuracy.</p>
+              <div class="tag-row"><span>Cisco</span><span>Asset Inventory</span><span>Auditing</span></div>
+            </article>
+            <article>
+              <p class="meta">2020–2021 · SEATTLE U / MEDINA PD</p>
+              <h3>IT System Engineer</h3>
+              <p>Cisco UC for COVID-19 continuity. 200+ faculty/staff/students. CJIS compliance + IR playbook authorship.</p>
+              <div class="tag-row"><span>Cisco UC</span><span>CJIS</span><span>PowerShell</span></div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Capabilities -->
+        <section id="cap" class="doc-section">
+          <span class="doc-section-label">§ III &middot; Capabilities</span>
+          <h2>Capability matrix</h2>
+          <div class="cap-grid">
+            <div class="cap-cat">
+              <h4>SIEM &amp; Detection</h4>
+              <ul>
+                <li>Splunk (SPL)</li>
+                <li>SolarWinds</li>
+                <li>CrowdStrike Falcon</li>
+                <li>Wazuh</li>
+                <li>Defender</li>
+                <li>Sentinel</li>
+              </ul>
+            </div>
+            <div class="cap-cat">
+              <h4>Cloud &amp; Identity</h4>
+              <ul>
+                <li>AWS (EC2/S3/IAM)</li>
+                <li>Azure</li>
+                <li>Entra ID</li>
+                <li>CSPM</li>
+              </ul>
+            </div>
+            <div class="cap-cat">
+              <h4>Compliance</h4>
+              <ul>
+                <li>NIST 800-53</li>
+                <li>NIST CSF</li>
+                <li>CJIS Level 4</li>
+                <li>DISA STIG</li>
+                <li>ISO 27001</li>
+                <li>ITIL</li>
+              </ul>
+            </div>
+            <div class="cap-cat">
+              <h4>Infra / IaC</h4>
+              <ul>
+                <li>Linux / Windows</li>
+                <li>Proxmox</li>
+                <li>Ansible</li>
+                <li>Terraform</li>
+                <li>Python · Bash</li>
+                <li>Git / CI</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <!-- Connect -->
+        <section id="contact" class="doc-section">
+          <span class="doc-section-label">§ IV &middot; Contact</span>
+          <div class="doc-connect">
+            <h3>Open file with hiring team</h3>
+            <p>Available for cybersecurity, DevOps, and IT operations roles. Remote or Seattle metro.</p>
+            <div class="row">
+              <a class="cta solid" href="mailto:steven@stevenjvik.tech">steven@stevenjvik.tech</a>
+              <a class="cta" href="https://linkedin.com/in/stevenjvik" target="_blank" rel="noopener">LinkedIn</a>
+              <a class="cta" href="https://github.com/sjviklabs" target="_blank" rel="noopener">GitHub</a>
+            </div>
+          </div>
+        </section>
+
+        <p class="doc-footer-strip">END OF DOCUMENT &middot; PAGE 1 OF 1 &middot; SJVIK-LLC &middot; FY 2026</p>
+      </div>
+    </main>
+  </body>
+</html>
