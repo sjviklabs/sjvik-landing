@@ -44,7 +44,10 @@ export default function StoreSync() {
     const mq = window.matchMedia("(prefers-color-scheme: light)");
     const onChange = () => {
       if ($theme.get() === "auto") {
-        document.documentElement.setAttribute("data-theme", resolveTheme("auto"));
+        document.documentElement.setAttribute(
+          "data-theme",
+          resolveTheme("auto"),
+        );
       }
     };
     mq.addEventListener("change", onChange);

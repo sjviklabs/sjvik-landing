@@ -7,6 +7,7 @@ If you discover a security vulnerability in any SJVIK Labs project, please repor
 **Email:** stevenjvik.work@gmail.com
 
 Please include:
+
 - Description of the vulnerability
 - Steps to reproduce
 - Potential impact

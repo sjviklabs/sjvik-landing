@@ -14,14 +14,30 @@ type Event = { id: number; t: Date; sev: Severity; src: string; msg: string };
 
 const EVENT_POOL: Array<Pick<Event, "sev" | "src" | "msg">> = [
   { sev: "INFO", src: "edr/endpoint-07", msg: "beacon handshake ok" },
-  { sev: "WARN", src: "firewall/wan", msg: "rate-limit: 412 reqs from 45.9.148.12" },
+  {
+    sev: "WARN",
+    src: "firewall/wan",
+    msg: "rate-limit: 412 reqs from 45.9.148.12",
+  },
   { sev: "INFO", src: "cron/backup", msg: "pbs snapshot rotated — 1.2GB" },
   { sev: "WARN", src: "auth/ssh", msg: "3 failed logins → 91.240.118.172" },
   { sev: "INFO", src: "loki/index", msg: "hot bucket sealed — 24.8M events" },
-  { sev: "CRIT", src: "wazuh/host-11", msg: "powershell → base64 encoded payload" },
-  { sev: "INFO", src: "adguard/dns", msg: "blocklist refreshed — 1.4M domains" },
+  {
+    sev: "CRIT",
+    src: "wazuh/host-11",
+    msg: "powershell → base64 encoded payload",
+  },
+  {
+    sev: "INFO",
+    src: "adguard/dns",
+    msg: "blocklist refreshed — 1.4M domains",
+  },
   { sev: "OK", src: "incident/ir-044", msg: "contained. closing ticket" },
-  { sev: "WARN", src: "traefik/lan", msg: "slow upstream — api.internal 812ms" },
+  {
+    sev: "WARN",
+    src: "traefik/lan",
+    msg: "slow upstream — api.internal 812ms",
+  },
   { sev: "INFO", src: "vuln/scan", msg: "scan complete — 0 critical" },
   { sev: "OK", src: "ansible/play", msg: "site.yml converged — 16 hosts" },
   { sev: "WARN", src: "mail/filter", msg: "quarantined: phish(cred-theft) ×7" },
@@ -108,7 +124,9 @@ export default function SocFeed() {
             }}
           >
             <span style={{ color: "var(--fg-dim)" }}>{fmtTime(e.t)}</span>
-            <span style={{ color: SEV_COLOR[e.sev], fontWeight: 600 }}>{e.sev}</span>
+            <span style={{ color: SEV_COLOR[e.sev], fontWeight: 600 }}>
+              {e.sev}
+            </span>
             <span>
               <span style={{ color: "var(--fg-dim)" }}>{e.src}</span>
               &nbsp;{e.msg}

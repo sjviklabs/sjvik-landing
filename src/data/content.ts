@@ -103,7 +103,14 @@ export const EXPERIENCE: ExperienceItem[] = [
     dates: "Feb 2024 – Mar 2025",
     description:
       "Monitored 3,000+ endpoints across critical transit IT and OT infrastructure in a 24/7 NOC. Authored SOPs, developed Python automation and Django-based internal tools reducing MTTR by 40%. Managed endpoint security tooling including CrowdStrike Falcon, Defender for Endpoint, and Entra ID. Enforced CJIS and NIST 800-53 compliance with zero audit violations.",
-    tags: ["Splunk", "SolarWinds", "Python", "CrowdStrike", "NIST 800-53", "CJIS"],
+    tags: [
+      "Splunk",
+      "SolarWinds",
+      "Python",
+      "CrowdStrike",
+      "NIST 800-53",
+      "CJIS",
+    ],
     caseStudyUrl: "/experience/sound-transit",
     accent: "emerald",
   },
@@ -115,7 +122,12 @@ export const EXPERIENCE: ExperienceItem[] = [
     dates: "Jul 2023 – Jan 2024",
     description:
       "Coordinated infrastructure audits across 20+ Amazon buildings — AV systems, Cisco hardware, and projector infrastructure. Streamlined asset inventory documentation and developed improved tracking processes that shortened audit cycles and improved equipment accuracy across campuses.",
-    tags: ["Asset Inventory", "Cisco", "Infrastructure Auditing", "Documentation"],
+    tags: [
+      "Asset Inventory",
+      "Cisco",
+      "Infrastructure Auditing",
+      "Documentation",
+    ],
     accent: "secondary",
   },
   {
@@ -138,7 +150,13 @@ export const EXPERIENCE: ExperienceItem[] = [
     dates: "Mar 2017 – Mar 2018",
     description:
       "Rebuilt DoD security environments for 500+ users. Managed DISA STIG-compliant Windows 10 deployment — 25% reduction in unauthorized access. Developed Splunk SIEM threat hunting protocols and vulnerability management strategies that delivered a 35% stronger security posture.",
-    tags: ["Splunk", "DISA STIG", "Windows Server", "Threat Hunting", "Vulnerability Management"],
+    tags: [
+      "Splunk",
+      "DISA STIG",
+      "Windows Server",
+      "Threat Hunting",
+      "Vulnerability Management",
+    ],
     caseStudyUrl: "/experience/jblm",
     accent: "amber",
   },
@@ -232,7 +250,15 @@ export const GUIDES: GuideItem[] = [
       "Advanced Topics: ZFS, Ceph, live migration, GPU passthrough",
       "Appendix: Quick reference, troubleshooting, version matrix",
     ],
-    tags: ["Proxmox", "LXC", "Traefik", "Grafana", "Monitoring", "Backups", "Security"],
+    tags: [
+      "Proxmox",
+      "LXC",
+      "Traefik",
+      "Grafana",
+      "Monitoring",
+      "Backups",
+      "Security",
+    ],
     url: "https://stevenjvik.gumroad.com/l/gxcefj",
     highlights: [
       "3-node Proxmox cluster setup from bare metal",
@@ -271,7 +297,14 @@ export const GUIDES: GuideItem[] = [
       "Common Mistakes: Answers that sound right but are wrong",
       "First 90 Days: Your onboarding playbook",
     ],
-    tags: ["SOC", "SIEM", "Splunk", "Sentinel", "MITRE ATT&CK", "Interview Prep"],
+    tags: [
+      "SOC",
+      "SIEM",
+      "Splunk",
+      "Sentinel",
+      "MITRE ATT&CK",
+      "Interview Prep",
+    ],
     url: "https://stevenjvik.gumroad.com/l/pwemdd",
     highlights: [
       "200+ flashcards covering SOC fundamentals",
@@ -304,7 +337,13 @@ export const SKILLS: SkillGroup[] = [
   },
   {
     name: "Cloud & Identity",
-    skills: ["AWS (EC2, S3, IAM)", "Azure (VMs, Security Center)", "Entra ID", "Defender", "CSPM"],
+    skills: [
+      "AWS (EC2, S3, IAM)",
+      "Azure (VMs, Security Center)",
+      "Entra ID",
+      "Defender",
+      "CSPM",
+    ],
   },
   {
     name: "Scripting & Automation",
@@ -312,7 +351,14 @@ export const SKILLS: SkillGroup[] = [
   },
   {
     name: "Infrastructure",
-    skills: ["Linux", "Windows Server", "Proxmox VE", "LXC", "VMware ESXi", "Cisco UC"],
+    skills: [
+      "Linux",
+      "Windows Server",
+      "Proxmox VE",
+      "LXC",
+      "VMware ESXi",
+      "Cisco UC",
+    ],
   },
   {
     name: "Network & Security Tools",
@@ -331,7 +377,14 @@ export const SKILLS: SkillGroup[] = [
   },
   {
     name: "Compliance & Frameworks",
-    skills: ["NIST 800-53", "NIST CSF", "CJIS", "DISA STIG", "ISO 27001", "ITIL"],
+    skills: [
+      "NIST 800-53",
+      "NIST CSF",
+      "CJIS",
+      "DISA STIG",
+      "ISO 27001",
+      "ITIL",
+    ],
   },
   {
     name: "Security Disciplines",
@@ -345,7 +398,15 @@ export const SKILLS: SkillGroup[] = [
   },
   {
     name: "DevOps & Tooling",
-    skills: ["Git", "GitHub", "Terraform", "Ansible", "Node.js / Express", "CI/CD", "ServiceNow"],
+    skills: [
+      "Git",
+      "GitHub",
+      "Terraform",
+      "Ansible",
+      "Node.js / Express",
+      "CI/CD",
+      "ServiceNow",
+    ],
   },
 ];
 

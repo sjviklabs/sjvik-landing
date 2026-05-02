@@ -85,46 +85,178 @@ export default function CommandPalette() {
   const commands = useMemo<Command[]>(
     () => [
       // ── nav ───────────────────────────────────────────
-      { id: "go-home",    label: "Go: Home",     kind: "nav", hint: "G H", run: () => scrollToOrNavigate("home", "/") },
-      { id: "go-work",    label: "Go: Work",     kind: "nav", hint: "G W", run: () => scrollToOrNavigate("work", "/experience") },
-      { id: "go-proj",    label: "Go: Projects", kind: "nav", hint: "G P", run: () => scrollToOrNavigate("projects", "/projects") },
-      { id: "go-guides",  label: "Go: Guides",   kind: "nav", hint: "G U", run: () => scrollToOrNavigate("guides", "/guides") },
-      { id: "go-contact", label: "Go: Contact",  kind: "nav", hint: "G C", run: () => scrollToOrNavigate("contact", "/about") },
-      { id: "go-noc",     label: "Go: NOC Architecture", kind: "nav", run: () => { window.location.href = "/noc/"; } },
+      {
+        id: "go-home",
+        label: "Go: Home",
+        kind: "nav",
+        hint: "G H",
+        run: () => scrollToOrNavigate("home", "/"),
+      },
+      {
+        id: "go-work",
+        label: "Go: Work",
+        kind: "nav",
+        hint: "G W",
+        run: () => scrollToOrNavigate("work", "/experience"),
+      },
+      {
+        id: "go-proj",
+        label: "Go: Projects",
+        kind: "nav",
+        hint: "G P",
+        run: () => scrollToOrNavigate("projects", "/projects"),
+      },
+      {
+        id: "go-guides",
+        label: "Go: Guides",
+        kind: "nav",
+        hint: "G U",
+        run: () => scrollToOrNavigate("guides", "/guides"),
+      },
+      {
+        id: "go-contact",
+        label: "Go: Contact",
+        kind: "nav",
+        hint: "G C",
+        run: () => scrollToOrNavigate("contact", "/about"),
+      },
+      {
+        id: "go-noc",
+        label: "Go: NOC Architecture",
+        kind: "nav",
+        run: () => {
+          window.location.href = "/noc/";
+        },
+      },
 
       // ── actions ──────────────────────────────────────
-      { id: "resume",   label: "Download résumé (PDF)",     kind: "action", hint: "⇧ R", run: () => window.open(CONTACT.resumeUrl, "_blank") },
-      { id: "email",    label: `Email — ${CONTACT.email}`,   kind: "action", run: () => (window.location.href = `mailto:${CONTACT.email}`) },
-      { id: "linkedin", label: "Open LinkedIn",              kind: "action", run: () => window.open(CONTACT.linkedin, "_blank", "noopener,noreferrer") },
-      { id: "github",   label: "Open GitHub — sjviklabs",    kind: "action", run: () => window.open(CONTACT.github, "_blank", "noopener,noreferrer") },
-      { id: "gumroad",  label: "Open Gumroad — guides",      kind: "action", run: () => window.open("https://stevenjvik.gumroad.com", "_blank", "noopener,noreferrer") },
+      {
+        id: "resume",
+        label: "Download résumé (PDF)",
+        kind: "action",
+        hint: "⇧ R",
+        run: () => window.open(CONTACT.resumeUrl, "_blank"),
+      },
+      {
+        id: "email",
+        label: `Email — ${CONTACT.email}`,
+        kind: "action",
+        run: () => (window.location.href = `mailto:${CONTACT.email}`),
+      },
+      {
+        id: "linkedin",
+        label: "Open LinkedIn",
+        kind: "action",
+        run: () =>
+          window.open(CONTACT.linkedin, "_blank", "noopener,noreferrer"),
+      },
+      {
+        id: "github",
+        label: "Open GitHub — sjviklabs",
+        kind: "action",
+        run: () => window.open(CONTACT.github, "_blank", "noopener,noreferrer"),
+      },
+      {
+        id: "gumroad",
+        label: "Open Gumroad — guides",
+        kind: "action",
+        run: () =>
+          window.open(
+            "https://stevenjvik.gumroad.com",
+            "_blank",
+            "noopener,noreferrer",
+          ),
+      },
 
       // ── theme ─────────────────────────────────────────
-      { id: "t-auto",  label: "Theme: Auto (follow OS)", kind: "theme", run: () => $theme.set("auto" as Theme) },
-      { id: "t-light", label: "Theme: Light",            kind: "theme", run: () => $theme.set("light" as Theme) },
-      { id: "t-dark",  label: "Theme: Dark",             kind: "theme", run: () => $theme.set("dark" as Theme) },
+      {
+        id: "t-auto",
+        label: "Theme: Auto (follow OS)",
+        kind: "theme",
+        run: () => $theme.set("auto" as Theme),
+      },
+      {
+        id: "t-light",
+        label: "Theme: Light",
+        kind: "theme",
+        run: () => $theme.set("light" as Theme),
+      },
+      {
+        id: "t-dark",
+        label: "Theme: Dark",
+        kind: "theme",
+        run: () => $theme.set("dark" as Theme),
+      },
 
       // ── accent ────────────────────────────────────────
-      { id: "a-green", label: "Accent: Green (default)", kind: "accent", run: () => $accent.set("green" as Accent) },
-      { id: "a-amber", label: "Accent: Amber",           kind: "accent", run: () => $accent.set("amber" as Accent) },
-      { id: "a-ice",   label: "Accent: Ice",             kind: "accent", run: () => $accent.set("ice" as Accent) },
-      { id: "a-mono",  label: "Accent: Mono",            kind: "accent", run: () => $accent.set("mono" as Accent) },
+      {
+        id: "a-green",
+        label: "Accent: Green (default)",
+        kind: "accent",
+        run: () => $accent.set("green" as Accent),
+      },
+      {
+        id: "a-amber",
+        label: "Accent: Amber",
+        kind: "accent",
+        run: () => $accent.set("amber" as Accent),
+      },
+      {
+        id: "a-ice",
+        label: "Accent: Ice",
+        kind: "accent",
+        run: () => $accent.set("ice" as Accent),
+      },
+      {
+        id: "a-mono",
+        label: "Accent: Mono",
+        kind: "accent",
+        run: () => $accent.set("mono" as Accent),
+      },
 
       // ── layout ────────────────────────────────────────
-      { id: "v-terminal",  label: "Layout: Terminal (MOTD + widgets)", kind: "layout", run: () => $variant.set("terminal" as Variant) },
-      { id: "v-editorial", label: "Layout: Editorial (paper + serif)", kind: "layout", run: () => $variant.set("editorial" as Variant) },
+      {
+        id: "v-terminal",
+        label: "Layout: Terminal (MOTD + widgets)",
+        kind: "layout",
+        run: () => $variant.set("terminal" as Variant),
+      },
+      {
+        id: "v-editorial",
+        label: "Layout: Editorial (paper + serif)",
+        kind: "layout",
+        run: () => $variant.set("editorial" as Variant),
+      },
+      {
+        id: "v-fieldnotes",
+        label: "Layout: Field Notes (engineering journal)",
+        kind: "layout",
+        run: () => $variant.set("fieldnotes" as Variant),
+      },
 
       // ── motion ────────────────────────────────────────
-      { id: "m-on",  label: "Motion: On",  kind: "motion", run: () => $motion.set("on" as Motion) },
-      { id: "m-off", label: "Motion: Off (freeze widgets)", kind: "motion", run: () => $motion.set("off" as Motion) },
+      {
+        id: "m-on",
+        label: "Motion: On",
+        kind: "motion",
+        run: () => $motion.set("on" as Motion),
+      },
+      {
+        id: "m-off",
+        label: "Motion: Off (freeze widgets)",
+        kind: "motion",
+        run: () => $motion.set("off" as Motion),
+      },
     ],
-    []
+    [],
   );
 
   const filtered = useMemo(() => {
     const s = q.trim().toLowerCase();
     if (!s) return commands;
-    return commands.filter((c) => c.label.toLowerCase().includes(s) || c.kind.includes(s));
+    return commands.filter(
+      (c) => c.label.toLowerCase().includes(s) || c.kind.includes(s),
+    );
   }, [q, commands]);
 
   if (!open) return null;
@@ -159,8 +291,8 @@ export default function CommandPalette() {
         if (e.key === "Tab" && dialogRef.current) {
           const focusables = Array.from(
             dialogRef.current.querySelectorAll<HTMLElement>(
-              'input, button, [tabindex]:not([tabindex="-1"]), [role="option"]'
-            )
+              'input, button, [tabindex]:not([tabindex="-1"]), [role="option"]',
+            ),
           ).filter((el) => !el.hasAttribute("disabled"));
           if (focusables.length === 0) return;
           const first = focusables[0];
@@ -227,7 +359,10 @@ export default function CommandPalette() {
           />
           <span className="kbd">esc</span>
         </div>
-        <div style={{ maxHeight: 360, overflow: "auto", padding: "6px 0" }} role="listbox">
+        <div
+          style={{ maxHeight: 360, overflow: "auto", padding: "6px 0" }}
+          role="listbox"
+        >
           {filtered.length === 0 && (
             <div
               className="mono"

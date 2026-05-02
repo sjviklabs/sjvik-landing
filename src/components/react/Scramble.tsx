@@ -18,7 +18,11 @@ type Props = {
 
 const GLYPHS = "!<>-_\\/[]{}—=+*^?#________";
 
-export function useScramble(target: string, trigger?: unknown, duration = 900): string {
+export function useScramble(
+  target: string,
+  trigger?: unknown,
+  duration = 900,
+): string {
   const reduced = useReducedMotion();
   const [text, setText] = useState("");
   const textRef = useRef(text);
@@ -30,7 +34,13 @@ export function useScramble(target: string, trigger?: unknown, duration = 900): 
       return;
     }
 
-    type Step = { from: string; to: string; start: number; end: number; char: string };
+    type Step = {
+      from: string;
+      to: string;
+      start: number;
+      end: number;
+      char: string;
+    };
     const prev = textRef.current;
     const len = Math.max(target.length, prev.length);
     const queue: Step[] = [];
@@ -74,7 +84,14 @@ export function useScramble(target: string, trigger?: unknown, duration = 900): 
   return reduced ? target : text;
 }
 
-export default function Scramble({ children, trigger, duration, className }: Props) {
+export default function Scramble({
+  children,
+  trigger,
+  duration,
+  className,
+}: Props) {
   const html = useScramble(children, trigger, duration);
-  return <span className={className} dangerouslySetInnerHTML={{ __html: html }} />;
+  return (
+    <span className={className} dangerouslySetInnerHTML={{ __html: html }} />
+  );
 }

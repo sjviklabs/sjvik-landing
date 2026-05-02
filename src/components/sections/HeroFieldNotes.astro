@@ -1,0 +1,262 @@
+---
+/**
+ * HeroFieldNotes — the "fieldnotes" variant hero.
+ *
+ * Engineering-journal aesthetic: datestamped entry, serif headline with
+ * Caveat handwriting accents, "what shipped" outcomes box with checkmarks,
+ * sign-off vibe. Cascading site-wide treatment lives in global.css under
+ * [data-variant="fieldnotes"]; this component renders the homepage hero.
+ *
+ * Content sources:
+ *   - CONTACT (location, email, resumeUrl)
+ *   - EXPERIENCE (Sound Transit / JBLM metric extraction)
+ */
+import { CONTACT } from "../../data/content";
+
+// Today's date as journal datestamp
+const today = new Date();
+const dayNum = today.getDate();
+const monthShort = today.toLocaleString("en-US", { month: "short" }).toUpperCase();
+const yearFull = today.getFullYear();
+---
+
+<section
+  id="home"
+  class="fn-hero"
+>
+  {/* Masthead — journal title + volume metadata */}
+  <header class="fn-masthead">
+    <div class="title">Field Notes — engineering journal</div>
+    <div class="meta">VOL. <span class="vol">VIII</span> · NO. 04 · {yearFull}</div>
+  </header>
+
+  {/* Hero entry */}
+  <article class="fn-entry">
+    <div class="datestamp">
+      <span class="day">{dayNum}</span>
+      {monthShort}<br />{yearFull}
+    </div>
+
+    <div class="fn-byline">By Steven J. Vik · {CONTACT.location} · Reply &lt; 24h</div>
+
+    <h1 class="fn-headline">
+      Cybersecurity engineer<br />
+      who runs the lab <span class="fn-handnote">— and the runbook.</span>
+    </h1>
+
+    <p class="fn-deck">
+      Eight years across enterprise NOC, DoD compliance, and transit security.
+      I keep a <strong>3-node SOC homelab</strong> running so I can test
+      patterns in production-shaped conditions before I ship them at work.
+      Currently <strong>open to roles</strong> — remote or Seattle metro.
+    </p>
+
+    <div class="fn-outcomes" aria-label="Quantified outcomes">
+      <ul>
+        <li>
+          <strong>40%</strong> MTTR reduction at Sound Transit (Python alert
+          validation, 24/7 SOC, 3,000+ endpoints)
+        </li>
+        <li>
+          <strong>0</strong> CJIS audit violations across federal, transit,
+          and law-enforcement work
+        </li>
+        <li>
+          <strong>25% &amp; 35%</strong> fewer unauth events / stronger
+          posture rebuilding DoD environments at JBLM
+        </li>
+      </ul>
+    </div>
+
+    <div class="fn-actions">
+      <a class="cta solid" href={`mailto:${CONTACT.email}`}>
+        Email {CONTACT.email}
+      </a>
+      <a class="cta" href="#projects">Read the entries →</a>
+      <a class="cta ghost" href={CONTACT.resumeUrl}>Résumé.pdf</a>
+    </div>
+  </article>
+</section>
+
+<style>
+  .fn-hero {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 24px 32px 56px;
+  }
+
+  /* Masthead */
+  .fn-masthead {
+    padding: 24px 0 16px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .fn-masthead .title {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--fg);
+  }
+  .fn-masthead .meta {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+  .fn-masthead .meta .vol {
+    color: var(--green);
+  }
+
+  /* Entry */
+  .fn-entry {
+    position: relative;
+    padding: 24px 0;
+  }
+  .fn-entry .datestamp {
+    position: absolute;
+    top: 24px;
+    left: -120px;
+    width: 100px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-align: right;
+  }
+  .fn-entry .datestamp .day {
+    font-family: var(--font-serif);
+    font-size: 32px;
+    font-weight: 600;
+    color: var(--fg);
+    line-height: 1;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .fn-byline {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--fg-mute);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: 24px;
+  }
+
+  .fn-headline {
+    font-family: var(--font-serif);
+    font-size: clamp(34px, 5vw, 54px);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--fg);
+    margin: 0 0 16px;
+  }
+  .fn-handnote {
+    font-family: "Caveat", cursive;
+    font-size: 0.62em;
+    color: var(--green);
+    transform: rotate(-1.5deg);
+    display: inline-block;
+    margin-left: 6px;
+    line-height: 1;
+    font-weight: 600;
+  }
+
+  .fn-deck {
+    font-family: var(--font-serif);
+    font-size: 19px;
+    line-height: 1.55;
+    color: var(--fg);
+    max-width: 60ch;
+    margin: 0 0 24px;
+  }
+  .fn-deck strong {
+    font-weight: 600;
+  }
+
+  /* Outcomes box */
+  .fn-outcomes {
+    position: relative;
+    margin: 24px 0 32px;
+    padding: 16px 18px;
+    border: 1px solid var(--fg);
+    background: color-mix(in srgb, var(--green) 6%, transparent);
+    font-family: var(--font-serif);
+    max-width: 60ch;
+  }
+  .fn-outcomes::before {
+    content: "what shipped:";
+    position: absolute;
+    top: -10px;
+    left: 14px;
+    background: var(--ink);
+    padding: 0 8px;
+    font-family: "Caveat", cursive;
+    font-size: 16px;
+    color: var(--green-soft);
+    font-weight: 600;
+  }
+  .fn-outcomes ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .fn-outcomes li {
+    position: relative;
+    padding: 4px 0 4px 22px;
+    line-height: 1.5;
+    color: var(--fg);
+    font-size: 15px;
+  }
+  .fn-outcomes li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    font-family: "Caveat", cursive;
+    font-size: 20px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .fn-outcomes li strong {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--green);
+    font-weight: 700;
+    margin-right: 6px;
+  }
+
+  .fn-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 1100px) {
+    .fn-entry .datestamp {
+      position: static;
+      width: auto;
+      text-align: left;
+      margin-bottom: 8px;
+    }
+    .fn-entry .datestamp .day {
+      display: inline-block;
+      margin-right: 8px;
+      font-size: 18px;
+    }
+  }
+  @media (max-width: 600px) {
+    .fn-hero {
+      padding: 16px 18px 40px;
+    }
+  }
+</style>

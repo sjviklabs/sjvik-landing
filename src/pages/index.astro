@@ -4,6 +4,7 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import HeroTerminal from "../components/sections/HeroTerminal.astro";
 import HeroEditorial from "../components/sections/HeroEditorial.astro";
+import HeroFieldNotes from "../components/sections/HeroFieldNotes.astro";
 import WorkSection from "../components/sections/WorkSection.astro";
 import ProjectsSection from "../components/sections/ProjectsSection.astro";
 import GuidesSection from "../components/sections/GuidesSection.astro";
@@ -26,6 +27,9 @@ import ContactSection from "../components/sections/ContactSection.astro";
     <div data-hero="editorial">
       <HeroEditorial />
     </div>
+    <div data-hero="fieldnotes">
+      <HeroFieldNotes />
+    </div>
 
     <WorkSection />
     <ProjectsSection />
@@ -37,9 +41,15 @@ import ContactSection from "../components/sections/ContactSection.astro";
 
 <style is:global>
   /* Hero variant toggle — CSS-driven, no React flash. */
-  [data-hero="terminal"]  { display: block; }
-  [data-hero="editorial"] { display: none; }
+  [data-hero="terminal"]   { display: block; }
+  [data-hero="editorial"]  { display: none; }
+  [data-hero="fieldnotes"] { display: none; }
 
-  html[data-variant="editorial"] [data-hero="terminal"]  { display: none; }
-  html[data-variant="editorial"] [data-hero="editorial"] { display: block; }
+  html[data-variant="editorial"] [data-hero="terminal"]   { display: none; }
+  html[data-variant="editorial"] [data-hero="editorial"]  { display: block; }
+  html[data-variant="editorial"] [data-hero="fieldnotes"] { display: none; }
+
+  html[data-variant="fieldnotes"] [data-hero="terminal"]   { display: none; }
+  html[data-variant="fieldnotes"] [data-hero="editorial"]  { display: none; }
+  html[data-variant="fieldnotes"] [data-hero="fieldnotes"] { display: block; }
 </style>

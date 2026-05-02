@@ -54,7 +54,7 @@ function Spark({
 export default function UptimeGrid() {
   const reduced = useReducedMotion();
   const [data, setData] = useState<number[]>(() =>
-    Array.from({ length: 40 }, () => 40 + Math.random() * 40)
+    Array.from({ length: 40 }, () => 40 + Math.random() * 40),
   );
 
   useEffect(() => {
@@ -110,7 +110,8 @@ export default function UptimeGrid() {
                   height: 8,
                   borderRadius: 99,
                   marginTop: 5,
-                  background: s.state === "ok" ? "var(--green)" : "var(--amber)",
+                  background:
+                    s.state === "ok" ? "var(--green)" : "var(--amber)",
                   boxShadow: `0 0 0 3px color-mix(in oklab, ${
                     s.state === "ok" ? "var(--green)" : "var(--amber)"
                   } 22%, transparent)`,

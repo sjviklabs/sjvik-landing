@@ -9,7 +9,15 @@ import { useReducedMotion } from "./useReducedMotion";
  * shows the initial render time without updating.
  */
 
-function StatusRow({ label, value, hi }: { label: string; value: string; hi?: boolean }) {
+function StatusRow({
+  label,
+  value,
+  hi,
+}: {
+  label: string;
+  value: string;
+  hi?: boolean;
+}) {
   return (
     <div
       style={{
@@ -54,19 +62,28 @@ export default function NowCard() {
         </div>
         <span className="mono">{pt} PT</span>
       </div>
-      <div className="frame-body" style={{ padding: 18, display: "grid", gap: 12 }}>
+      <div
+        className="frame-body"
+        style={{ padding: 18, display: "grid", gap: 12 }}
+      >
         <StatusRow label="location" value="Seattle, WA" />
         <StatusRow
           label="availability"
           value="open to cybersecurity, DevOps, infra roles"
           hi
         />
-        <StatusRow label="focus" value="incident response · infra hardening · SJVIK NOC" />
+        <StatusRow
+          label="focus"
+          value="incident response · infra hardening · SJVIK NOC"
+        />
         <StatusRow
           label="stack"
           value="Splunk · Wazuh · Proxmox · Ansible · Loki · Claude Code"
         />
-        <StatusRow label="degree" value="B.S. Cybersecurity — WGU, in progress" />
+        <StatusRow
+          label="degree"
+          value="B.S. Cybersecurity — WGU, in progress"
+        />
       </div>
     </div>
   );

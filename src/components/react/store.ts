@@ -14,7 +14,7 @@ import { persistentAtom } from "@nanostores/persistent";
 
 export type Theme = "auto" | "light" | "dark";
 export type Accent = "green" | "amber" | "ice" | "mono";
-export type Variant = "terminal" | "editorial";
+export type Variant = "terminal" | "editorial" | "fieldnotes";
 export type Motion = "on" | "off";
 
 /** 'auto' follows prefers-color-scheme; light/dark pin the mode. */
@@ -23,7 +23,7 @@ export const $theme = persistentAtom<Theme>("theme", "auto");
 /** Default green is the forest-green terminal accent. */
 export const $accent = persistentAtom<Accent>("accent", "green");
 
-/** terminal = MOTD typewriter + widgets; editorial = paper grid + serif. */
+/** terminal = MOTD typewriter + widgets; editorial = paper grid + serif; fieldnotes = engineering journal. */
 export const $variant = persistentAtom<Variant>("variant", "terminal");
 
 /** 'off' disables animations; ALSO respected via prefers-reduced-motion. */
@@ -33,7 +33,9 @@ export const $motion = persistentAtom<Motion>("motion", "on");
 export function resolveTheme(t: Theme): "light" | "dark" {
   if (t === "auto") {
     if (typeof window !== "undefined" && window.matchMedia) {
-      return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+      return window.matchMedia("(prefers-color-scheme: light)").matches
+        ? "light"
+        : "dark";
     }
     return "dark";
   }

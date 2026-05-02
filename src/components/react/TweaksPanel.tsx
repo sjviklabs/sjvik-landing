@@ -43,7 +43,9 @@ function Chip({ on, onClick, children, label }: ChipProps) {
         borderRadius: 4,
         border: `1px solid ${on ? "var(--green)" : "var(--line)"}`,
         color: on ? "var(--green)" : "var(--fg-mute)",
-        background: on ? "color-mix(in oklab, var(--green) 12%, transparent)" : "transparent",
+        background: on
+          ? "color-mix(in oklab, var(--green) 12%, transparent)"
+          : "transparent",
         cursor: "pointer",
       }}
     >
@@ -52,7 +54,13 @@ function Chip({ on, onClick, children, label }: ChipProps) {
   );
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div
       style={{
@@ -66,7 +74,9 @@ function Row({ label, children }: { label: string; children: React.ReactNode }) 
       }}
     >
       <span className="label">{label}</span>
-      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>{children}</div>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -81,7 +91,8 @@ export default function TweaksPanel() {
   useEffect(() => {
     const onOpen = () => setDismissed(false);
     window.addEventListener("open-tweaks", onOpen as EventListener);
-    return () => window.removeEventListener("open-tweaks", onOpen as EventListener);
+    return () =>
+      window.removeEventListener("open-tweaks", onOpen as EventListener);
   }, []);
 
   if (dismissed) return null;
@@ -144,27 +155,84 @@ export default function TweaksPanel() {
       </header>
       <div style={{ padding: "4px 14px 12px" }}>
         <Row label="layout">
-          <Chip on={variant === "terminal"} onClick={() => $variant.set("terminal" as Variant)}>
+          <Chip
+            on={variant === "terminal"}
+            onClick={() => $variant.set("terminal" as Variant)}
+          >
             terminal
           </Chip>
-          <Chip on={variant === "editorial"} onClick={() => $variant.set("editorial" as Variant)}>
+          <Chip
+            on={variant === "editorial"}
+            onClick={() => $variant.set("editorial" as Variant)}
+          >
             editorial
+          </Chip>
+          <Chip
+            on={variant === "fieldnotes"}
+            onClick={() => $variant.set("fieldnotes" as Variant)}
+          >
+            field notes
           </Chip>
         </Row>
         <Row label="theme">
-          <Chip on={theme === "auto"}  onClick={() => $theme.set("auto" as Theme)}>auto</Chip>
-          <Chip on={theme === "light"} onClick={() => $theme.set("light" as Theme)}>light</Chip>
-          <Chip on={theme === "dark"}  onClick={() => $theme.set("dark" as Theme)}>dark</Chip>
+          <Chip
+            on={theme === "auto"}
+            onClick={() => $theme.set("auto" as Theme)}
+          >
+            auto
+          </Chip>
+          <Chip
+            on={theme === "light"}
+            onClick={() => $theme.set("light" as Theme)}
+          >
+            light
+          </Chip>
+          <Chip
+            on={theme === "dark"}
+            onClick={() => $theme.set("dark" as Theme)}
+          >
+            dark
+          </Chip>
         </Row>
         <Row label="accent">
-          <Chip on={accent === "green"} onClick={() => $accent.set("green" as Accent)}>green</Chip>
-          <Chip on={accent === "amber"} onClick={() => $accent.set("amber" as Accent)}>amber</Chip>
-          <Chip on={accent === "ice"}   onClick={() => $accent.set("ice" as Accent)}>ice</Chip>
-          <Chip on={accent === "mono"}  onClick={() => $accent.set("mono" as Accent)}>mono</Chip>
+          <Chip
+            on={accent === "green"}
+            onClick={() => $accent.set("green" as Accent)}
+          >
+            green
+          </Chip>
+          <Chip
+            on={accent === "amber"}
+            onClick={() => $accent.set("amber" as Accent)}
+          >
+            amber
+          </Chip>
+          <Chip
+            on={accent === "ice"}
+            onClick={() => $accent.set("ice" as Accent)}
+          >
+            ice
+          </Chip>
+          <Chip
+            on={accent === "mono"}
+            onClick={() => $accent.set("mono" as Accent)}
+          >
+            mono
+          </Chip>
         </Row>
         <Row label="motion">
-          <Chip on={motion === "on"}  onClick={() => $motion.set("on" as Motion)}>on</Chip>
-          <Chip on={motion === "off"} onClick={() => $motion.set("off" as Motion)}>off</Chip>
+          <Chip
+            on={motion === "on"}
+            onClick={() => $motion.set("on" as Motion)}
+          >
+            on
+          </Chip>
+          <Chip
+            on={motion === "off"}
+            onClick={() => $motion.set("off" as Motion)}
+          >
+            off
+          </Chip>
         </Row>
       </div>
     </aside>
