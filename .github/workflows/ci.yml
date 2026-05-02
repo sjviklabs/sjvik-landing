@@ -26,15 +26,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      # Copy opt-in beta PDFs (not committed to the repo) into the build
-      # output, matching the current deploy step's behavior.
-      - name: Include beta PDFs if present
-        run: |
-          if [ -d static-assets/beta ]; then
-            mkdir -p dist/beta
-            cp -v static-assets/beta/* dist/beta/
-          fi
-
       - name: Upload dist artifact
         uses: actions/upload-artifact@v7
         with:

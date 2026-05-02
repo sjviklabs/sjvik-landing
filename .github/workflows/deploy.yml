@@ -54,10 +54,6 @@ jobs:
         run: |
           npm ci
           npm run build
-          if [ -d static-assets/beta ]; then
-            mkdir -p dist/beta
-            cp -v static-assets/beta/* dist/beta/
-          fi
 
       - name: Deploy to Hostinger via FTPS
         # Hard cap so a hung FTP connection doesn't burn a full job-hour.
