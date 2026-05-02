@@ -23,8 +23,10 @@ export const $theme = persistentAtom<Theme>("theme", "auto");
 /** Default green is the forest-green terminal accent. */
 export const $accent = persistentAtom<Accent>("accent", "green");
 
-/** terminal = MOTD typewriter + widgets; editorial = paper grid + serif; fieldnotes = engineering journal. */
-export const $variant = persistentAtom<Variant>("variant", "terminal");
+/** terminal = MOTD typewriter + widgets; editorial = paper grid + serif; fieldnotes = engineering journal.
+ *  Default is fieldnotes — recruiter-direct (email CTA + quantified metrics + reply-time).
+ *  Existing visitors keep their persisted preference; only fresh localStorage gets the new default. */
+export const $variant = persistentAtom<Variant>("variant", "fieldnotes");
 
 /** 'off' disables animations; ALSO respected via prefers-reduced-motion. */
 export const $motion = persistentAtom<Motion>("motion", "on");
